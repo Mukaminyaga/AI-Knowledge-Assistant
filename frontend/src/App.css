@@ -1,0 +1,65 @@
+/* App-specific styles */
+.App {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Smooth transitions for route changes */
+.App * {
+  transition: opacity 0.2s ease;
+}
+
+/* Focus styles for accessibility */
+*:focus {
+  outline: 2px solid var(--primary-color);
+  outline-offset: 2px;
+}
+
+/* Print styles */
+@media print {
+  .header-container,
+  .demo-button,
+  .signin-button,
+  .get-started-button,
+  .submit-button,
+  .btn {
+    display: none !important;
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  :root {
+    --primary-color: #000;
+    --text-gray: #333;
+    --border-gray: #000;
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Loading state */
+.loading {
+  opacity: 0.7;
+  pointer-events: none;
+}
+
+/* Error state */
+.error {
+  color: #d32f2f;
+  border-color: #d32f2f;
+}
+
+/* Success state */
+.success {
+  color: #2e7d32;
+  border-color: #2e7d32;
+}
