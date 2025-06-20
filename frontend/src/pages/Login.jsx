@@ -9,7 +9,7 @@ function Login() {
     password: "",
     rememberMe: false,
   });
-
+  const [user, setUser] = useState(null);
   const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
@@ -91,14 +91,17 @@ const handleSubmit = async (e) => {
       password: formData.password,
     });
 
-    const { access_token, token_type } = response.data;
+   const { access_token, user: loggedInUser } = response.data;
 
-    // ✅ Save the token in localStorage
-    localStorage.setItem("token", access_token);
+localStorage.setItem("token", access_token);
+localStorage.setItem("user", JSON.stringify(loggedInUser));
 
-    // ✅ Redirect to another page, like dashboard
-    window.location.href = "/dashboard"; // or use useNavigate()
 
+if (loggedInUser.role === "admin") {
+  window.location.href = "/dashboard";
+} else {
+  window.location.href = "/dashboard";
+}
   } catch (error) {
     console.error("Login error:", error);
 

@@ -205,7 +205,7 @@ function Signup() {
 
       console.log("Signup successful:", response.data);
       setSuccessMessage(
-        "Signup successful! Redirecting to Home Page for login...",
+        "Signup successful! Redirecting to Home Page for login as you await approval...",
       );
 
       // Reset form

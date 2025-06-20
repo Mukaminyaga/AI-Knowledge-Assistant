@@ -51,7 +51,7 @@ def startup():
 
 # Include Routers
 app.include_router(auth_routes.router, prefix="/auth", tags=["Auth"])
-app.include_router(user_routes.router, prefix="/users", tags=["Users"])
+# app.include_router(user_routes.router, prefix="/users", tags=["Users"])
 app.include_router(upload.router, prefix="/documents", tags=["Documents"])
 app.include_router(user_routes.router, prefix="/users", tags=["Users"])
 

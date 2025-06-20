@@ -38,4 +38,12 @@ def login(user: schemas.UserLogin, db: Session = Depends(database.get_db)):
         raise HTTPException(status_code=403, detail="Your account is pending approval")
 
     token = auth.create_access_token({"sub": db_user.email, "role": db_user.role})
-    return {"access_token": token, "token_type": "bearer"}
+    return {
+        "access_token": token,
+        "token_type": "bearer",
+        "user": {
+            "email": db_user.email,
+            "role": db_user.role,
+            "is_approved": db_user.is_approved
+        }
+    }

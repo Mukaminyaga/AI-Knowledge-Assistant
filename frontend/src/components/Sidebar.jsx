@@ -2,6 +2,19 @@ import React, { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import "../styles/Sidebar.css";
 
+  import { 
+  FiHome, 
+  FiUpload, 
+  FiMessageSquare, 
+  FiBook,
+  FiUser, 
+  FiUsers, 
+  FiSettings,
+  FiChevronDown, 
+  FiLogOut,
+  FiMessageCircle
+} from 'react-icons/fi';
+
 function Sidebar({ isOpen = false, onClose, isMobile = false }) {
   const location = useLocation();
   const [isCollapsed, setIsCollapsed] = useState(false);
@@ -20,43 +33,44 @@ function Sidebar({ isOpen = false, onClose, isMobile = false }) {
     }
   };
 
-  const menuItems = [
-    {
-      icon: "🏠",
-      label: "Dashboard",
-      path: "/dashboard",
-    },
-    {
-      icon: "📄",
-      label: "Upload Documents",
-      path: "/upload-documents",
-    },
-    {
-      icon: "💬",
-      label: "Chat",
-      path: "/chat",
-    },
-    // {
-    //   icon: "🗨️",
-    //   label: "Chat UI",
-    //   path: "/chat-user",
-    // },
-    {
-      icon: "📚",
-      label: "Knowledge Base",
-      path: "/knowledge-base",
-    },
-    {
-      icon: "👥",
-      label: "Team",
-      path: "/users",
-    },
-    {
-      icon: "⚙️",
-      label: "Settings",
-      path: "/settings",
-    },
-  ];
+
+const menuItems = [
+  {
+    icon: <FiHome size={20} />,
+    label: "Dashboard",
+    path: "/dashboard",
+  },
+  {
+    icon: <FiUpload size={20} />,
+    label: "Upload Documents",
+    path: "/upload-documents",
+  },
+  {
+    icon: <FiMessageSquare size={20} />,
+    label: "Chat",
+    path: "/chat",
+  },
+  // {
+  //   icon: <FiMessageCircle size={20} />,
+  //   label: "Chat UI",
+  //   path: "/chat-user",
+  // },
+  {
+    icon: <FiBook size={20} />,
+    label: "Knowledge Base",
+    path: "/knowledge-base",
+  },
+  {
+    icon: <FiUsers size={20} />,
+    label: "Team",
+    path: "/users",
+  },
+  {
+    icon: <FiSettings size={20} />,
+    label: "Settings",
+    path: "/settings",
+  },
+];
 
   return (
     <div
@@ -117,15 +131,23 @@ function Sidebar({ isOpen = false, onClose, isMobile = false }) {
       </nav>
 
       <div className="sidebar-footer">
-        <div className="user-profile">
-          <div className="user-avatar">👤</div>
-          {!isCollapsed && (
-            <div className="user-info">
-              <p className="user-name">John Doe</p>
-              <p className="user-role">Administrator</p>
-            </div>
-          )}
-        </div>
+       <div className="user-profile">
+  <div className="user-avatar">
+    <FiUser size={20} />
+  </div>
+  {!isCollapsed && (
+    <div className="user-info">
+      <p className="user-name">John Doe</p>
+      <p className="user-role">Administrator</p>
+    </div>
+  )}
+  {!isCollapsed && (
+    <div className="profile-actions">
+      {/* <FiChevronDown className="dropdown-icon" /> */}
+      <FiLogOut className="logout-icon" />
+    </div>
+  )}
+</div>
 
         {!isCollapsed && (
           <div className="help-section">
