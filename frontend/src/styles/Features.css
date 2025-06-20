@@ -358,6 +358,7 @@
 
 .cta-button {
   background-color: var(--white);
+  text-decoration: none;
   color: var(--primary-color);
   border: none;
   border-radius: 25px;

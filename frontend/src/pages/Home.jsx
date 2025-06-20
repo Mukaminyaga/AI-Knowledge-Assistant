@@ -221,7 +221,11 @@ function Home() {
                   </div>
                 </div>
               </div>
-              <button className="benefits-cta-button">Schedule a Demo</button>
+      
+            <Link to="/contact" className="benefits-cta-link">
+  <button className="benefits-cta-button">Schedule a Demo</button>
+</Link>
+    
             </div>
             <div className="benefits-visual">
               <div className="stats-card">

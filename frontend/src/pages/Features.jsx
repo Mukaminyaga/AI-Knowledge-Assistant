@@ -127,7 +127,7 @@ function Features() {
             Join thousands of teams who have already transformed their knowledge
             management with our AI-powered solution.
           </p>
-          <Link to="/signup" className="cta-button">
+          <Link to="/contact" className="cta-button">
             Get Started Today
           </Link>
         </div>

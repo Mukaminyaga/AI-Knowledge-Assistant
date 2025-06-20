@@ -15,7 +15,10 @@ class UserOut(BaseModel):
     id: int
     first_name: str
     last_name: str
-    email: EmailStr
+    email: str
     role: str
+    is_approved: bool
+
     class Config:
-        orm_mode = True
+       from_attributes = True 
+       

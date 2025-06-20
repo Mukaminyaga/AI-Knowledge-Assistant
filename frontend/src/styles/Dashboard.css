@@ -5,6 +5,12 @@
   padding: 40px;
 }
 
+/* Adjust padding when inside dashboard layout */
+.dashboard-layout .dashboard-container {
+  min-height: calc(100vh - 0px);
+  background-color: transparent;
+}
+
 @media (max-width: 768px) {
   .dashboard-container {
     padding: 20px;
@@ -210,6 +216,9 @@
   transition: all 0.2s ease;
   text-transform: uppercase;
   letter-spacing: 0.5px;
+  text-decoration: none;
+  display: inline-block;
+  text-align: center;
 }
 
 .card-button:hover {

@@ -285,6 +285,7 @@
   align-items: stretch;
   line-height: normal;
   width: 50%;
+  margin-right: -90px;
   /* padding-left: 50px; */
   margin-left: 50px;
 }
@@ -342,6 +343,7 @@
 }
 
 .chat-window {
+  margin-bottom: 15px;
   position: relative;
   border-radius: 30px;
   background-color: var(--white);
@@ -920,7 +922,7 @@
 
 /* Features Section */
 .features-section {
-  margin-top: 120px;
+  margin-top: 80px;
   width: 100vw;
   padding: 80px 0;
   background: linear-gradient(
@@ -1025,16 +1027,16 @@
   background-color: var(--white);
   padding: 40px 30px;
   border-radius: 20px;
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+  /* box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08); */
   transition: all 0.3s ease;
-  border: 1px solid rgba(240, 242, 245, 0.8);
+  border: 1px solid rgba(240, 242, 245, 1);
   text-align: center;
 }
 
 .feature-card:hover {
-  transform: translateY(-8px);
-  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.12);
-  border-color: rgba(11, 58, 96, 0.1);
+    transform: translateY(-8px);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.08);
+  border-color: transparent !important;
 }
 
 @media (max-width: 768px) {
@@ -1058,8 +1060,8 @@
 
 .feature-title {
   font-size: 24px;
-  font-family: var(--font-work-sans);
-  font-weight: 700;
+  font-family: var(--font-inter) !important;
+  font-weight: 600;
   color: var(--black);
   margin-bottom: 16px;
   letter-spacing: -0.3px;
@@ -1091,6 +1093,7 @@
 .how-it-works-section {
   background-color: var(--white);
   width: 100vw;
+  margin-top: 20px;
 }
 
 @media (max-width: 991px) {

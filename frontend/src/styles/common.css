@@ -45,6 +45,11 @@ body {
   min-height: 100vh;
 }
 
+/* Layout adjustments for sidebar pages */
+.dashboard-layout .App {
+  overflow-x: hidden;
+}
+
 /* Common utility classes */
 .container {
   max-width: var(--max-width);
