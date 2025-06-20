@@ -49,16 +49,12 @@
   align-items: stretch;
   line-height: normal;
   width: 50%;
-  margin-left: 50px;
-  /* Add these to limit growth on large screens */
-  max-width: 600px; /* Adjust this value as needed */
-  margin-right: auto; /* Pushes the column to the left */
+  margin-left: 50px ;
 }
 
 @media (max-width: 991px) {
   .left-column {
     width: 100%;
-    max-width: 100%; /* Reset max-width for smaller screens */
     margin-left: 0;
   }
 }

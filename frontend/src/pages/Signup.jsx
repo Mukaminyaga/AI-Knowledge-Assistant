@@ -191,14 +191,17 @@ function Signup() {
 
     setIsSubmitting(true);
 
-    try {
-      const response = await axios.post("http://127.0.0.1:8000/auth/register", {
-        first_name: formData.firstName,
-        last_name: formData.lastName,
-        email: formData.email,
-        password: formData.password,
-        role: formData.jobTitle || "User", // Use jobTitle as role
-      });
+  try {
+  const response = await axios.post(
+    `${process.env.REACT_APP_API_URL}/auth/register`,
+    {
+      first_name: formData.firstName,
+      last_name: formData.lastName,
+      email: formData.email,
+      password: formData.password,
+      role: formData.jobTitle || "User",
+    }
+  );
 
       console.log("Signup successful:", response.data);
       setSuccessMessage(
