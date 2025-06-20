@@ -1,0 +1,52 @@
+.documents-list {
+  padding: 20px;
+}
+
+.documents-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.document-card {
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 15px;
+  width: 250px;
+  background-color: #fafafa;
+  position: relative;
+}
+
+.doc-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.doc-header h3 {
+  font-size: 1.1rem;
+  margin: 0;
+}
+
+.doc-details {
+  font-size: 0.9rem;
+  margin: 10px 0;
+}
+
+.doc-preview {
+  font-style: italic;
+  color: #555;
+}
+
+.delete-button {
+  border: none;
+  padding: 5px 10px;
+  background-color: #ff4d4d;
+  color: #fff;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.delete-button:hover {
+  background-color: #d93636;
+}

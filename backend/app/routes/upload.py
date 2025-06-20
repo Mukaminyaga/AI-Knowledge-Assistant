@@ -3,13 +3,13 @@ from sqlalchemy.orm import Session
 import os, shutil
 import numpy as np
 from ..utils import document_utils, embedding_utils
-from ..database import get_db  # function that gives a DB session
+from app.database import get_db
 from app.models.document import Document
-
 
 router = APIRouter()
 UPLOAD_DIR = "uploads"
 os.makedirs(UPLOAD_DIR, exist_ok=True)
+
 
 @router.post("/upload")
 async def upload_document(file: UploadFile = File(...), db: Session = Depends(get_db)):
@@ -19,7 +19,7 @@ async def upload_document(file: UploadFile = File(...), db: Session = Depends(ge
     if ext not in ("pdf", "docx", "txt"):
         raise HTTPException(status_code=400, detail=f"{filename}: unsupported type {ext}")
 
-    # Save file to disk
+    # Save the uploaded file
     dest = os.path.join(UPLOAD_DIR, filename)
     with open(dest, "wb") as buffer:
         shutil.copyfileobj(file.file, buffer)
@@ -44,7 +44,7 @@ async def upload_document(file: UploadFile = File(...), db: Session = Depends(ge
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"{filename}: embedding error {e}")
 
-    # Save document metadata to database (needed before FAISS for document_id)
+    # Save document record
     document = Document(
         filename=filename,
         file_type=ext,
@@ -56,7 +56,7 @@ async def upload_document(file: UploadFile = File(...), db: Session = Depends(ge
     db.commit()
     db.refresh(document)
 
-    # Prepare metadata for FAISS
+    # Save embeddings to FAISS
     metadata = [
         {
             "filename": filename,
@@ -65,8 +65,6 @@ async def upload_document(file: UploadFile = File(...), db: Session = Depends(ge
         }
         for i in range(len(embeddings))
     ]
-
-    # Save to FAISS
     try:
         embedding_utils.save_to_faiss(np.array(embeddings), metadata)
     except Exception as e:
@@ -83,3 +81,34 @@ async def upload_document(file: UploadFile = File(...), db: Session = Depends(ge
             "preview": document.preview,
         }
     }
+
+
+@router.get("/")
+def get_all_documents(db: Session = Depends(get_db)):
+    documents = db.query(Document).all()
+    return [
+        {
+            "id": doc.id,
+            "filename": doc.filename,
+            "file_type": doc.file_type,
+            "size": doc.size,
+            # "num_chunks": doc.num_chunks,
+            # "preview": doc.preview,
+        }
+        for doc in documents
+    ]
+
+
+@router.delete("/{doc_id}")
+def delete_document(doc_id: int, db: Session = Depends(get_db)):
+    document = db.query(Document).filter(Document.id == doc_id).first()
+    if not document:
+        raise HTTPException(status_code=404, detail=f"Document {doc_id} not found.")
+
+    file_path = os.path.join(UPLOAD_DIR, document.filename)
+    if os.path.exists(file_path):
+        os.remove(file_path)
+
+    db.delete(document)
+    db.commit()
+    return {"message": f"Deleted document '{document.filename}' successfully."}
