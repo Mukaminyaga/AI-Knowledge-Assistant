@@ -10,7 +10,7 @@ const Users = () => {
   // Fetch all users
   const fetchUsers = async () => {
     try {
-      const res = await axios.get("http://localhost:8000/users", {
+      const res = await axios.get(`${process.env.REACT_APP_API_URL}/users`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
@@ -26,7 +26,7 @@ const Users = () => {
   const approveUser = async (userId) => {
     try {
       const res = await axios.put(
-        `http://localhost:8000/users/approve/${userId}`,
+      `${process.env.REACT_APP_API_URL}/users/approve/${userId}`,
         {},
         {
           headers: {
@@ -53,8 +53,8 @@ const Users = () => {
     if (!confirmDelete) return;
 
     try {
-      const res = await axios.delete(
-        `http://localhost:8000/users/delete/${userId}`,
+     const res = await axios.delete(
+      `${process.env.REACT_APP_API_URL}/users/delete/${userId}`,
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,

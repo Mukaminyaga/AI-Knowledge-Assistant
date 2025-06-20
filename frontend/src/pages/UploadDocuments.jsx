@@ -67,20 +67,24 @@ function UploadDocuments() {
     const form = new FormData();
     form.append("file", fileObj.file);
 
-    try {
-      await axios.post("http://localhost:8000/documents/upload", form, {
-        headers: { "Content-Type": "multipart/form-data" },
-        onUploadProgress: (e) => {
-          const percent = Math.round((e.loaded * 100) / e.total);
-          setUploadedFiles((prev) =>
-            prev.map((f) =>
-              f.id === fileObj.id
-                ? { ...f, progress: percent, status: percent === 100 ? "completed" : "uploading" }
-                : f
-            )
-          );
-        },
-      });
+   try {
+  await axios.post(`${process.env.REACT_APP_API_URL}/documents/upload`, form, {
+    headers: { "Content-Type": "multipart/form-data" },
+    onUploadProgress: (e) => {
+      const percent = Math.round((e.loaded * 100) / e.total);
+      setUploadedFiles((prev) =>
+        prev.map((f) =>
+          f.id === fileObj.id
+            ? {
+                ...f,
+                progress: percent,
+                status: percent === 100 ? "completed" : "uploading",
+              }
+            : f
+        )
+      );
+    },
+  });
     } catch (err) {
       setUploadedFiles((prev) =>
         prev.map((f) =>
