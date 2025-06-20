@@ -284,7 +284,7 @@ const handleSubmit = async (e) => {
                 </div>
                 <Link to="/" className="demo-link">
                   <div className="demo-button">
-                    <span className="demo-icon">🚀</span>
+              
                     Try a Demo Instead
                   </div>
                 </Link>

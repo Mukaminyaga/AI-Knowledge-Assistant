@@ -1,49 +1,85 @@
-from fastapi import UploadFile, File, APIRouter, HTTPException
-from ..utils import document_utils, embedding_utils
-import os
-import shutil
+from fastapi import UploadFile, File, APIRouter, HTTPException, Depends
+from sqlalchemy.orm import Session
+import os, shutil
 import numpy as np
+from ..utils import document_utils, embedding_utils
+from ..database import get_db  # function that gives a DB session
+from app.models.document import Document
+
 
 router = APIRouter()
 UPLOAD_DIR = "uploads"
 os.makedirs(UPLOAD_DIR, exist_ok=True)
 
 @router.post("/upload")
-async def upload_document(file: UploadFile = File(...)):
-    extension = file.filename.split(".")[-1].lower()
-    if extension not in ["pdf", "docx", "txt"]:
-        raise HTTPException(status_code=400, detail="Only PDF, DOCX, and TXT files are supported.")
+async def upload_document(file: UploadFile = File(...), db: Session = Depends(get_db)):
+    filename = file.filename
+    ext = filename.split(".")[-1].lower()
 
-    file_path = os.path.join(UPLOAD_DIR, file.filename)
-    with open(file_path, "wb") as buffer:
+    if ext not in ("pdf", "docx", "txt"):
+        raise HTTPException(status_code=400, detail=f"{filename}: unsupported type {ext}")
+
+    # Save file to disk
+    dest = os.path.join(UPLOAD_DIR, filename)
+    with open(dest, "wb") as buffer:
         shutil.copyfileobj(file.file, buffer)
 
+    # Extract text
     try:
-        if extension == "pdf":
-            text = document_utils.extract_text_from_pdf(file_path)
-        elif extension == "docx":
-            text = document_utils.extract_text_from_docx(file_path)
-        elif extension == "txt":
-            text = document_utils.extract_text_from_txt(file_path)
+        text = {
+            "pdf": document_utils.extract_text_from_pdf,
+            "docx": document_utils.extract_text_from_docx,
+            "txt": document_utils.extract_text_from_txt,
+        }[ext](dest)
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Failed to extract text: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"{filename}: extract error {e}")
 
-    # Chunk text
+    # Chunk and embed
     chunks = embedding_utils.chunk_text(text)
-
     if not chunks:
-        raise HTTPException(status_code=500, detail="No meaningful text found to process.")
+        raise HTTPException(status_code=500, detail=f"{filename}: no text chunks extracted")
 
-    # Embed text
     try:
         embeddings = embedding_utils.embed_chunks(chunks)
-        embedding_utils.save_to_faiss(np.array(embeddings))  # Save to vector index
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Embedding or indexing failed: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"{filename}: embedding error {e}")
+
+    # Save document metadata to database (needed before FAISS for document_id)
+    document = Document(
+        filename=filename,
+        file_type=ext,
+        size=os.path.getsize(dest),
+        num_chunks=len(chunks),
+        preview=chunks[0]
+    )
+    db.add(document)
+    db.commit()
+    db.refresh(document)
+
+    # Prepare metadata for FAISS
+    metadata = [
+        {
+            "filename": filename,
+            "chunk_index": i,
+            "document_id": document.id
+        }
+        for i in range(len(embeddings))
+    ]
+
+    # Save to FAISS
+    try:
+        embedding_utils.save_to_faiss(np.array(embeddings), metadata)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"{filename}: embedding error {e}")
 
     return {
-        "filename": file.filename,
-        "message": "Upload, parsing, and embedding successful",
-        "chunks": len(chunks),
-        "preview": chunks[0] if chunks else "No preview available"
+        "message": "Uploaded successfully",
+        "document": {
+            "id": document.id,
+            "filename": document.filename,
+            "file_type": document.file_type,
+            "size": document.size,
+            "num_chunks": document.num_chunks,
+            "preview": document.preview,
+        }
     }

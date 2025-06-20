@@ -1,18 +1,21 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from . import models, database
-from .database import engine
-from .routes import user, upload
+from app.routes import auth as auth_routes
+from app.routes import user as user_routes
+from app.routes import upload
+from app import database
+from app.models import users
 from dotenv import load_dotenv
+import os
 
-load_dotenv()  # Load .env variables for auth.py
+load_dotenv()
 
 app = FastAPI()
 
-# CORS Middleware
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000"], 
+    allow_origins=["http://localhost:3000", "http://localhost:8000"],
+    allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
@@ -24,26 +27,27 @@ def root():
 @app.on_event("startup")
 def startup():
     database.Base.metadata.create_all(bind=database.engine)
-    from . import auth
+    from app import auth
     db = database.SessionLocal()
     admin_email = "admin@example.com"
-    existing_admin = db.query(models.User).filter(models.User.email == admin_email).first()
+    existing_admin = db.query(users.User).filter(users.User.email == admin_email).first()
     if not existing_admin:
-        admin_user = models.User(
+        admin_user = users.User(
             first_name="Super",
             last_name="Admin",
             email=admin_email,
             hashed_password=auth.hash_password("AdminPassword123"),
-            role="admin"
+            role="admin",
+            is_approved=True
         )
         db.add(admin_user)
         db.commit()
         print("Admin user created:", admin_email)
     db.close()
 
-# Create tables
-models.Base.metadata.create_all(bind=engine)
+# Include Routers
+app.include_router(auth_routes.router, prefix="/auth", tags=["Auth"])
+app.include_router(user_routes.router, prefix="/users", tags=["Users"])
+app.include_router(upload.router, prefix="/documents", tags=["Documents"])
+app.include_router(user_routes.router, prefix="/users", tags=["Users"])
 
-# Routes
-app.include_router(user.router, prefix="/auth", tags=["auth"])
-app.include_router(upload.router, prefix="/documents", tags=["documents"])

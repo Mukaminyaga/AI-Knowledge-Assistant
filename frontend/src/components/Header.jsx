@@ -15,13 +15,13 @@ function Header() {
         <div className="nav-links-group">
           <Link
             to="/"
-            className={`nav-link ${location.pathname === "/" ? "active" : ""}`}
+            // className={`nav-link ${location.pathname === "/" ? "active" : ""}`}
           >
             Home
           </Link>
           <Link
             to="/features"
-            className={`nav-link ${location.pathname === "/features" ? "active" : ""}`}
+            // className={`nav-link ${location.pathname === "/features" ? "active" : ""}`}
           >
             Features
           </Link>
@@ -33,7 +33,7 @@ function Header() {
           </Link> */}
           <Link
             to="/contact"
-            className={`nav-link ${location.pathname === "/contact" ? "active" : ""}`}
+            // className={`nav-link ${location.pathname === "/contact" ? "active" : ""}`}
           >
             Contact
           </Link>

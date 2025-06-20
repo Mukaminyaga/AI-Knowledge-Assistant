@@ -1,34 +1,55 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
-from .. import models, schemas, auth
-from ..database import get_db
+from typing import List
+from app import schemas, auth, database
+from app.models import users
+from app.auth import get_current_user
+from app.database import get_db
+
 
 router = APIRouter()
 
-@router.post("/register", response_model=schemas.UserOut)
-def register(user: schemas.UserCreate, db: Session = Depends(get_db)):
-    db_user = db.query(models.User).filter(models.User.email == user.email).first()
-    if db_user:
-        raise HTTPException(status_code=400, detail="Email already registered")
-    
-    hashed_pw = auth.hash_password(user.password)
-    new_user = models.User(
-        first_name=user.first_name,
-        last_name=user.last_name,
-        email=user.email,
-        hashed_password=hashed_pw,
-        role=user.role,
-    )
-    db.add(new_user)
-    db.commit()
-    db.refresh(new_user)
-    return new_user
+@router.put("/approve/{user_id}")
+def approve_user(
+    user_id: int,
+    db: Session = Depends(database.get_db),
+    current_user: users.User = Depends(get_current_user)
+):
+    if current_user.role.lower() != "admin":
+        raise HTTPException(status_code=403, detail="Not authorized to approve users")
 
-@router.post("/login")
-def login(user: schemas.UserLogin, db: Session = Depends(get_db)):
-    db_user = db.query(models.User).filter(models.User.email == user.email).first()
-    if not db_user or not auth.verify_password(user.password, db_user.hashed_password):
-        raise HTTPException(status_code=400, detail="Invalid credentials")
-    
-    token = auth.create_access_token({"sub": db_user.email, "role": db_user.role})
-    return {"access_token": token, "token_type": "bearer"}
+    user = db.query(users.User).filter(users.User.id == user_id).first()
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    user.is_approved = True
+    db.commit()
+    db.refresh(user)
+    return {"message": f"{user.email} has been approved."}
+
+@router.get("/", response_model=List[schemas.UserOut])
+def get_all_users(
+    db: Session = Depends(get_db),
+    current_user: users.User = Depends(get_current_user)
+):
+    print(f"Current user: {current_user.email}, Role: {current_user.role}")
+    if current_user.role.lower() != "admin":
+        raise HTTPException(status_code=403, detail="Only admins can view users.")
+    return db.query(users.User).all()
+
+@router.delete("/delete/{user_id}")
+def delete_user(
+    user_id: int,
+    db: Session = Depends(get_db),
+    current_user: users.User = Depends(get_current_user)
+):
+    if current_user.role.lower() != "admin":
+        raise HTTPException(status_code=403, detail="Only admins can delete users")
+
+    user = db.query(users.User).filter(users.User.id == user_id).first()
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    db.delete(user)
+    db.commit()
+    return {"message": f"{user.email} has been deleted."}
