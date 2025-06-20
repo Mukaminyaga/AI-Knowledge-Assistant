@@ -1,5 +1,5 @@
 :root {
-  --header-height: 130px;
+  --header-height: 110px;
   --container-padding: 30px;
   --primary-color: #0b3a60;
   --primary-dark: #07263f;
@@ -64,6 +64,7 @@
 
 
 .nav-links-group {
+  margin-top: 20px;
   display: flex;
   gap: 2rem; /* space between links */
   align-items: center;
