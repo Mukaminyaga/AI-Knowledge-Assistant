@@ -21,15 +21,17 @@ function Home() {
                 Empower your team to find answers fast — <br />
                 from HR policies, internal docs, FAQs, and more — <br />
                 all in one place
-              </div>
-              <Link to="/signup" className="get-started-button pulse">
-                Get Started
-              </Link>
-              <div className="team-info">
+                <div className="team-info">
                 <div className="team-text">
                   Helping teams work smarter with AI
                 </div>
               </div>
+              </div>
+              
+              <Link to="/signup" className="get-started-button pulse">
+                Get Started
+              </Link>
+          
             </div>
           </div>
           <div className="right-column">
@@ -225,7 +227,6 @@ function Home() {
             <Link to="/contact" className="benefits-cta-link">
   <button className="benefits-cta-button">Schedule a Demo</button>
 </Link>
-    
             </div>
             <div className="benefits-visual">
               <div className="stats-card">
