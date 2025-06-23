@@ -56,14 +56,15 @@ async def upload_document(file: UploadFile = File(...), db: Session = Depends(ge
     db.commit()
     db.refresh(document)
 
-    # Save embeddings to FAISS
+    # Save embeddings with chunk text
     metadata = [
         {
             "filename": filename,
             "chunk_index": i,
+            "chunk_text": chunk,
             "document_id": document.id
         }
-        for i in range(len(embeddings))
+        for i, chunk in enumerate(chunks)
     ]
     try:
         embedding_utils.save_to_faiss(np.array(embeddings), metadata)
@@ -92,8 +93,6 @@ def get_all_documents(db: Session = Depends(get_db)):
             "filename": doc.filename,
             "file_type": doc.file_type,
             "size": doc.size,
-            # "num_chunks": doc.num_chunks,
-            # "preview": doc.preview,
         }
         for doc in documents
     ]

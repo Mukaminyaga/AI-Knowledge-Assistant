@@ -13,9 +13,10 @@ import Signup from "./pages/Signup";
 import UploadDocuments from "./pages/UploadDocuments";
 import KnowledgeBase from "./pages/KnowledgeBase";
 import Users from "./pages/Users";
+import Settings from "./pages/Settings";
 import "./styles/common.css";
 import "./App.css";
-
+import KnowledgeChat from "./pages/KnowledgeChat";
 
 function App() {
   return (
@@ -29,12 +30,14 @@ function App() {
 
           <Route path="/upload-documents" element={<UploadDocuments />} />
           <Route path="/knowledge-base" element={<KnowledgeBase />} />
+          <Route path="/KnowledgeChat" element={<KnowledgeChat/>} />
           <Route path="/features" element={<Features />} />
           <Route path="/about" element={<About />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
           <Route path="/users" element={<Users />} />
+          <Route path="/settings" element={<Settings />} />
         </Routes>
       </div>
     </Router>

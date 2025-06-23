@@ -1,253 +1,176 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import axios from "axios"; 
+import { FiSend, FiPlus } from "react-icons/fi";
+import DashboardLayout from "../components/DashboardLayout";
 import "../styles/Chat.css";
 
 function Chat() {
-  const [searchQuery, setSearchQuery] = useState("");
-  const [selectedChat, setSelectedChat] = useState(null);
-  const [messageInput, setMessageInput] = useState("");
-
-  // Mock data for previous chats
-  const previousChats = [
+  const [inputValue, setInputValue] = useState("");
+  const [chatHistory, setChatHistory] = useState([
     {
-      id: 1,
-      title: "Employee Handbook Query",
-      timestamp: "2 hours ago",
-      preview: "Where can I find the employee code...",
-    },
-    {
-      id: 2,
-      title: "Password Reset Help",
-      timestamp: "1 day ago",
-      preview: "How do I reset my company email...",
-    },
-    {
-      id: 3,
-      title: "Onboarding Materials",
-      timestamp: "3 days ago",
-      preview: "Find onboarding materials for...",
-    },
-    {
-      id: 4,
-      title: "IT Support Request",
-      timestamp: "1 week ago",
-      preview: "My laptop is running slowly...",
-    },
-    {
-      id: 5,
-      title: "Benefits Information",
-      timestamp: "2 weeks ago",
-      preview: "What health insurance options...",
-    },
-  ];
+      role: "assistant",
+      text: "Hello! I'm your Knowledge Assistant AI. How can I help you today?",
+      results: []
+    }
+  ]);
+  const [loading, setLoading] = useState(false);
+  const [recentSearches, setRecentSearches] = useState(() => {
+    // Load recent searches from localStorage if available
+    const stored = localStorage.getItem("recentSearches");
+    return stored ? JSON.parse(stored) : [];
+  });
 
-  const filteredChats = previousChats.filter(
-    (chat) =>
-      chat.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      chat.preview.toLowerCase().includes(searchQuery.toLowerCase()),
-  );
+  const handleSend = async (userQuery) => {
+    if (!userQuery.trim()) return;
 
-  const handleChatSelect = (chat) => {
-    setSelectedChat(chat);
-  };
+    // Push user message
+    setChatHistory((prev) => [...prev, { role: "user", text: userQuery }]);
+    setInputValue("");
 
-  const handleNewChat = () => {
-    setSelectedChat(null);
-    setMessageInput("");
-  };
+    // ✅ Add to recent searches
+    setRecentSearches((prev) => {
+      const updated = [userQuery, ...prev.filter((q) => q !== userQuery)];
+      const trimmed = updated.slice(0, 5); // Keep only the 5 most recent
+      localStorage.setItem("recentSearches", JSON.stringify(trimmed));
+      return trimmed;
+    });
 
-  const handleSendMessage = () => {
-    if (messageInput.trim()) {
-      // Here you would typically send the message to your backend
-      console.log("Sending message:", messageInput);
-      setMessageInput("");
+    try {
+      setLoading(true);
+      const response = await axios.post(`${process.env.REACT_APP_API_URL}/search/search`, {
+        query: userQuery,
+        top_k: 3,
+      });
+      const data = response.data;
+
+      setChatHistory((prev) => [
+        ...prev,
+        {
+          role: "assistant",
+          text: data.answer,
+          results: data.source_files?.map((src) => ({ chunk_text: src })) || []
+        },
+      ]);
+    } catch (error) {
+      console.error(error);
+      setChatHistory((prev) => [
+        ...prev,
+        {
+          role: "assistant",
+          text: "Sorry, I encountered an error while processing your request.",
+          results: []
+        },
+      ]);
+    } finally {
+      setLoading(false);
     }
   };
-
-  const suggestionCards = [
-    {
-      icon: "https://cdn.builder.io/api/v1/image/assets/TEMP/a45695d907e33d937a751065ec5e48f3b3ba2bab?placeholderIfAbsent=true",
-      text: "Where can I find the employee code of conduct?",
-    },
-    {
-      icon: "https://cdn.builder.io/api/v1/image/assets/TEMP/6f7773bacd4ec7789b1064c5e157f280cab52a08?placeholderIfAbsent=true",
-      text: "Find onboarding materials for new hires.",
-    },
-    {
-      icon: "https://cdn.builder.io/api/v1/image/assets/TEMP/81eb2eb3c3152ed49e125f6eb4d3d147add36fec?placeholderIfAbsent=true",
-      text: "How do I reset my company email password?",
-    },
-  ];
-
+  
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (inputValue.trim()) {
+      handleSend(inputValue);
+    }
+  };
+  
+  const handleSuggestionClick = (suggestion) => {
+    setInputValue(suggestion);
+    handleSend(suggestion);
+  };
+  
+  const handleNewChat = () => {
+    setChatHistory([
+      {
+        role: "assistant",
+        text: "Hello! I'm your Knowledge Assistant AI. How can I help you today?",
+        results: []
+      }
+    ]);
+    setInputValue("");
+  };
+  
   return (
-    <div className="chat-wrapper">
-      <div className="chat-layout">
-        {/* Navigation Sidebar */}
-        <div className="navigation-sidebar">
-          <img
-            src="https://cdn.builder.io/api/v1/image/assets/TEMP/8bec5fd07b066f4c244b33ebda2a2c9d5c09f55e?placeholderIfAbsent=true"
-            className="sidebar-logo"
-            alt="Logo"
-          />
-          <img
-            src="https://cdn.builder.io/api/v1/image/assets/TEMP/a4784354f91d2a08bd7d76ffc5df9ee473f0de31?placeholderIfAbsent=true"
-            className="sidebar-icon"
-            alt="Home"
-          />
-          <img
-            src="https://cdn.builder.io/api/v1/image/assets/TEMP/679fbbab4eb08ea8b1eec1b878025b8cc01c7427?placeholderIfAbsent=true"
-            className="sidebar-icon"
-            alt="Search"
-          />
-          <img
-            src="https://cdn.builder.io/api/v1/image/assets/TEMP/9aefdbca3241c9e024ae84a44353d1f33e64eef6?placeholderIfAbsent=true"
-            className="sidebar-icon active"
-            alt="Chat"
-          />
-          <img
-            src="https://cdn.builder.io/api/v1/image/assets/TEMP/f9b9b7bd67fddc92be60dfa74a7fb4438b74c4a4?placeholderIfAbsent=true"
-            className="sidebar-icon"
-            alt="Settings"
-          />
-        </div>
-
-        {/* Previous Chats Sidebar */}
-        <div className="chats-sidebar">
-          <div className="chats-header">
+    <DashboardLayout>
+      <div className="chat-page">
+        <div className="chat-sidebar">
+          <div className="sidebar-header">
             <button className="new-chat-button" onClick={handleNewChat}>
-              New Chat
+              <FiPlus size={18} /> New Chat
             </button>
-            <div className="search-container">
-              <input
-                type="text"
-                placeholder="Search chats..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="search-input"
-              />
-              <img
-                src="https://cdn.builder.io/api/v1/image/assets/TEMP/6ce4305ae9d9863a81bf73837262b9375cbdce70?placeholderIfAbsent=true"
-                className="search-icon"
-                alt="Search"
-              />
-            </div>
           </div>
-
-          <div className="previous-chats">
-            <h3 className="chats-title">Previous Chats</h3>
-            <div className="chats-list">
-              {filteredChats.map((chat) => (
-                <div
-                  key={chat.id}
-                  className={`chat-item ${selectedChat?.id === chat.id ? "active" : ""}`}
-                  onClick={() => handleChatSelect(chat)}
-                >
-                  <div className="chat-title">{chat.title}</div>
-                  <div className="chat-preview">{chat.preview}</div>
-                  <div className="chat-timestamp">{chat.timestamp}</div>
-                </div>
-              ))}
-            </div>
-          </div>
+          <h3>Recent Searches</h3>
+          {recentSearches.length > 0 ? (
+            recentSearches.map((search, index) => (
+              <div
+                key={index}
+                className="chat-sidebar-item"
+                onClick={() => handleSuggestionClick(search)}
+              >
+                {search}
+              </div>
+            ))
+          ) : (
+            <div className="chat-sidebar-item no-recent">No recent searches yet</div>
+          )}
         </div>
 
-        {/* Profile Icon */}
-        <img
-          src="https://cdn.builder.io/api/v1/image/assets/TEMP/c4cf647c053511fbe5e6b02e954f8f34b7691c86?placeholderIfAbsent=true"
-          className="profile-icon"
-          alt="Profile"
-        />
-
-        {/* Main Content */}
-        <div className="main-content">
-          {!selectedChat ? (
-            /* New Chat Welcome Screen */
-            <div className="welcome-content">
-              <div className="content-header">
-                <img
-                  src="https://cdn.builder.io/api/v1/image/assets/TEMP/f980d815558b7d3ef79877f361fed5d51296e05c?placeholderIfAbsent=true"
-                  className="chat-illustration"
-                  alt="Chat illustration"
-                />
-                <div className="greeting-text">Hi there,</div>
-                <div className="help-text">How can I help?</div>
-              </div>
-
-              <div className="suggestion-section">
-                <div className="suggestions-grid">
-                  {suggestionCards.map((suggestion, index) => (
-                    <div
-                      key={index}
-                      className="suggestion-card"
-                      onClick={() => setMessageInput(suggestion.text)}
-                    >
-                      <img
-                        src={suggestion.icon}
-                        className="suggestion-icon"
-                        alt="Suggestion"
-                      />
-                      <div className="suggestion-text">{suggestion.text}</div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-          ) : (
-            /* Selected Chat Content */
-            <div className="chat-content">
-              <div className="chat-header">
-                <h2 className="chat-title-main">{selectedChat.title}</h2>
-                <span className="chat-timestamp-main">
-                  {selectedChat.timestamp}
-                </span>
-              </div>
-              <div className="chat-messages">
-                <div className="message user-message">
-                  <div className="message-content">{selectedChat.preview}</div>
-                  <div className="message-time">{selectedChat.timestamp}</div>
-                </div>
-                <div className="message bot-message">
-                  <div className="message-content">
-                    I'd be happy to help you with that! Let me search through
-                    our company documents and provide you with the most relevant
-                    information.
-                  </div>
-                  <div className="message-time">2 minutes ago</div>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* Input Section */}
-          <div className="input-section">
-            <div className="input-container">
-              <input
-                type="text"
-                placeholder="Ask me anything..."
-                value={messageInput}
-                onChange={(e) => setMessageInput(e.target.value)}
-                onKeyPress={(e) => e.key === "Enter" && handleSendMessage()}
-                className="message-input"
-              />
-              <img
-                src="https://cdn.builder.io/api/v1/image/assets/TEMP/6ce4305ae9d9863a81bf73837262b9375cbdce70?placeholderIfAbsent=true"
-                className="attach-icon"
-                alt="Attach"
-              />
-              <img
-                src="https://cdn.builder.io/api/v1/image/assets/TEMP/99f3e69ef66aa962902be4f65631319f99009d5b?placeholderIfAbsent=true"
-                className="send-icon"
-                alt="Send"
-                onClick={handleSendMessage}
-              />
-            </div>
-            <div className="disclaimer-text">
-              The assistant's accuracy depends on the quality of uploaded
-              documents. If something seems off, contact your Admin
-            </div>
+        <div className="chat-main">
+          <div className="chat-header">
+            <h2>💬 Live AI Conversation</h2>
           </div>
+
+          <div className="chat-messages">
+            {chatHistory.map((msg, idx) => (
+              <div key={idx} className={`chat-message ${msg.role}-message`}>
+                <div className="message-role">{msg.role === 'user' ? 'YOU' : 'AI ASSISTANT'}</div>
+                <div className="message-content">
+                  <div className="message-text">{msg.text}</div>
+                  {msg.results && msg.results.length > 0 && (
+                    <div className="message-results">
+                      <ul>
+                        {msg.results.map((res, i) => (
+                          <li key={i} className="result-item">
+                            <span className="result-bullet">•</span> {res.chunk_text}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+                </div>
+              </div>
+            ))}
+            {loading && (
+              <div className="chat-message assistant-message">
+                <div className="message-role">AI ASSISTANT</div>
+                <div className="message-content">
+                  <div className="typing-indicator">
+                    <span></span><span></span><span></span>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+
+          <form className="chat-input-area" onSubmit={handleSubmit}>
+            <input
+              type="text"
+              placeholder="Ask me anything ..."
+              value={inputValue}
+              onChange={(e) => setInputValue(e.target.value)}
+              className="chat-input"
+            />
+            <button
+              type="submit"
+              className="chat-send-button"
+              title="Send message"
+              disabled={loading || !inputValue.trim()}
+            >
+              <FiSend size={20} />
+            </button>
+          </form>
         </div>
       </div>
-    </div>
+    </DashboardLayout>
   );
 }
 
