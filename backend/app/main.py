@@ -4,6 +4,7 @@ from app.routes import auth as auth_routes
 from app.routes import user as user_routes
 from app.routes import upload
 from app.routes import search
+from app.routes import reset
 from app import database
 from app.models import users
 from dotenv import load_dotenv
@@ -56,4 +57,5 @@ app.include_router(auth_routes.router, prefix="/auth", tags=["Auth"])
 app.include_router(upload.router, prefix="/documents", tags=["Documents"])
 app.include_router(user_routes.router, prefix="/users", tags=["Users"])
 app.include_router(search.router, prefix="/search", tags=["Search"])
+app.include_router(reset.router, prefix="/reset", tags=["Reset"])
 
