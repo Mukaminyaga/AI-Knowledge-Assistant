@@ -252,7 +252,7 @@ if (loggedInUser.role === "admin") {
                       Remember me
                     </label>
                   </div>
-                  <Link to="/forgot-password" className="forgot-link">
+                  <Link to="/forgot" className="forgot-link">
                     Forgot password?
                   </Link>
                 </div>
@@ -300,7 +300,7 @@ if (loggedInUser.role === "admin") {
         <div className="auth-visual">
           <div className="visual-content">
             <div className="feature-highlight">
-              <div className="feature-icon">🤖</div>
+              {/* <div className="feature-icon">🤖</div> */}
               <h3 className="feature-title">AI-Powered Knowledge</h3>
               <p className="feature-description">
                 Get instant answers from your organization's knowledge base with

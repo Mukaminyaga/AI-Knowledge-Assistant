@@ -17,6 +17,8 @@ import Settings from "./pages/Settings";
 import "./styles/common.css";
 import "./App.css";
 import KnowledgeChat from "./pages/KnowledgeChat";
+import ForgotPassword from "./pages/ForgotPassword";
+import ResetPassword from "./pages/ResetPassword";
 
 function App() {
   return (
@@ -27,7 +29,6 @@ function App() {
           <Route path="/home" element={<LoggedInHome />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/chat" element={<Chat />} />
-
           <Route path="/upload-documents" element={<UploadDocuments />} />
           <Route path="/knowledge-base" element={<KnowledgeBase />} />
           <Route path="/KnowledgeChat" element={<KnowledgeChat/>} />
@@ -38,6 +39,8 @@ function App() {
           <Route path="/signup" element={<Signup />} />
           <Route path="/users" element={<Users />} />
           <Route path="/settings" element={<Settings />} />
+           <Route path="/forgot" element={<ForgotPassword />} />
+          <Route path="/reset" element={<ResetPassword/>} />
         </Routes>
       </div>
     </Router>
