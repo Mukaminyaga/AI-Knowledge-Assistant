@@ -2,6 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 import Header from "../components/Header";
 import "../styles/Home.css";
+import { FiSearch, FiCpu, FiBookOpen, FiZap, FiUsers } from "react-icons/fi"; 
 
 function Home() {
   return (
@@ -22,16 +23,14 @@ function Home() {
                 from HR policies, internal docs, FAQs, and more — <br />
                 all in one place
                 <div className="team-info">
-                <div className="team-text">
-                  Helping teams work smarter with AI
+                  <div className="team-text">
+                    Helping teams work smarter with AI
+                  </div>
                 </div>
               </div>
-              </div>
-              
               <Link to="/signup" className="get-started-button pulse">
                 Get Started
               </Link>
-          
             </div>
           </div>
           <div className="right-column">
@@ -96,7 +95,7 @@ function Home() {
 
           <div className="features-grid">
             <div className="feature-card">
-              <div className="feature-icon">🔍</div>
+              <div className="feature-icon"><FiSearch size={30} /></div>
               <h3 className="feature-title">Smart Search</h3>
               <p className="feature-description">
                 Find answers instantly across all your documents, policies, and
@@ -105,7 +104,7 @@ function Home() {
             </div>
 
             <div className="feature-card">
-              <div className="feature-icon">🤖</div>
+              <div className="feature-icon"><FiCpu size={30} /></div>
               <h3 className="feature-title">AI Assistant</h3>
               <p className="feature-description">
                 Get contextual answers and suggestions from your personalized AI
@@ -114,7 +113,7 @@ function Home() {
             </div>
 
             <div className="feature-card">
-              <div className="feature-icon">📚</div>
+              <div className="feature-icon"><FiBookOpen size={30} /></div>
               <h3 className="feature-title">Knowledge Base</h3>
               <p className="feature-description">
                 Centralize all your documents, FAQs, and procedures in one
@@ -123,7 +122,7 @@ function Home() {
             </div>
 
             <div className="feature-card">
-              <div className="feature-icon">⚡</div>
+              <div className="feature-icon"><FiZap size={30} /></div>
               <h3 className="feature-title">Quick Actions</h3>
               <p className="feature-description">
                 Access frequently needed information with smart shortcuts and
@@ -132,7 +131,7 @@ function Home() {
             </div>
 
             <div className="feature-card">
-              <div className="feature-icon">👥</div>
+              <div className="feature-icon"><FiUsers size={30} /></div>
               <h3 className="feature-title">Team Collaboration</h3>
               <p className="feature-description">
                 Share knowledge, insights, and updates seamlessly across teams
@@ -223,10 +222,9 @@ function Home() {
                   </div>
                 </div>
               </div>
-      
-            <Link to="/contact" className="benefits-cta-link">
-  <button className="benefits-cta-button">Schedule a Demo</button>
-</Link>
+              <Link to="/contact" className="benefits-cta-link">
+                <button className="benefits-cta-button">Schedule a Demo</button>
+              </Link>
             </div>
             <div className="benefits-visual">
               <div className="stats-card">
@@ -246,6 +244,7 @@ function Home() {
             </div>
           </div>
         </div>
+        {/* End of Main Content */}
       </div>
     </div>
   );
