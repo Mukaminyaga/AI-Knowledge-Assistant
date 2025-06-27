@@ -1,22 +1,21 @@
 import React, { useState } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import "../styles/Sidebar.css";
-
-  import { 
-  FiHome, 
-  FiUpload, 
-  FiMessageSquare, 
+import {
+  FiHome,
+  FiUpload,
+  FiMessageSquare,
   FiBook,
-  FiUser, 
-  FiUsers, 
+  FiUser,
+  FiUsers,
   FiSettings,
-  FiChevronDown, 
   FiLogOut,
-  FiMessageCircle
-} from 'react-icons/fi';
+} from "react-icons/fi";
+import { logout } from "../utils/auth"; 
 
 function Sidebar({ isOpen = false, onClose, isMobile = false }) {
   const location = useLocation();
+  const navigate = useNavigate();
   const [isCollapsed, setIsCollapsed] = useState(false);
 
   const toggleSidebar = () => {
@@ -26,51 +25,26 @@ function Sidebar({ isOpen = false, onClose, isMobile = false }) {
       setIsCollapsed(!isCollapsed);
     }
   };
-
   const handleLinkClick = () => {
     if (isMobile && onClose) {
       onClose();
     }
   };
+  const handleLogout = () => {
+    logout();
+    navigate("/login");
+  };
+  // Get the user data from localStorage
+const user = JSON.parse(localStorage.getItem("user"));
 
-
-const menuItems = [
-  {
-    icon: <FiHome size={20} />,
-    label: "Dashboard",
-    path: "/dashboard",
-  },
-  {
-    icon: <FiUpload size={20} />,
-    label: "Upload Documents",
-    path: "/upload-documents",
-  },
-  {
-    icon: <FiMessageSquare size={20} />,
-    label: "Chat",
-    path: "/chat",
-  },
-  // {
-  //   icon: <FiMessageCircle size={20} />,
-  //   label: "Chat UI",
-  //   path: "/chat-user",
-  // },
-  {
-    icon: <FiBook size={20} />,
-    label: "Knowledge Base",
-    path: "/knowledge-base",
-  },
-  {
-    icon: <FiUsers size={20} />,
-    label: "Team",
-    path: "/users",
-  },
-  {
-    icon: <FiSettings size={20} />,
-    label: "Settings",
-    path: "/settings",
-  },
-];
+  const menuItems = [
+    { icon: <FiHome size={20} />, label: "Dashboard", path: "/dashboard" },
+    { icon: <FiUpload size={20} />, label: "Upload Documents", path: "/upload-documents" },
+    { icon: <FiMessageSquare size={20} />, label: "Chat", path: "/chat" },
+    { icon: <FiBook size={20} />, label: "Knowledge Base", path: "/knowledge-base" },
+    { icon: <FiUsers size={20} />, label: "Team", path: "/users" },
+    { icon: <FiSettings size={20} />, label: "Settings", path: "/settings" },
+  ];
 
   return (
     <div
@@ -90,8 +64,8 @@ const menuItems = [
                     isMobile
                       ? "Close sidebar"
                       : isCollapsed
-                        ? "Expand sidebar"
-                        : "Collapse sidebar"
+                      ? "Expand sidebar"
+                      : "Collapse sidebar"
                   }
                 >
                   {isMobile ? "✕" : "←"}
@@ -121,9 +95,7 @@ const menuItems = [
                 onClick={handleLinkClick}
               >
                 <span className="nav-icon">{item.icon}</span>
-                {!isCollapsed && (
-                  <span className="nav-label">{item.label}</span>
-                )}
+                {!isCollapsed && <span className="nav-label">{item.label}</span>}
               </Link>
             </li>
           ))}
@@ -131,29 +103,36 @@ const menuItems = [
       </nav>
 
       <div className="sidebar-footer">
-       <div className="user-profile">
-  <div className="user-avatar">
-    <FiUser size={20} />
-  </div>
-  {!isCollapsed && (
-    <div className="user-info">
-      <p className="user-name">John Doe</p>
-      <p className="user-role">Administrator</p>
-    </div>
-  )}
-  {!isCollapsed && (
-    <div className="profile-actions">
-      {/* <FiChevronDown className="dropdown-icon" /> */}
-      <FiLogOut className="logout-icon" />
-    </div>
-  )}
-</div>
+        <div className="user-profile">
+          <div className="user-avatar">
+            <FiUser size={20} />
+          </div>
+          {!isCollapsed && (
+            <div className="user-info">
+               <p className="user-name">
+  {user?.first_name
+    ? `${user.first_name}.${user.last_name?.charAt(0).toUpperCase() || ""}`
+    : "John.D"}
+</p>
+
+               <p className="user-email">{user?.email || "john@example.com"}</p>
+            </div>
+          )}
+          {!isCollapsed && (
+            <div className="profile-actions">
+              <FiLogOut
+                className="logout-icon"
+                title="Logout"
+                onClick={handleLogout}
+              />
+            </div>
+          )}
+        </div>
 
         {!isCollapsed && (
           <div className="help-section">
             <div className="help-card">
               <h4 className="help-title">Need Help?</h4>
-              {/* <p class="help-text">Contact our support team</p> */}
               <button className="help-button">Contact Support</button>
             </div>
           </div>
