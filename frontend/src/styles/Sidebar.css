@@ -43,6 +43,7 @@
   align-items: center;
   gap: 12px;
   flex: 1;
+  margin-left: 10px;
 }
 
 .brand-icon {
@@ -191,7 +192,7 @@
 
 /* Footer Section */
 .sidebar-footer {
-  padding: 20px;
+  padding: 10px;
   border-top: 1px solid rgba(240, 242, 245, 0.6);
   display: flex;
   margin-bottom: 50px;
@@ -240,8 +241,8 @@
   line-height: 1.2;
 }
 
-.user-role {
-  font-size: 12px;
+.user-email {
+  font-size: 10px;
   font-family: var(--font-inter);
   color: var(--text-light-gray);
   margin: 0;

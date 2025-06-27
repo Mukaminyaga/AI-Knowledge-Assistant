@@ -1,39 +1,59 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios"; 
+import axios from "axios";
 import { FiSend, FiPlus } from "react-icons/fi";
 import DashboardLayout from "../components/DashboardLayout";
 import "../styles/Chat.css";
 
 function Chat() {
+  const user = JSON.parse(localStorage.getItem("user"));
+  const userId = user?.email || "guest";
+
   const [inputValue, setInputValue] = useState("");
-  const [chatHistory, setChatHistory] = useState([
-    {
-      role: "assistant",
-      text: "Hello! I'm your Knowledge Assistant AI. How can I help you today?",
-      results: []
-    }
-  ]);
+  const [chatHistory, setChatHistory] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [recentSearches, setRecentSearches] = useState(() => {
-    // Load recent searches from localStorage if available
-    const stored = localStorage.getItem("recentSearches");
-    return stored ? JSON.parse(stored) : [];
-  });
+  const [chatSessions, setChatSessions] = useState([]);
+  const [currentSessionId, setCurrentSessionId] = useState(null);
+
+  // Load saved sessions on start
+  useEffect(() => {
+    const savedSessions = JSON.parse(localStorage.getItem(`chat_sessions_${userId}`)) || [];
+    setChatSessions(savedSessions);
+
+    if (savedSessions.length > 0) {
+      const lastSession = savedSessions[savedSessions.length - 1];
+      const history = JSON.parse(localStorage.getItem(`chat_${userId}_${lastSession.id}`));
+      setChatHistory(history || []);
+      setCurrentSessionId(lastSession.id);
+    } else {
+      startNewChat();
+    }
+  }, [userId]);
+
+  const summarizeTitle = (text) => {
+    const clean = text.replace(/\s+/g, " ").trim();
+    return clean.length > 35 ? clean.slice(0, 35) + "..." : clean;
+  };
+
+  const startNewChat = () => {
+    const newId = `chat_${Date.now()}`;
+    const welcomeMessage = [
+      {
+        role: "assistant",
+        text: "Hello! I'm your Knowledge Assistant AI. How can I help you today?",
+        results: [],
+      },
+    ];
+    setChatHistory(welcomeMessage);
+    setCurrentSessionId(newId);
+    setInputValue("");
+  };
 
   const handleSend = async (userQuery) => {
     if (!userQuery.trim()) return;
 
-    // Push user message
-    setChatHistory((prev) => [...prev, { role: "user", text: userQuery }]);
+    const newChat = [...chatHistory, { role: "user", text: userQuery }];
+    setChatHistory(newChat);
     setInputValue("");
-
-    // ✅ Add to recent searches
-    setRecentSearches((prev) => {
-      const updated = [userQuery, ...prev.filter((q) => q !== userQuery)];
-      const trimmed = updated.slice(0, 5); // Keep only the 5 most recent
-      localStorage.setItem("recentSearches", JSON.stringify(trimmed));
-      return trimmed;
-    });
 
     try {
       setLoading(true);
@@ -41,76 +61,89 @@ function Chat() {
         query: userQuery,
         top_k: 3,
       });
-      const data = response.data;
 
-      setChatHistory((prev) => [
-        ...prev,
-        {
-          role: "assistant",
-          text: data.answer,
-          results: data.source_files?.map((src) => ({ chunk_text: src })) || []
-        },
-      ]);
+      const assistantMessage = {
+        role: "assistant",
+        text: response.data.answer,
+        results: response.data.source_files?.map((src) => ({ chunk_text: src })) || [],
+      };
+
+      const updatedChat = [...newChat, assistantMessage];
+      setChatHistory(updatedChat);
+
+      // Save full chat to localStorage
+      localStorage.setItem(
+        `chat_${userId}_${currentSessionId}`,
+        JSON.stringify(updatedChat)
+      );
+
+      // If this is a new session, add to sidebar
+      const existingSession = chatSessions.find((s) => s.id === currentSessionId);
+      if (!existingSession) {
+        const newSession = {
+          id: currentSessionId,
+          title: summarizeTitle(userQuery),
+        };
+        const updatedSessions = [...chatSessions, newSession];
+        setChatSessions(updatedSessions);
+        localStorage.setItem(
+          `chat_sessions_${userId}`,
+          JSON.stringify(updatedSessions)
+        );
+      }
     } catch (error) {
-      console.error(error);
+      console.error("Error:", error);
       setChatHistory((prev) => [
         ...prev,
         {
           role: "assistant",
           text: "Sorry, I encountered an error while processing your request.",
-          results: []
+          results: [],
         },
       ]);
     } finally {
       setLoading(false);
     }
   };
-  
+
   const handleSubmit = (e) => {
     e.preventDefault();
     if (inputValue.trim()) {
       handleSend(inputValue);
     }
   };
-  
-  const handleSuggestionClick = (suggestion) => {
-    setInputValue(suggestion);
-    handleSend(suggestion);
-  };
-  
-  const handleNewChat = () => {
-    setChatHistory([
-      {
-        role: "assistant",
-        text: "Hello! I'm your Knowledge Assistant AI. How can I help you today?",
-        results: []
-      }
-    ]);
+
+  const handleSelectChat = (sessionId) => {
+    const history = JSON.parse(localStorage.getItem(`chat_${userId}_${sessionId}`)) || [];
+    setChatHistory(history);
+    setCurrentSessionId(sessionId);
     setInputValue("");
   };
-  
+
   return (
     <DashboardLayout>
       <div className="chat-page">
         <div className="chat-sidebar">
           <div className="sidebar-header">
-            <button className="new-chat-button" onClick={handleNewChat}>
+            <button className="new-chat-button" onClick={startNewChat}>
               <FiPlus size={18} /> New Chat
             </button>
           </div>
-          <h3>Recent Searches</h3>
-          {recentSearches.length > 0 ? (
-            recentSearches.map((search, index) => (
+
+          <h3>CHATS</h3>
+          {chatSessions.length > 0 ? (
+            chatSessions.map((session) => (
               <div
-                key={index}
-                className="chat-sidebar-item"
-                onClick={() => handleSuggestionClick(search)}
+                key={session.id}
+                className={`chat-sidebar-item ${session.id === currentSessionId ? "active" : ""}`}
+                onClick={() => handleSelectChat(session.id)}
+                title={session.title}
               >
-                {search}
+                {session.title}
               </div>
             ))
           ) : (
-            <div className="chat-sidebar-item no-recent">No recent searches yet</div>
+            <div className="chat-sidebar-item no-recent">No conversations yet</div>
           )}
         </div>
 
@@ -122,10 +155,10 @@ function Chat() {
           <div className="chat-messages">
             {chatHistory.map((msg, idx) => (
               <div key={idx} className={`chat-message ${msg.role}-message`}>
-                <div className="message-role">{msg.role === 'user' ? 'YOU' : 'AI ASSISTANT'}</div>
+                <div className="message-role">{msg.role === "user" ? "YOU" : "AI ASSISTANT"}</div>
                 <div className="message-content">
                   <div className="message-text">{msg.text}</div>
-                  {msg.results && msg.results.length > 0 && (
+                  {msg.results?.length > 0 && (
                     <div className="message-results">
                       <ul>
                         {msg.results.map((res, i) => (
@@ -162,8 +195,8 @@ function Chat() {
             <button
               type="submit"
               className="chat-send-button"
-              title="Send message"
               disabled={loading || !inputValue.trim()}
+              title="Send message"
             >
               <FiSend size={20} />
             </button>
