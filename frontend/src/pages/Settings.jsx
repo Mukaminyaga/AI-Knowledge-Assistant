@@ -2,8 +2,6 @@ import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import {
   FiUser,
-  FiMail,
-  FiPhone,
   FiBell,
   FiShield,
   FiSave,

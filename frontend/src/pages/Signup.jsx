@@ -73,18 +73,6 @@ function Signup() {
           return "success";
         }
         break;
-      //   case "companyName":
-      //     if (formData[fieldName].trim().length >= 2) {
-      //       return "success";
-      //     }
-      //     break;
-      //   case "teamSize":
-      //     if (formData[fieldName]) {
-      //       return "success";
-      //     }
-      //     break;
-      //   default:
-      //     break;
     }
 
     return "";

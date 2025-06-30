@@ -4,7 +4,7 @@ import Home from "./pages/Home";
 import LoggedInHome from "./pages/LoggedInHome";
 import Dashboard from "./pages/Dashboard";
 import Chat from "./pages/Chat";
-
+import ChatUser from "./pages/ChatUser";
 import Contact from "./pages/Contact";
 import Features from "./pages/Features";
 import About from "./pages/About";
@@ -32,6 +32,7 @@ function App() {
           <Route path="/upload-documents" element={<UploadDocuments />} />
           <Route path="/knowledge-base" element={<KnowledgeBase />} />
           <Route path="/KnowledgeChat" element={<KnowledgeChat/>} />
+          <Route path="/chatuser" element={<ChatUser/>} />
           <Route path="/features" element={<Features />} />
           <Route path="/about" element={<About />} />
           <Route path="/contact" element={<Contact />} />

@@ -73,6 +73,7 @@
 
 .back-to-home-button {
   background-color: var(--background-light);
+  margin-left: 30px;
   color: var(--text-dark);
   border: none;
   border-radius: 15px;
