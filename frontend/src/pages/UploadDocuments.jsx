@@ -2,7 +2,12 @@ import React, { useState, useRef } from "react";
 import axios from "axios";
 import DashboardLayout from "../components/DashboardLayout";
 import "../styles/UploadDocuments.css";
-
+import {
+  FiFileText,
+  FiTag,
+  FiFolder,
+  FiRefreshCcw,
+} from "react-icons/fi";
 
 
 function UploadDocuments() {
@@ -207,34 +212,35 @@ function UploadDocuments() {
   )}
 </div>
         <div className="upload-tips">
-          <h3 className="tips-title">💡 Tips for better results</h3>
-          <div className="tips-grid">
-            <div className="tip-item">
-              <div className="tip-icon">📋</div>
-              <h4>Clear text documents</h4>
-              <p>
-                Ensure text is readable and well-formatted for better AI
-                understanding
-              </p>
-            </div>
-            <div className="tip-item">
-              <div className="tip-icon">🏷️</div>
-              <h4>Descriptive filenames</h4>
-              <p>
-                Use clear, descriptive names that reflect the document content
-              </p>
-            </div>
-            <div className="tip-item">
-              <div className="tip-icon">📁</div>
-              <h4>Organize by topic</h4>
-              <p>Upload related documents together for better categorization</p>
-            </div>
-            <div className="tip-item">
-              <div className="tip-icon">🔄</div>
-              <h4>Regular updates</h4>
-              <p>
-                Keep your knowledge base fresh by uploading updated versions
-              </p>
+  <h3 className="tips-title">💡 Tips for better results</h3>
+  <div className="tips-grid">
+    <div className="tip-item">
+      <div className="tip-icon"><FiFileText size={24} /></div>
+      <h4>Clear text documents</h4>
+      <p>
+        Ensure text is readable and well-formatted for better AI
+        understanding
+      </p>
+    </div>
+    <div className="tip-item">
+      <div className="tip-icon"><FiTag size={24} /></div>
+      <h4>Descriptive filenames</h4>
+      <p>
+        Use clear, descriptive names that reflect the document content
+      </p>
+    </div>
+    <div className="tip-item">
+      <div className="tip-icon"><FiFolder size={24} /></div>
+      <h4>Organize by topic</h4>
+      <p>Upload related documents together for better categorization</p>
+    </div>
+    <div className="tip-item">
+      <div className="tip-icon"><FiRefreshCcw size={24} /></div>
+      <h4>Regular updates</h4>
+      <p>
+        Keep your knowledge base fresh by uploading updated versions
+      </p>
+
             </div>
           </div>
         </div>

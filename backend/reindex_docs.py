@@ -1,5 +1,6 @@
 import os
 import numpy as np
+import faiss  # ✅ Needed for normalization
 from sqlalchemy.orm import Session
 from app.database import SessionLocal
 from app.models.document import Document
@@ -25,6 +26,7 @@ def extract_text_for_file(filename, filepath):
         return extract_text_from_docx(filepath)
     elif ext == "txt":
         return extract_text_from_txt(filepath)
+    return ""
 
 def reindex_docs():
     """Re-index all documents found in the database."""
@@ -37,16 +39,15 @@ def reindex_docs():
         filepath = os.path.join(DOCUMENTS_DIR, doc.filename)
 
         if not os.path.exists(filepath):
-            print(f"Warning: File not found for Document ID {doc.id}: {filepath}")
+            print(f"⚠️ Warning: File not found for Document ID {doc.id}: {filepath}")
             continue
 
         text = extract_text_for_file(doc.filename, filepath)
-
         if not text:
-            print(f"Warning: No text extracted from {doc.filename}. Skipping...")
+            print(f"⚠️ Warning: No text extracted from {doc.filename}. Skipping...")
             continue
 
-        chunks = chunk_text(text, chunk_size=300)
+        chunks = chunk_text(text, chunk_size=300, overlap=50)
 
         for idx, chunk in enumerate(chunks):
             all_chunks.append(chunk)
@@ -60,12 +61,16 @@ def reindex_docs():
     db.close()
 
     if not all_chunks:
-        print("No documents found for indexing.")
+        print("⚠️ No documents found for indexing.")
         return
 
     embeddings = embed_chunks(all_chunks)
-    embeddings_array = np.asarray(embeddings)
+    embeddings_array = np.asarray(embeddings, dtype=np.float32)
 
+    # ✅ Normalize embeddings for cosine similarity
+    faiss.normalize_L2(embeddings_array)
+
+    # Save to Faiss index
     save_to_faiss(embeddings_array, all_metadata)
 
     print(f"✅ Done reindexing {len(all_chunks)} chunks from {len(documents)} files.")

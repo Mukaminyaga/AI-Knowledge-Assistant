@@ -4,7 +4,7 @@ import { FiSend, FiPlus, FiTrash2 } from "react-icons/fi";
 import DashboardLayout from "../components/DashboardLayout";
 import "../styles/Chat.css";
 
-function Chat() {
+function ChatUser() {
   const user = JSON.parse(localStorage.getItem("user"));
   const userId = user?.email || "guest";
 
@@ -144,7 +144,7 @@ function Chat() {
   };
 
   return (
-    <DashboardLayout>
+    // <DashboardLayout>
       <div className="chat-page">
         <div className="chat-sidebar">
           <div className="sidebar-header">
@@ -232,8 +232,9 @@ function Chat() {
           </form>
         </div>
       </div>
-    </DashboardLayout>
+    // </DashboardLayout>
   );
 }
 
-export default Chat;
+export default ChatUser;
+
