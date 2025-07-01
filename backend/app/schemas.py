@@ -22,3 +22,7 @@ class UserOut(BaseModel):
     class Config:
        from_attributes = True 
        
+class UserUpdate(BaseModel):
+    first_name: str | None = None
+    last_name: str | None = None
+    email: EmailStr | None = None

@@ -104,7 +104,7 @@ const user = JSON.parse(localStorage.getItem("user"));
 
       <div className="sidebar-footer">
         <div className="user-profile">
-          <div className="user-avatar">
+          <div className="user-avatar1">
             <FiUser size={20} />
           </div>
           {!isCollapsed && (

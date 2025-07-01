@@ -1,11 +1,14 @@
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import axios from "axios";
+import { Link, useNavigate } from "react-router-dom";
 import {
   FiUser,
   FiBell,
   FiShield,
   FiSave,
   FiEdit3,
+  FiCpu,
+  FiMessageCircle,
   FiArrowLeft,
 } from "react-icons/fi";
 import DashboardLayout from "../components/DashboardLayout";
@@ -13,27 +16,41 @@ import "../styles/Settings.css";
 
 function Settings() {
   const [isEditing, setIsEditing] = useState(false);
-  const [userInfo, setUserInfo] = useState({
-    firstName: "John",
-    lastName: "Doe",
-    email: "john.doe@company.com",
-    phone: "+1 (555) 123-4567",
-    role: "Administrator",
-    department: "IT",
-  });
+  const [userInfo, setUserInfo] = useState(null);
+  const [editedInfo, setEditedInfo] = useState({});
+  const navigate = useNavigate();
 
-  const [editedInfo, setEditedInfo] = useState(userInfo);
+  const token = localStorage.getItem("token");
+
+  useEffect(() => {
+    axios
+      .get(`${process.env.REACT_APP_API_URL}/user/profile`, {
+        headers: { Authorization: `Bearer ${token}` },
+      })
+      .then((res) => {
+        setUserInfo(res.data);
+        setEditedInfo(res.data);
+      })
+      .catch((err) => {
+        console.error("Failed to fetch profile:", err);
+        if (err.response?.status === 401) navigate("/login");
+      });
+  }, [navigate, token]);
 
   const handleEdit = () => {
     setIsEditing(true);
-    setEditedInfo(userInfo);
   };
 
   const handleSave = () => {
-    setUserInfo(editedInfo);
-    setIsEditing(false);
-    // Here you would typically make an API call to save the changes
-    console.log("Saving user info:", editedInfo);
+    axios
+      .put(`${process.env.REACT_APP_API_URL}/user/profile`, editedInfo, {
+        headers: { Authorization: `Bearer ${token}` },
+      })
+      .then((res) => {
+        setUserInfo(res.data);
+        setIsEditing(false);
+      })
+      .catch((err) => console.error("Failed to update profile:", err));
   };
 
   const handleCancel = () => {
@@ -47,6 +64,8 @@ function Settings() {
       [field]: value,
     }));
   };
+
+  if (!userInfo) return <div>Loading...</div>;
 
   return (
     <DashboardLayout>
@@ -89,13 +108,13 @@ function Settings() {
                       <input
                         type="text"
                         className="form-input"
-                        value={editedInfo.firstName}
+                        value={editedInfo.first_name}
                         onChange={(e) =>
-                          handleInputChange("firstName", e.target.value)
+                          handleInputChange("first_name", e.target.value)
                         }
                       />
                     ) : (
-                      <div className="form-display">{userInfo.firstName}</div>
+                      <div className="form-display">{userInfo.first_name}</div>
                     )}
                   </div>
 
@@ -105,13 +124,13 @@ function Settings() {
                       <input
                         type="text"
                         className="form-input"
-                        value={editedInfo.lastName}
+                        value={editedInfo.last_name}
                         onChange={(e) =>
-                          handleInputChange("lastName", e.target.value)
+                          handleInputChange("last_name", e.target.value)
                         }
                       />
                     ) : (
-                      <div className="form-display">{userInfo.lastName}</div>
+                      <div className="form-display">{userInfo.last_name}</div>
                     )}
                   </div>
 
@@ -132,31 +151,10 @@ function Settings() {
                   </div>
 
                   <div className="form-group">
-                    <label className="form-label">Phone Number</label>
-                    {isEditing ? (
-                      <input
-                        type="tel"
-                        className="form-input"
-                        value={editedInfo.phone}
-                        onChange={(e) =>
-                          handleInputChange("phone", e.target.value)
-                        }
-                      />
-                    ) : (
-                      <div className="form-display">{userInfo.phone}</div>
-                    )}
-                  </div>
-
-                  <div className="form-group">
                     <label className="form-label">Role</label>
                     <div className="form-display role-badge">
                       {userInfo.role}
                     </div>
-                  </div>
-
-                  <div className="form-group">
-                    <label className="form-label">Department</label>
-                    <div className="form-display">{userInfo.department}</div>
                   </div>
                 </div>
 
@@ -174,7 +172,7 @@ function Settings() {
               </div>
             </div>
 
-            {/* Account Settings Card */}
+            {/* Account & Notification Settings */}
             <div className="settings-card">
               <div className="card-header">
                 <div className="card-title-section">
@@ -186,14 +184,17 @@ function Settings() {
               <div className="card-content">
                 <div className="settings-list">
                   <div className="setting-item">
-                    <div className="setting-info">
-                      <h3 className="setting-name">Password</h3>
-                      <p className="setting-description">
-                        Change your account password
-                      </p>
-                    </div>
-                    <button className="setting-action">Change</button>
-                  </div>
+  <div className="setting-info">
+    <h3 className="setting-name">Password</h3>
+    <p className="setting-description">
+      Change your account password
+    </p>
+  </div>
+  <Link to="/forgot" className="setting-action">
+    Change
+  </Link>
+</div>
+
 
                   <div className="setting-item">
                     <div className="setting-info">
@@ -220,7 +221,6 @@ function Settings() {
               </div>
             </div>
 
-            {/* Notification Settings Card */}
             <div className="settings-card">
               <div className="card-header">
                 <div className="card-title-section">
@@ -273,13 +273,13 @@ function Settings() {
               </div>
             </div>
 
-            {/* AI Assistant Settings Card */}
             <div className="settings-card">
               <div className="card-header">
-                <div className="card-title-section">
-                  <span className="card-icon">🤖</span>
+             <div className="card-title-section">
+                  <FiMessageCircle className="card-icon" />
                   <h2 className="card-title">AI Assistant</h2>
                 </div>
+
               </div>
 
               <div className="card-content">
@@ -291,11 +291,9 @@ function Settings() {
                         Choose how detailed AI responses should be
                       </p>
                     </div>
-                    <select className="setting-select">
+                    <select className="setting-select" defaultValue="standard">
                       <option value="brief">Brief</option>
-                      <option value="standard" selected>
-                        Standard
-                      </option>
+                      <option value="standard">Standard</option>
                       <option value="detailed">Detailed</option>
                     </select>
                   </div>

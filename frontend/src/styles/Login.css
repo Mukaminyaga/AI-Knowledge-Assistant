@@ -101,6 +101,12 @@
   font-family: var(--font-work-sans);
 }
 
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
 .form-input {
   border-radius: 12px;
   border: 1px solid var(--border-light);
@@ -112,12 +118,15 @@
   transition: all 0.2s ease;
   min-height: 48px;
   width: 100%;
+  box-sizing: border-box;
 }
 
 .password-input-wrapper {
   position: relative;
   display: flex;
   align-items: center;
+  width: 100%;
+  min-height: 48px;
 }
 
 .password-input {
@@ -129,19 +138,19 @@
   right: 12px;
   top: 50%;
   transform: translateY(-50%);
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 8px;
-  color: var(--text-light-gray);
-  transition: color 0.2s ease;
+  width: 32px;
+  height: 32px;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 6px;
-  min-width: 32px;
-  min-height: 32px;
+  background: transparent;
+  color: var(--text-light-gray);
+  cursor: pointer;
+  user-select: none;
+  z-index: 2;
+  pointer-events: auto;
 }
+
 
 .password-toggle-btn:hover {
   color: var(--primary-color);
@@ -156,13 +165,19 @@
 .password-toggle-btn svg {
   width: 20px;
   height: 20px;
+  pointer-events: none;
 }
+
 
 .form-input:focus {
   outline: none;
   border-color: var(--primary-color);
   box-shadow: 0 0 0 3px rgba(11, 58, 96, 0.1);
+  /* Add this to make sure it doesn't push layout: */
+  position: relative;
+  z-index: 1;
 }
+
 
 .form-input::placeholder {
   color: var(--text-light-gray);
@@ -204,6 +219,9 @@
 }
 
 .form-checkbox {
+   appearance: none; /* ✅ Hide default checkmark */
+  -webkit-appearance: none;
+  -moz-appearance: none;
   width: 16px;
   height: 16px;
   border-radius: 4px;

@@ -37,7 +37,10 @@ function Header() {
           <Link to="/login" className="signin-button">
             Sign in
           </Link>
-          <button className="demo-button">Try a Demo</button>
+         <Link to="/contact">
+    <button className="demo-button">Try a Demo</button>
+     </Link>
+          
         </div>
       </div>
     </div>

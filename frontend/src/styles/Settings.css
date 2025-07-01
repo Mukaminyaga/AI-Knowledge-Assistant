@@ -137,8 +137,12 @@
 
 .card-icon {
   font-size: 24px;
+  margin-top: 20px;
   color: var(--primary-color);
   flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .card-title {
@@ -148,6 +152,8 @@
   color: var(--text-dark);
   margin: 0;
 }
+
+
 
 @media (max-width: 768px) {
   .card-title {
