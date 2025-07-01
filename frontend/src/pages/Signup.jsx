@@ -327,11 +327,10 @@ function Signup() {
                         value={formData.password}
                         onChange={handleInputChange}
                         className={`form-input password-input ${errors.password ? "error" : ""}`}
-                        placeholder="Create a password"
+                        placeholder="Create password"
                         autoComplete="new-password"
                       />
-                      <button
-                        type="button"
+                      <span
                         className="password-toggle-btn"
                         onClick={() => setShowPassword(!showPassword)}
                         aria-label={
@@ -380,7 +379,7 @@ function Signup() {
                             />
                           </svg>
                         )}
-                      </button>
+                      </span>
                     </div>
                     {errors.password && (
                       <span className="error-message">{errors.password}</span>
@@ -402,8 +401,8 @@ function Signup() {
                         placeholder="Confirm password"
                         autoComplete="new-password"
                       />
-                      <button
-                        type="button"
+                      <span
+              
                         className="password-toggle-btn"
                         onClick={() =>
                           setShowConfirmPassword(!showConfirmPassword)
@@ -456,7 +455,7 @@ function Signup() {
                             />
                           </svg>
                         )}
-                      </button>
+                      </span>
                     </div>
                     {errors.confirmPassword && (
                       <span className="error-message">
@@ -584,7 +583,7 @@ function Signup() {
                 <div className="demo-divider">
                   <span className="demo-divider-text">or</span>
                 </div>
-                <Link to="/" className="demo-link">
+                <Link to="/contact" className="demo-link">
                   <div className="demo-button">
                     <span className="demo-icon">🚀</span>
                     Try a Demo First

@@ -32,6 +32,10 @@
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
 }
 
+a {
+  text-decoration: none;
+}
+
 .nav-wrapper {
   display: flex;
   align-items: center;
