@@ -1,94 +1,193 @@
 .documents-list-container {
-  padding: 24px;
-  max-width: 1200px;
+  padding: 32px;
+  max-width: 1280px;
   margin: 0 auto;
+  background-color: #f9fafb;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+   font-family: var(--font-work-sans);
 }
 
 .documents-list-container h2 {
-  font-size: 1.8rem;
-  margin-bottom: 20px;
-  color: #222;
+  font-size: 2rem;
+  margin-bottom: 24px;
+  color: #1f2937;
+  font-weight: 700;
 }
 
-.documents-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-  gap: 20px;
+.documents-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
 }
 
-.document-card {
-  background-color: #ffffff;
-  border: 1px solid #e0e0e0;
-  border-radius: 12px;
-  padding: 20px;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-
-.document-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-}
-
-.doc-header {
+.top-controls {
   display: flex;
   align-items: center;
-  gap: 10px;
-  margin-bottom: 10px;
+  gap: 1rem;
+  flex-wrap: wrap;
 }
 
-.doc-header h3 {
-  font-size: 1.1rem;
-  margin: 0;
-  color: #333;
+.search-box {
+  padding: 10px 14px;
+  width: 260px;
+  border: none !important;
+  border-radius: 6px;
+  border: 1px solid #d1d5db;
+  background-color: #ffffff;
+  font-size: 0.95rem;
+}
+
+.filter-buttons button {
+  padding: 8px 16px;
+  border: 1px solid #d1d5db;
+  background-color: #ffffff;
+  color: #374151;
+  font-size: 0.9rem;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+}
+
+.filter-buttons button:hover {
+  background-color: #f3f4f6;
+}
+
+.filter-buttons .active {
+  background-color: #3b82f6;
+  border-color: #3b82f6;
+  color: #ffffff;
   font-weight: 600;
 }
 
-.doc-details {
-  font-size: 0.9rem;
-  color: #666;
-  margin: 10px 0;
-  line-height: 1.4;
+.documents-table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: #ffffff;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
 }
 
-.doc-preview {
+.documents-table th,
+.documents-table td {
+  text-align: left;
+  padding: 16px;
+  font-size: 0.85rem;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.documents-table th {
+  background-color: #f3f4f6;
+  color: #374151;
+  font-weight: 600;
+}
+
+.documents-table tr:hover {
+  background-color: #f9fafb;
+}
+
+.status.indexed {
+  color: #10b981;
+  font-weight: 600;
+}
+
+.status.indexing {
+  color: #f59e0b;
   font-style: italic;
-  color: #888;
-  margin-top: 8px;
-  font-size: 0.85rem;
 }
 
-.delete-button {
-  margin-top: 10px;
+.preview-column {
+  max-width: 300px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: #6b7280;
+  font-style: italic;
+}
+
+.delete-btn,
+.download-btn {
+  padding: 6px 12px;
+  font-size: 0.85rem;
   border: none;
-  padding: 8px 14px;
-  background-color: #ff4d4d;
-  color: #fff;
-  border-radius: 6px;
-  font-size: 0.85rem;
+  border-radius: 5px;
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  margin-right: 6px;
+  transition: background-color 0.2s ease;
 }
 
-.delete-button:hover {
-  background-color: #d93636;
+.delete-btn {
+  background-color: #ef4444;
+  color: white;
+}
+
+.delete-btn:hover {
+  background-color: #dc2626;
+}
+
+.download-btn {
+  background-color: #10b981;
+  color: white;
+  text-decoration: none;
+}
+
+.download-btn:hover {
+  background-color: #059669;
+}
+
+.pagination {
+  margin-top: 2rem;
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+}
+
+.pagination button {
+  padding: 6px 14px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  background-color: #ffffff;
+  color: #374151;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.pagination button:hover {
+  background-color: #f3f4f6;
+}
+
+.pagination button.active {
+  background-color: #3b82f6;
+  border: none;
+  color: white;
+  font-weight: bold;
 }
 
 @media (max-width: 768px) {
   .documents-list-container {
-    padding: 16px;
+    padding: 20px;
   }
 
-  .document-card {
-    padding: 16px;
+  .search-box {
+    width: 100%;
   }
 
-  .doc-header h3 {
-    font-size: 1rem;
+  .documents-table th,
+  .documents-table td {
+    padding: 12px;
   }
 
-  .delete-button {
-    padding: 6px 12px;
-    font-size: 0.8rem;
+  .top-controls {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .pagination {
+    flex-wrap: wrap;
   }
 }

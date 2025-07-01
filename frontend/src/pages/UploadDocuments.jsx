@@ -212,7 +212,7 @@ function UploadDocuments() {
   )}
 </div>
         <div className="upload-tips">
-  <h3 className="tips-title">💡 Tips for better results</h3>
+  <h3 className="tips-title"> Tips for better results</h3>
   <div className="tips-grid">
     <div className="tip-item">
       <div className="tip-icon"><FiFileText size={24} /></div>

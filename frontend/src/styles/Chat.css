@@ -13,11 +13,11 @@
 }
 
 /* Main layout */
-.chat-page {
+.chat-page1 {
   overflow-y: scroll;
   display: flex;
   height: calc(100vh - 60px);
-  width: 75vw;
+  width: 75vw !important;
  font-family: 'Inter', 'Segoe UI', Roboto, Arial, sans-serif;  background-color: var(--white);
 }
 

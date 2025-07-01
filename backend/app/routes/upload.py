@@ -1,8 +1,7 @@
-from fastapi import UploadFile, File, APIRouter, HTTPException, Depends
+from fastapi import UploadFile, File, APIRouter, HTTPException, Depends, BackgroundTasks
 from sqlalchemy.orm import Session
 import os, shutil
-import numpy as np
-from ..utils import document_utils, embedding_utils
+from ..utils import indexing_utils
 from app.database import get_db
 from app.models.document import Document
 
@@ -10,76 +9,45 @@ router = APIRouter()
 UPLOAD_DIR = "uploads"
 os.makedirs(UPLOAD_DIR, exist_ok=True)
 
-
 @router.post("/upload")
-async def upload_document(file: UploadFile = File(...), db: Session = Depends(get_db)):
+async def upload_document(
+    background_tasks: BackgroundTasks,
+    file: UploadFile = File(...),
+    db: Session = Depends(get_db)
+):
     filename = file.filename
     ext = filename.split(".")[-1].lower()
 
     if ext not in ("pdf", "docx", "txt"):
-        raise HTTPException(status_code=400, detail=f"{filename}: unsupported type {ext}")
+        raise HTTPException(status_code=400, detail=f"{filename}: unsupported file type {ext}")
 
-    # Save the uploaded file
+    # Save file
     dest = os.path.join(UPLOAD_DIR, filename)
     with open(dest, "wb") as buffer:
         shutil.copyfileobj(file.file, buffer)
 
-    # Extract text
-    try:
-        text = {
-            "pdf": document_utils.extract_text_from_pdf,
-            "docx": document_utils.extract_text_from_docx,
-            "txt": document_utils.extract_text_from_txt,
-        }[ext](dest)
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"{filename}: extract error {e}")
-
-    # Chunk and embed
-    chunks = embedding_utils.chunk_text(text)
-    if not chunks:
-        raise HTTPException(status_code=500, detail=f"{filename}: no text chunks extracted")
-
-    try:
-        embeddings = embedding_utils.embed_chunks(chunks)
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"{filename}: embedding error {e}")
-
-    # Save document record
+    # Add DB record first
     document = Document(
         filename=filename,
         file_type=ext,
         size=os.path.getsize(dest),
-        num_chunks=len(chunks),
-        preview=chunks[0]
+        num_chunks=0,
+        preview=""
     )
     db.add(document)
     db.commit()
     db.refresh(document)
 
-    # Save embeddings with chunk text
-    metadata = [
-        {
-            "filename": filename,
-            "chunk_index": i,
-            "chunk_text": chunk,
-            "document_id": document.id
-        }
-        for i, chunk in enumerate(chunks)
-    ]
-    try:
-        embedding_utils.save_to_faiss(np.array(embeddings), metadata)
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"{filename}: embedding error {e}")
+    # Index in background
+    background_tasks.add_task(indexing_utils.index_and_update, file_path=dest, document_id=document.id)
 
     return {
-        "message": "Uploaded successfully",
+        "message": "✅ Upload successful. Indexing is being done in the background.",
         "document": {
             "id": document.id,
             "filename": document.filename,
             "file_type": document.file_type,
             "size": document.size,
-            "num_chunks": document.num_chunks,
-            "preview": document.preview,
         }
     }
 
@@ -93,6 +61,8 @@ def get_all_documents(db: Session = Depends(get_db)):
             "filename": doc.filename,
             "file_type": doc.file_type,
             "size": doc.size,
+            "num_chunks": doc.num_chunks,
+             "indexed": doc.indexed
         }
         for doc in documents
     ]

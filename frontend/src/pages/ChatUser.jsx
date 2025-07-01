@@ -218,7 +218,7 @@ function ChatUser() {
                     <ul>
                       {msg.results.map((res, i) => (
                         <li key={i} className="result-item">
-                          <span className="result-bullet">•</span> {res.chunk_text}
+                          <span className="result-bullet"></span> {res.chunk_text}
                         </li>
                       ))}
                     </ul>
