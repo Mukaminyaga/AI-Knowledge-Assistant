@@ -10,11 +10,16 @@ from app.routes import user_profile
 from app import database
 from app.models import users
 from dotenv import load_dotenv
+from fastapi.staticfiles import StaticFiles
 import os
 
 load_dotenv()
+app = FastAPI() 
 
-app = FastAPI()
+
+# BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
+# UPLOADS_PATH = os.path.join(BASE_DIR, "uploads")
+
 
 app.add_middleware(
     CORSMiddleware,
@@ -62,3 +67,4 @@ app.include_router(search.router, prefix="/search", tags=["Search"])
 app.include_router(reset.router, prefix="/reset", tags=["Reset"])
 app.include_router(contact.router, prefix="/contact", tags=["Contact"])
 app.include_router(user_profile.router)
+# app.mount("/uploads", StaticFiles(directory=UPLOADS_PATH), name="uploads")

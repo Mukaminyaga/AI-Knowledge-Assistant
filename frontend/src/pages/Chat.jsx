@@ -145,7 +145,7 @@ function Chat() {
 
   return (
     <DashboardLayout>
-      <div className="chat-page">
+      <div className="chat-page1">
         <div className="chat-sidebar">
           <div className="sidebar-header">
             <button className="new-chat-button" onClick={startNewChat}>
@@ -192,7 +192,7 @@ function Chat() {
                       <ul>
                         {msg.results.map((res, i) => (
                           <li key={i} className="result-item">
-                            <span className="result-bullet">•</span> {res.chunk_text}
+                            <span className="result-bullet"></span> {res.chunk_text}
                           </li>
                         ))}
                       </ul>

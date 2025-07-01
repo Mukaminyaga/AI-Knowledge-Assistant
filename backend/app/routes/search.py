@@ -10,7 +10,7 @@ router = APIRouter()
 
 class QueryRequest(BaseModel):
     query: str
-    top_k: int = 5 # Increase top_k for more context
+    top_k: int = 10 # Increase top_k for more context
 
 def clean_text(text):
     text = re.sub(r'\s+', ' ', text)

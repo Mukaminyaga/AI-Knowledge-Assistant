@@ -65,16 +65,16 @@ function Home() {
           </div>
         </div>
       </div>
-      <div className="quick-searches-title">Try these examples</div>
+      {/* <div className="quick-searches-title">Try these examples</div>
       <div className="search-tags">
         <div className="search-tag">
           <div className="tag-text">Permissions</div>
         </div>
         <div className="search-tag">
           <div className="tag-text">Access Levels</div>
-        </div>
-  
-      </div>
+        </div> */}
+{/*   
+      </div> */}
     </div>
   </div>
 </div>
