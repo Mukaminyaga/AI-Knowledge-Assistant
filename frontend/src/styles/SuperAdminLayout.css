@@ -1,0 +1,137 @@
+/* Super Admin Layout Styles - Following reference design */
+.super-admin-layout {
+  display: flex;
+  min-height: 100vh;
+  background-color: rgb(249, 250, 251); /* gray-50 */
+}
+
+.super-admin-main-container {
+  flex: 1;
+  margin-left: 256px; /* sidebar width */
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Sticky Header */
+.super-admin-header {
+  background: rgb(255, 255, 255);
+  border-bottom: 1px solid rgb(229, 231, 235); /* gray-100 */
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+}
+
+.header-container {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 32px;
+}
+
+.header-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 64px;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+}
+
+.header-brand {
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 28px;
+  color: rgb(17, 24, 39); /* gray-900 */
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.notification-btn {
+  background: none;
+  border: none;
+  padding: 8px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.notification-btn:hover {
+  background-color: rgb(249, 250, 251);
+}
+
+.notification-icon {
+  width: 20px;
+  height: 20px;
+  color: rgb(156, 163, 175); /* gray-400 */
+}
+
+.user-profile {
+  display: flex;
+  align-items: center;
+}
+
+.user-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: rgb(32, 148, 243); /* primary-blue */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  cursor: pointer;
+}
+
+/* Page Content */
+.super-admin-content {
+  flex: 1;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 32px 16px;
+  width: 100%;
+}
+
+/* Responsive Layout */
+@media (max-width: 1024px) {
+  .super-admin-main-container {
+    margin-left: 0;
+  }
+
+  .super-admin-content {
+    padding: 20px 16px;
+  }
+
+  .header-container {
+    padding: 0 16px;
+  }
+}
+
+@media (max-width: 768px) {
+  .super-admin-content {
+    padding: 16px;
+  }
+
+  .header-container {
+    padding: 0 12px;
+  }
+
+  .header-brand {
+    font-size: 18px;
+  }
+
+  .user-avatar {
+    width: 28px;
+    height: 28px;
+  }
+}
