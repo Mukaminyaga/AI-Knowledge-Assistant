@@ -11,5 +11,5 @@ class Document(Base):
     size = Column(Integer, nullable=False)
     upload_time = Column(DateTime(timezone=True), server_default=func.now())
     num_chunks = Column(Integer)
-    preview = Column(String)
+    # preview = Column(String)
     indexed = Column(Boolean, default=False) 

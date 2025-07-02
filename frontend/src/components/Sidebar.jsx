@@ -90,7 +90,7 @@ const user = JSON.parse(localStorage.getItem("user"));
             <li key={item.path} className="nav-item">
               <Link
                 to={item.path}
-                className={`nav-link ${location.pathname === item.path ? "active" : ""}`}
+                className={`nav-link1 ${location.pathname === item.path ? "active" : ""}`}
                 title={isCollapsed && !isMobile ? item.label : ""}
                 onClick={handleLinkClick}
               >

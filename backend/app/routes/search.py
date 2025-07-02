@@ -1,6 +1,6 @@
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
-from app.utils.database import DocumentSearcher
+from app.utils.faiss_search import DocumentSearcher
 from app.utils.embedding_utils import embed_chunks
 from app.utils.llm import llm_pipeline
 from app.utils.summarizer import summarize_results
