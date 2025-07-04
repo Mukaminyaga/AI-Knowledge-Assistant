@@ -21,6 +21,9 @@ function Signup() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [successMessage, setSuccessMessage] = useState("");
+  const navigate = useNavigate();
+
 
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -142,13 +145,13 @@ function Signup() {
     }
 
     // Company name validation
-    // if (!formData.companyName.trim()) {
-    //   newErrors.companyName = "Company name is required";
-    // } else if (formData.companyName.trim().length < 2) {
-    //   newErrors.companyName = "Company name must be at least 2 characters";
-    // } else if (formData.companyName.trim().length > 100) {
-    //   newErrors.companyName = "Company name is too long";
-    // }
+    if (!formData.companyName.trim()) {
+      newErrors.companyName = "Company name is required";
+    } else if (formData.companyName.trim().length < 2) {
+      newErrors.companyName = "Company name must be at least 2 characters";
+    } else if (formData.companyName.trim().length > 100) {
+      newErrors.companyName = "Company name is too long";
+    }
 
     // Job title validation (optional field)
     if (formData.jobTitle.trim() && formData.jobTitle.trim().length > 100) {
@@ -168,63 +171,75 @@ function Signup() {
     return newErrors;
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
 
-    const newErrors = validateForm();
-    if (Object.keys(newErrors).length > 0) {
-      setErrors(newErrors);
-      return;
-    }
 
-    setIsSubmitting(true);
+
+
+const handleSubmit = async (e) => {
+  e.preventDefault();
+
+  const newErrors = validateForm();
+  if (Object.keys(newErrors).length > 0) {
+    setErrors(newErrors);
+    return;
+  }
+
+  setIsSubmitting(true);
 
   try {
-  const response = await axios.post(
-    `${process.env.REACT_APP_API_URL}/auth/register`,
-    {
-      first_name: formData.firstName,
-      last_name: formData.lastName,
-      email: formData.email,
-      password: formData.password,
-      role: formData.jobTitle || "User",
-    }
-  );
+    const response = await axios.post(
+      `${process.env.REACT_APP_API_URL}/auth/register`,
+      {
+        first_name: formData.firstName,
+        last_name: formData.lastName,
+        email: formData.email,
+        password: formData.password,
+        role: formData.jobTitle || "User",
+        company_name: formData.companyName,
+      }
+    );
 
-      console.log("Signup successful:", response.data);
-      setSuccessMessage(
-        "Signup successful! Redirecting to Home Page for login as you await approval...",
-      );
+    console.log("Signup successful:", response.data);
+    setSuccessMessage(
+      "Signup successful! Redirecting to Home Page for login as you await approval..."
+    );
 
-      // Reset form
-      setFormData({
-        firstName: "",
-        lastName: "",
-        email: "",
-        password: "",
-        confirmPassword: "",
-        companyName: "",
-        jobTitle: "",
-        teamSize: "",
-        agreeToTerms: false,
+    // Reset form
+    setFormData({
+      firstName: "",
+      lastName: "",
+      email: "",
+      password: "",
+      confirmPassword: "",
+      companyName: "",
+      jobTitle: "",
+      teamSize: "",
+      agreeToTerms: false,
+    });
+    setErrors({});
+
+    // Redirect after delay
+    setTimeout(() => {
+      navigate("/"); // home/login
+    }, 3000);
+  } catch (error) {
+    console.error("Signup error:", error);
+    const detail = error.response?.data?.detail;
+
+    if (Array.isArray(detail)) {
+      // FastAPI returns a list of error objects
+      setErrors({
+        general: detail.map((err) => err.msg).join(" "),
       });
-      setErrors({});
-
-      // Redirect after delay
-      setTimeout(() => {
-        navigate("/"); // or "/" if home is login
-      }, 3000);
-    } catch (error) {
-      console.error("Signup error:", error);
-      const errMsg =
-        error.response?.data?.detail || "Signup failed. Please try again.";
-      setErrors({ general: errMsg });
-    } finally {
-      setIsSubmitting(false);
+    } else {
+      setErrors({
+        general: detail || "Signup failed. Please try again.",
+      });
     }
-  };
-  const navigate = useNavigate();
-  const [successMessage, setSuccessMessage] = useState("");
+  } finally {
+    setIsSubmitting(false);
+  }
+};
 
   return (
     <div className="auth-page">
@@ -256,6 +271,7 @@ function Signup() {
                 )}
 
                 <div className="form-row">
+                  
                   <div className="form-group">
                     <label htmlFor="firstName" className="form-label">
                       First name
@@ -483,7 +499,21 @@ function Signup() {
                     <span className="error-message">{errors.companyName}</span>
                   )}
                 </div>
-
+                   <div className="form-group">
+                    <label htmlFor="companyName" className="form-label">
+                      Company Name
+                    </label>
+                    <input
+                      type="text"
+                      id="companyName"
+                      name="companyName"
+                      value={formData.companyName}
+                      onChange={handleInputChange}
+                      className="form-input"
+                      placeholder="e.g. Good Partners"
+                      autoComplete="company name"
+                    />
+                  </div>
                 {/* <div className="form-row">
                   <div className="form-group">
                     <label htmlFor="jobTitle" className="form-label">

@@ -6,6 +6,7 @@ class UserCreate(BaseModel):
     email: EmailStr
     password: str
     role: str
+    company_name: str
 
 class UserLogin(BaseModel):
     email: EmailStr
@@ -18,10 +19,11 @@ class UserOut(BaseModel):
     email: str
     role: str
     is_approved: bool
+    tenant_id: int
 
     class Config:
-       from_attributes = True 
-       
+        from_attributes = True
+
 class UserUpdate(BaseModel):
     first_name: str | None = None
     last_name: str | None = None

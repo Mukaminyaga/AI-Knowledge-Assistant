@@ -1,5 +1,6 @@
-from sqlalchemy import Column, Integer, String, Boolean
-from ..database import Base  
+from sqlalchemy import Column, Integer, String, Boolean, ForeignKey
+from sqlalchemy.orm import relationship
+from ..database import Base
 
 class User(Base):
     __tablename__ = "users"
@@ -9,5 +10,9 @@ class User(Base):
     last_name = Column(String, nullable=False)
     email = Column(String, unique=True, index=True, nullable=False)
     hashed_password = Column(String, nullable=False)
-    role = Column(String, nullable=False, default="user")  # Required for the new column
+    role = Column(String, nullable=False, default="user")
     is_approved = Column(Boolean, nullable=False, default=False)
+
+    # Foreign key to tenant
+    tenant_id = Column(Integer, ForeignKey("tenants.id"), nullable=False)
+    tenant = relationship("Tenant", back_populates="users")
