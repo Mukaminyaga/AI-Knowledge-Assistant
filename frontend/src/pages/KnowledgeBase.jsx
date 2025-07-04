@@ -15,23 +15,24 @@ const KnowledgeBase = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
 
-  const fetchDocuments = async () => {
-    try {
-      const res = await axios.get(`${process.env.REACT_APP_API_URL}/documents/`);
-      setDocuments(res.data);
-    } catch (error) {
-      console.error(error);
-      toast.error("Error loading documents");
-    } finally {
-      setLoading(false);
-    }
-  };
+ const fetchDocuments = async () => {
+  console.log(" Fetching documents...");
+  try {
+    const res = await axios.get(`${process.env.REACT_APP_API_URL}/documents/`);
+    setDocuments(res.data);
+  } catch (error) {
+    console.error(error);
+    toast.error("Error loading documents");
+  } finally {
+    setLoading(false);
+  }
+};
 
-  useEffect(() => {
-    fetchDocuments();
-    const interval = setInterval(fetchDocuments);
-    return () => clearInterval(interval);
-  }, []);
+
+useEffect(() => {
+  fetchDocuments(); // only once
+}, []);
+
 
   useEffect(() => {
     let result = [...documents];
@@ -105,13 +106,13 @@ const KnowledgeBase = () => {
                 className={filter === "indexed" ? "active" : ""}
                 onClick={() => setFilter("indexed")}
               >
-                ✅ Indexed
+                 Indexed
               </button>
               <button
                 className={filter === "indexing" ? "active" : ""}
                 onClick={() => setFilter("indexing")}
               >
-                ⏳ Indexing
+                 Indexing
               </button>
             </div>
           </div>

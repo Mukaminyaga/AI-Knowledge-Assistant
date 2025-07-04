@@ -7,7 +7,6 @@ import {
   FiShield,
   FiSave,
   FiEdit3,
-  FiCpu,
   FiMessageCircle,
   FiArrowLeft,
 } from "react-icons/fi";

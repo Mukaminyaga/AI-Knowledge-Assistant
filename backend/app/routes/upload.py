@@ -31,8 +31,8 @@ async def upload_document(
         filename=filename,
         file_type=ext,
         size=os.path.getsize(dest),
-        num_chunks=0,
-        preview=""
+        num_chunks=0
+        # preview=""
     )
     db.add(document)
     db.commit()

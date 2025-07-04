@@ -1,11 +1,12 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from typing import List
-from app import schemas, auth, database
+
+from app.schemas.users import UserCreate, UserLogin, UserOut 
+from app import auth, database
 from app.models import users
 from app.auth import get_current_user
 from app.database import get_db
-
 
 router = APIRouter()
 
@@ -27,7 +28,8 @@ def approve_user(
     db.refresh(user)
     return {"message": f"{user.email} has been approved."}
 
-@router.get("/", response_model=List[schemas.UserOut])
+
+@router.get("/", response_model=List[UserOut])  # ✅ updated UserOut import
 def get_all_users(
     db: Session = Depends(get_db),
     current_user: users.User = Depends(get_current_user)
@@ -36,6 +38,7 @@ def get_all_users(
     if current_user.role.lower() != "admin":
         raise HTTPException(status_code=403, detail="Only admins can view users.")
     return db.query(users.User).all()
+
 
 @router.delete("/delete/{user_id}")
 def delete_user(

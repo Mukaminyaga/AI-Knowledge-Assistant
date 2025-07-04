@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import SuperAdminLayout from "../../components/SuperAdmin/SuperAdminLayout";
 import TenantTable from "../../components/SuperAdmin/TenantTable";
 import TenantForm from "../../components/SuperAdmin/TenantForm";
-import { FiPlus, FiDownload, FiFilter } from "react-icons/fi";
+import { FiPlus, FiDownload } from "react-icons/fi";
 import "../../styles/SuperAdmin.css";
 
 // Mock data - in a real app, this would come from an API

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import SuperAdminLayout from "../../components/SuperAdmin/SuperAdminLayout";
-import StatCard from "../../components/SuperAdmin/StatCard";
-import TenantTable from "../../components/SuperAdmin/TenantTable";
+// import StatCard from "../../components/SuperAdmin/StatCard";
+// import TenantTable from "../../components/SuperAdmin/TenantTable";
 import {
   FiUsers,
   FiDollarSign,

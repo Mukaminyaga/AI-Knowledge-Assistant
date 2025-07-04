@@ -2,7 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 import Header from "../components/Header";
 import "../styles/Home.css";
-import { FiSearch, FiBookOpen, FiZap, FiUsers,FiMessageCircle  } from "react-icons/fi"; 
+import { FiSearch, FiBookOpen,FiUsers,FiMessageCircle  } from "react-icons/fi"; 
 
 function Home() {
   return (

@@ -44,7 +44,7 @@ function UploadDocuments() {
     if (type.includes("pdf")) return "📄";
     if (type.includes("text")) return "📝";
     if (type.includes("word")) return "📘";
-    return "📁";
+    return <img src="/icons/folder.png" alt="Folder icon" width={24} />;
   }
 
   const handleFiles = (files) => {
@@ -132,7 +132,10 @@ function UploadDocuments() {
         style={{ display: "none" }}
       />
       <div className="dropzone-content">
-        <div className="upload-icon">{isUploading ? "⏳" : "📁"}</div>
+        <div className="upload-icon">
+  {isUploading ? "⏳" : <img src="/icons/folder.png" alt="Folder icon" width={40} />}
+</div>
+
         <h3 className="dropzone-title">
           {dragActive ? "Drop files here" : "Drag & drop files here"}
         </h3>

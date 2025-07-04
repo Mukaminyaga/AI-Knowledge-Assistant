@@ -12,6 +12,9 @@ from app.models import users
 from dotenv import load_dotenv
 from fastapi.staticfiles import StaticFiles
 import os
+from app.routes import tenant
+
+
 
 load_dotenv()
 app = FastAPI() 
@@ -27,6 +30,7 @@ app.add_middleware(
         "http://localhost:3000",
         "http://localhost:8000",
         "http://192.168.1.249:3000",
+        "http://192.168.1.152:3000", 
         "http://165.22.78.252" 
     ],
     allow_credentials=True,
@@ -69,3 +73,4 @@ app.include_router(reset.router, prefix="/reset", tags=["Reset"])
 app.include_router(contact.router, prefix="/contact", tags=["Contact"])
 app.include_router(user_profile.router)
 # app.mount("/uploads", StaticFiles(directory=UPLOADS_PATH), name="uploads")
+app.include_router(tenant.router, prefix="/tenants", tags=["Tenants"])
