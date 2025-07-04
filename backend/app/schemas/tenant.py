@@ -11,12 +11,23 @@ class TenantCreate(BaseModel):
     monthly_fee: float
     max_users: int
 
-
-
 class TenantOut(TenantCreate):
     id: int
     created_at: datetime
     status: str
+
+    class Config:
+        orm_mode = True
+
+class TenantUpdate(BaseModel):
+    company_name: Optional[str]
+    contact_email: Optional[EmailStr]
+    slug_url: Optional[str]
+    contact_phone: Optional[str]
+    billing_address: Optional[str]
+    monthly_fee: Optional[float]
+    max_users: Optional[int]
+    status: Optional[str]
 
     class Config:
         orm_mode = True

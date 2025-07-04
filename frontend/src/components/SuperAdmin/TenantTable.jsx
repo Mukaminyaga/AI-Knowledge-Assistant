@@ -13,13 +13,21 @@ const TenantTable = ({
   const [searchTerm, setSearchTerm] = useState("");
   const [sortField, setSortField] = useState("createdAt");
   const [sortDirection, setSortDirection] = useState("desc");
+  const [expandedTenantId, setExpandedTenantId] = useState(null);
 
-  const filteredTenants = tenants.filter(
-    (tenant) =>
-      tenant.companyName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      tenant.contactEmail.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      tenant.slugUrl.toLowerCase().includes(searchTerm.toLowerCase()),
-  );
+
+  // Fix: safely access fields for search
+  const filteredTenants = tenants.filter((tenant) => {
+    const companyName = tenant?.companyName || tenant?.company_name || "";
+    const contactEmail = tenant?.contactEmail || tenant?.contact_email || "";
+    const slugUrl = tenant?.slugUrl || tenant?.slug_url || "";
+
+    return (
+      companyName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      contactEmail.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      slugUrl.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+  });
 
   const sortedTenants = [...filteredTenants].sort((a, b) => {
     let aVal = a[sortField];
@@ -67,12 +75,17 @@ const TenantTable = ({
       inactive: "warning",
       suspended: "danger",
     };
+  const formatDate = (dateString) => {
+  return new Date(dateString).toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  });
+};
 
     return (
-      <span
-        className={`status-badge status-${statusColors[status] || "default"}`}
-      >
-        {status.charAt(0).toUpperCase() + status.slice(1)}
+      <span className={`status-badge status-${statusColors[status] || "default"}`}>
+        {status?.charAt(0).toUpperCase() + status?.slice(1)}
       </span>
     );
   };
@@ -98,10 +111,7 @@ const TenantTable = ({
         <table className="data-table">
           <thead>
             <tr>
-              <th
-                className="sortable"
-                onClick={() => handleSort("companyName")}
-              >
+              <th className="sortable" onClick={() => handleSort("companyName")}>
                 Company
                 {sortField === "companyName" && (
                   <span className="sort-indicator">
@@ -109,10 +119,7 @@ const TenantTable = ({
                   </span>
                 )}
               </th>
-              <th
-                className="sortable"
-                onClick={() => handleSort("contactEmail")}
-              >
+              <th className="sortable" onClick={() => handleSort("contactEmail")}>
                 Contact Email
                 {sortField === "contactEmail" && (
                   <span className="sort-indicator">
@@ -121,7 +128,7 @@ const TenantTable = ({
                 )}
               </th>
               <th>Slug URL</th>
-              <th>Plan</th>
+              {/* <th>Plan</th> */}
               <th className="sortable" onClick={() => handleSort("monthlyFee")}>
                 Monthly Fee
                 {sortField === "monthlyFee" && (
@@ -132,14 +139,15 @@ const TenantTable = ({
               </th>
               <th>Max Users</th>
               <th>Status</th>
-              <th className="sortable" onClick={() => handleSort("createdAt")}>
-                Created
-                {sortField === "createdAt" && (
-                  <span className="sort-indicator">
-                    {sortDirection === "asc" ? "↑" : "↓"}
-                  </span>
-                )}
-              </th>
+        <th className="sortable" onClick={() => handleSort("created_at")}>
+  Created
+  {sortField === "created_at" && (
+    <span className="sort-indicator">
+      {sortDirection === "asc" ? "↑" : "↓"}
+    </span>
+  )}
+</th>
+
               {showActions && <th>Actions</th>}
             </tr>
           </thead>
@@ -157,33 +165,56 @@ const TenantTable = ({
                 <tr key={tenant.id}>
                   <td>
                     <div className="company-cell">
-                      <div className="company-name">{tenant.companyName}</div>
-                      <div className="company-phone">{tenant.contactPhone}</div>
+                      <div className="company-name">
+                        {tenant.companyName || tenant.company_name}
+                      </div>
+                      <div className="company-phone">
+                        {tenant.contactPhone || tenant.contact_phone}
+                      </div>
                     </div>
                   </td>
-                  <td>{tenant.contactEmail}</td>
+                  <td>{tenant.contactEmail || tenant.contact_email}</td>
                   <td>
-                    <code className="slug-code">{tenant.slugUrl}</code>
+                    <code className="slug-code">{tenant.slugUrl || tenant.slug_url}</code>
                   </td>
-                  <td>
+                  {/* <td>
                     <span className="plan-badge">{tenant.plan}</span>
-                  </td>
+                  </td> */}
                   <td>
-                    <span className="fee-amount">${tenant.monthlyFee}</span>
+                    <span className="fee-amount">
+                      {tenant.monthlyFee ?? tenant.monthly_fee}
+                    </span>
                   </td>
-                  <td>{tenant.maxUsers}</td>
+                  <td>{tenant.maxUsers ?? tenant.max_users}</td>
                   <td>{getStatusBadge(tenant.status)}</td>
-                  <td>{formatDate(tenant.createdAt)}</td>
+                  <td>{formatDate(tenant.created_at)}</td>
+
                   {showActions && (
                     <td>
                       <div className="action-buttons">
-                        <button
-                          className="action-btn view-btn"
-                          onClick={() => onView && onView(tenant)}
-                          title="View details"
-                        >
-                          <FiEye />
-                        </button>
+                     <button
+                className="action-btn view-btn"
+                onClick={() =>
+                  setExpandedTenantId(
+                    expandedTenantId === tenant.id ? null : tenant.id
+                  )
+                }
+                title={
+                  expandedTenantId === tenant.id
+                    ? "Hide details"
+                    : "View details"
+                }
+              >
+                <FiEye
+                  style={{
+                    transform:
+                      expandedTenantId === tenant.id
+                        ? "rotate(180deg)"
+                        : "none",
+                  }}
+                />
+              </button>
+
                         <button
                           className="action-btn edit-btn"
                           onClick={() => onEdit && onEdit(tenant)}
