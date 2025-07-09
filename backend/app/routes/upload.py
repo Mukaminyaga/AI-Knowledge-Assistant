@@ -4,6 +4,8 @@ import os, shutil
 from ..utils import indexing_utils
 from app.database import get_db
 from app.models.document import Document
+from app.auth import get_current_user
+from app.models.users import User  # for current_user.tenant_id
 
 router = APIRouter()
 UPLOAD_DIR = "uploads"
@@ -13,7 +15,8 @@ os.makedirs(UPLOAD_DIR, exist_ok=True)
 async def upload_document(
     background_tasks: BackgroundTasks,
     file: UploadFile = File(...),
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
 ):
     filename = file.filename
     ext = filename.split(".")[-1].lower()
@@ -26,23 +29,23 @@ async def upload_document(
     with open(dest, "wb") as buffer:
         shutil.copyfileobj(file.file, buffer)
 
-    # Add DB record first
+    # Save in DB with tenant_id
     document = Document(
         filename=filename,
         file_type=ext,
         size=os.path.getsize(dest),
+        tenant_id=current_user.tenant_id,
         num_chunks=0
-        # preview=""
     )
     db.add(document)
     db.commit()
     db.refresh(document)
 
-    # Index in background
+    # Background indexing
     background_tasks.add_task(indexing_utils.index_and_update, file_path=dest, document_id=document.id)
 
     return {
-        "message": "✅ Upload successful. Indexing is being done in the background.",
+        "message": " Upload successful. Indexing is being done in the background.",
         "document": {
             "id": document.id,
             "filename": document.filename,
@@ -51,10 +54,12 @@ async def upload_document(
         }
     }
 
-
 @router.get("/")
-def get_all_documents(db: Session = Depends(get_db)):
-    documents = db.query(Document).all()
+def get_all_documents(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    documents = db.query(Document).filter(Document.tenant_id == current_user.tenant_id).all()
     return [
         {
             "id": doc.id,
@@ -62,17 +67,24 @@ def get_all_documents(db: Session = Depends(get_db)):
             "file_type": doc.file_type,
             "size": doc.size,
             "num_chunks": doc.num_chunks,
-             "indexed": doc.indexed
+            "indexed": doc.indexed
         }
         for doc in documents
     ]
 
-
 @router.delete("/{doc_id}")
-def delete_document(doc_id: int, db: Session = Depends(get_db)):
-    document = db.query(Document).filter(Document.id == doc_id).first()
+def delete_document(
+    doc_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    document = db.query(Document).filter(
+        Document.id == doc_id,
+        Document.tenant_id == current_user.tenant_id
+    ).first()
+
     if not document:
-        raise HTTPException(status_code=404, detail=f"Document {doc_id} not found.")
+        raise HTTPException(status_code=404, detail=f"Document not found or not yours.")
 
     file_path = os.path.join(UPLOAD_DIR, document.filename)
     if os.path.exists(file_path):

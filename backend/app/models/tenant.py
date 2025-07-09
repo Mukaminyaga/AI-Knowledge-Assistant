@@ -19,3 +19,4 @@ class Tenant(Base):
 
     # One-to-many: one tenant has many users
     users = relationship("User", back_populates="tenant", cascade="all, delete")
+    documents = relationship("Document", back_populates="tenant", cascade="all, delete")
