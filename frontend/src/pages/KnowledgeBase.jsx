@@ -15,10 +15,14 @@ const KnowledgeBase = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
 
- const fetchDocuments = async () => {
-  console.log(" Fetching documents...");
+const fetchDocuments = async () => {
+  console.log("Fetching documents...");
   try {
-    const res = await axios.get(`${process.env.REACT_APP_API_URL}/documents/`);
+    const res = await axios.get(`${process.env.REACT_APP_API_URL}/documents/`, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+    });
     setDocuments(res.data);
   } catch (error) {
     console.error(error);
@@ -27,6 +31,7 @@ const KnowledgeBase = () => {
     setLoading(false);
   }
 };
+
 
 
 useEffect(() => {
@@ -52,18 +57,32 @@ useEffect(() => {
     setCurrentPage(1);
   }, [documents, filter, searchTerm]);
 
-  const deleteDocument = async (docId) => {
-    if (!window.confirm("Are you sure you want to delete this document?")) return;
+const deleteDocument = async (docId) => {
+  if (!window.confirm("Are you sure you want to delete this document?")) return;
 
-    try {
-      await axios.delete(`${process.env.REACT_APP_API_URL}/documents/${docId}`);
-      setDocuments((docs) => docs.filter((d) => d.id !== docId));
-      toast.success("Document deleted");
-    } catch (error) {
-      console.error(error);
-      toast.error("Error deleting the document");
-    }
-  };
+  const token = localStorage.getItem("token"); // Or however you store the auth token
+
+  try {
+    await axios.delete(
+      `${process.env.REACT_APP_API_URL}/documents/${docId}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    setDocuments((docs) => docs.filter((d) => d.id !== docId));
+    toast.success("Document deleted");
+  } catch (error) {
+    console.error(error);
+    toast.error(
+      error.response?.status === 401
+        ? "Unauthorized: Please log in again"
+        : "Error deleting the document"
+    );
+  }
+};
+
 
   const handleDownload = (filename) => {
     const link = document.createElement("a");

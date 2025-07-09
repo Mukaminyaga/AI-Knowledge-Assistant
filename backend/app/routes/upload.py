@@ -1,3 +1,4 @@
+from typing import List
 from fastapi import UploadFile, File, APIRouter, HTTPException, Depends, BackgroundTasks
 from sqlalchemy.orm import Session
 import os
@@ -7,7 +8,7 @@ from app.utils import indexing_utils
 from app.database import get_db
 from app.models.document import Document
 from app.auth import get_current_user
-from app.models.users import User  # For current_user.tenant_id
+from app.models.users import User
 
 router = APIRouter()
 UPLOAD_DIR = "uploads"
@@ -15,46 +16,59 @@ os.makedirs(UPLOAD_DIR, exist_ok=True)
 
 
 @router.post("/upload")
-async def upload_document(
+async def upload_documents(
     background_tasks: BackgroundTasks,
-    file: UploadFile = File(...),
+    files: List[UploadFile] = File(...),
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
-    filename = file.filename
-    ext = filename.split(".")[-1].lower()
+    uploaded_docs = []
 
-    if ext not in ("pdf", "docx", "txt"):
-        raise HTTPException(status_code=400, detail=f"{filename}: unsupported file type {ext}")
+    for file in files:
+        filename = file.filename
+        ext = filename.split(".")[-1].lower()
 
-    # Save file locally
-    dest = os.path.join(UPLOAD_DIR, filename)
-    with open(dest, "wb") as buffer:
-        shutil.copyfileobj(file.file, buffer)
+        if ext not in ("pdf", "docx", "txt"):
+            raise HTTPException(
+                status_code=400,
+                detail=f"{filename}: unsupported file type {ext}"
+            )
 
-    # Save document in DB
-    document = Document(
-        filename=filename,
-        file_type=ext,
-        size=os.path.getsize(dest),
-        tenant_id=current_user.tenant_id,
-        num_chunks=0,
-    )
-    db.add(document)
-    db.commit()
-    db.refresh(document)
+        # Save file locally
+        dest = os.path.join(UPLOAD_DIR, filename)
+        with open(dest, "wb") as buffer:
+            shutil.copyfileobj(file.file, buffer)
 
-    # Index the file in background
-    background_tasks.add_task(indexing_utils.index_and_update, file_path=dest, document_id=document.id)
+        # Save to DB
+        document = Document(
+            filename=filename,
+            file_type=ext,
+            size=os.path.getsize(dest),
+            tenant_id=current_user.tenant_id,
+            num_chunks=0,
+        )
+        db.add(document)
+        db.commit()
+        db.refresh(document)
 
-    return {
-        "message": " Upload successful. Indexing is being done in the background.",
-        "document": {
+        # Index document in background
+        background_tasks.add_task(
+            indexing_utils.index_and_update,
+            file_path=dest,
+            document_id=document.id
+        )
+
+        uploaded_docs.append({
             "id": document.id,
             "filename": document.filename,
             "file_type": document.file_type,
             "size": document.size,
-        },
+            "tenant_id": document.tenant_id,
+        })
+
+    return {
+        "message": f"{len(uploaded_docs)} file(s) uploaded successfully. Indexing in background.",
+        "documents": uploaded_docs
     }
 
 
@@ -71,7 +85,8 @@ def get_all_documents(
             "file_type": doc.file_type,
             "size": doc.size,
             "num_chunks": doc.num_chunks,
-            "indexed": doc.indexed
+            "indexed": doc.indexed,
+            "tenant_id": doc.tenant_id,
         }
         for doc in documents
     ]
@@ -91,7 +106,8 @@ def get_documents_by_tenant_id(
             "size": doc.size,
             "num_chunks": doc.num_chunks,
             "indexed": doc.indexed,
-            "uploaded_at": getattr(doc, "created_at", None)
+            "uploaded_at": getattr(doc, "created_at", None),
+            "tenant_id": doc.tenant_id,
         }
         for doc in documents
     ]
@@ -117,4 +133,5 @@ def delete_document(
 
     db.delete(document)
     db.commit()
+
     return {"message": f"Deleted document '{document.filename}' successfully."}

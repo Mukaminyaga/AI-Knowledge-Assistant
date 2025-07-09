@@ -41,9 +41,9 @@ function UploadDocuments() {
   }
 
   function getFileIcon(type) {
-    if (type.includes("pdf")) return "📄";
-    if (type.includes("text")) return "📝";
-    if (type.includes("word")) return "📘";
+    // if (type.includes("pdf")) return "📄";
+    // if (type.includes("text")) return "📝";
+    // if (type.includes("word")) return "📘";
     return <img src="/icons/folder.png" alt="Folder icon" width={24} />;
   }
 
@@ -63,44 +63,53 @@ function UploadDocuments() {
   const removeFile = (id) =>
     setUploadedFiles((prev) => prev.filter((f) => f.id !== id));
 
- const processDocs = async () => {
+const processDocs = async () => {
   if (!uploadedFiles.length) return;
 
   setIsUploading(true);
 
-  for (let fileObj of uploadedFiles) {
-    const form = new FormData();
-    form.append("file", fileObj.file);
-
-   try {
-  await axios.post(`${process.env.REACT_APP_API_URL}/documents/upload`, form, {
-    headers: { "Content-Type": "multipart/form-data" },
-    onUploadProgress: (e) => {
-      const percent = Math.round((e.loaded * 100) / e.total);
-      setUploadedFiles((prev) =>
-        prev.map((f) =>
-          f.id === fileObj.id
-            ? {
-                ...f,
-                progress: percent,
-                status: percent === 100 ? "completed" : "uploading",
-              }
-            : f
-        )
-      );
-    },
+  const form = new FormData();
+  uploadedFiles.forEach((fileObj) => {
+    form.append("files", fileObj.file);  // must be "files" (matches FastAPI param name)
   });
-    } catch (err) {
-      setUploadedFiles((prev) =>
-        prev.map((f) =>
-          f.id === fileObj.id ? { ...f, status: "error" } : f
-        )
-      );
-      console.error(err);
-    }
-  }
 
-  setIsUploading(false);
+  try {
+    await axios.post(`${process.env.REACT_APP_API_URL}/documents/upload`, form, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+        "Authorization": `Bearer ${localStorage.getItem("token")}`,
+      },
+      onUploadProgress: (e) => {
+        const percent = Math.round((e.loaded * 100) / e.total);
+        setUploadedFiles((prev) =>
+          prev.map((f) => ({
+            ...f,
+            progress: percent,
+            status: percent === 100 ? "completed" : "uploading",
+          }))
+        );
+      },
+    });
+
+    // Mark all as completed once done
+    setUploadedFiles((prev) =>
+      prev.map((f) => ({
+        ...f,
+        status: "completed",
+        progress: 100,
+      }))
+    );
+  } catch (err) {
+    console.error(err);
+    setUploadedFiles((prev) =>
+      prev.map((f) => ({
+        ...f,
+        status: "error",
+      }))
+    );
+  } finally {
+    setIsUploading(false);
+  }
 };
 
 
@@ -133,7 +142,7 @@ function UploadDocuments() {
       />
       <div className="dropzone-content">
         <div className="upload-icon">
-  {isUploading ? "⏳" : <img src="/icons/folder.png" alt="Folder icon" width={40} />}
+  {isUploading ? " " : <img src="/icons/folder.png" alt="Folder icon" width={40} />}
 </div>
 
         <h3 className="dropzone-title">

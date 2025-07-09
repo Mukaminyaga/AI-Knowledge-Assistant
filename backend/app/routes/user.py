@@ -21,7 +21,7 @@ def approve_user(
 
     user = db.query(users.User).filter(
         users.User.id == user_id,
-        users.User.tenant_id == current_user.tenant_id  # 🛡️ tenant scoping
+        users.User.tenant_id == current_user.tenant_id  #  tenant scoping
     ).first()
 
     if not user:
@@ -42,7 +42,7 @@ def get_all_users(
         raise HTTPException(status_code=403, detail="Only admins can view users.")
 
     return db.query(users.User).filter(
-        users.User.tenant_id == current_user.tenant_id  # 🛡️ return users of same tenant only
+        users.User.tenant_id == current_user.tenant_id  #  return users of same tenant only
     ).all()
 
 
@@ -57,7 +57,7 @@ def delete_user(
 
     user = db.query(users.User).filter(
         users.User.id == user_id,
-        users.User.tenant_id == current_user.tenant_id  # 🛡️ prevent deleting users from other tenants
+        users.User.tenant_id == current_user.tenant_id  #  prevent deleting users from other tenants
     ).first()
 
     if not user:

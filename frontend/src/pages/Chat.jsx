@@ -4,6 +4,7 @@ import { FiSend, FiPlus, FiTrash2 } from "react-icons/fi";
 import DashboardLayout from "../components/DashboardLayout";
 import "../styles/Chat.css";
 
+
 function Chat() {
   const user = JSON.parse(localStorage.getItem("user"));
   const userId = user?.email || "guest";
@@ -66,13 +67,21 @@ function Chat() {
     const newChat = [...chatHistory, { role: "user", text: userQuery }];
     setChatHistory(newChat);
     setInputValue("");
-
-    try {
-      setLoading(true);
-      const response = await axios.post(`${process.env.REACT_APP_API_URL}/search/search`, {
-        query: userQuery,
-        top_k: 3,
-      });
+try {
+  setLoading(true);
+  
+  const response = await axios.post(
+    `${process.env.REACT_APP_API_URL}/search/search`,
+    {
+      query: userQuery,
+      top_k: 3,
+    },
+    {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+    }
+  );
 
       const assistantMessage = {
         role: "assistant",

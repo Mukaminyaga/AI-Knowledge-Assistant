@@ -39,12 +39,12 @@ def reindex_docs():
         filepath = os.path.join(DOCUMENTS_DIR, doc.filename)
 
         if not os.path.exists(filepath):
-            print(f"⚠️ Warning: File not found for Document ID {doc.id}: {filepath}")
+            print(f" Warning: File not found for Document ID {doc.id}: {filepath}")
             continue
 
         text = extract_text_for_file(doc.filename, filepath)
         if not text:
-            print(f"⚠️ Warning: No text extracted from {doc.filename}. Skipping...")
+            print(f" Warning: No text extracted from {doc.filename}. Skipping...")
             continue
 
         chunks = chunk_text(text, chunk_size=300, overlap=50)
@@ -55,13 +55,14 @@ def reindex_docs():
                 "filename": doc.filename,
                 "chunk_index": idx,
                 "chunk_text": chunk,
-                "document_id": doc.id
+                "document_id": doc.id,
+                "tenant_id": doc.tenant_id
             })
 
     db.close()
 
     if not all_chunks:
-        print("⚠️ No documents found for indexing.")
+        print("No documents found for indexing.")
         return
 
     embeddings = embed_chunks(all_chunks)

@@ -116,5 +116,5 @@ def save_to_faiss(embeddings: np.ndarray, metadata: list):
     with open(METADATA_FILE, "w") as f:
         json.dump(existing_meta, f, indent=2)
 
-    print(f"✅ Saved {len(embeddings)} embeddings to {INDEX_FILE}")
-    print(f"✅ Saved metadata (without embeddings) to {METADATA_FILE}")
+    print(f" Saved {len(embeddings)} embeddings to {INDEX_FILE}")
+    print(f" Saved metadata (without embeddings) to {METADATA_FILE}")

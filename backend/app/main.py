@@ -65,7 +65,6 @@ def startup():
 
 # Include Routers
 app.include_router(auth_routes.router, prefix="/auth", tags=["Auth"])
-# app.include_router(user_routes.router, prefix="/users", tags=["Users"])
 app.include_router(upload.router, prefix="/documents", tags=["Documents"])
 app.include_router(user_routes.router, prefix="/users", tags=["Users"])
 app.include_router(search.router, prefix="/search", tags=["Search"])
@@ -74,3 +73,5 @@ app.include_router(contact.router, prefix="/contact", tags=["Contact"])
 app.include_router(user_profile.router)
 # app.mount("/uploads", StaticFiles(directory=UPLOADS_PATH), name="uploads")
 app.include_router(tenant.router, prefix="/tenants", tags=["Tenants"])
+
+

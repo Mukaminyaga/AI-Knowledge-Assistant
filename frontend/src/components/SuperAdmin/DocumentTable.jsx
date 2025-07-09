@@ -19,20 +19,28 @@ const DocumentTable = ({ documents, tenantId }) => {
   const [statusFilter, setStatusFilter] = useState("all");
   const [typeFilter, setTypeFilter] = useState("all");
 
-const filteredDocuments = documents.filter((doc) => {
-  const matchesSearch =
-    (doc.name?.toLowerCase() || "").includes(searchTerm.toLowerCase()) ||
-    (doc.uploadedBy?.toLowerCase() || "").includes(searchTerm.toLowerCase()) ||
-    (doc.type?.toLowerCase() || "").includes(searchTerm.toLowerCase());
+  const convertSizeToBytes = (sizeStr) => {
+    const units = { KB: 1024, MB: 1024 * 1024, GB: 1024 * 1024 * 1024 };
+    const match = String(sizeStr).match(/^(\d+(?:\.\d+)?)\s*(KB|MB|GB)$/i);
+    if (match && match[2]) {
+      return parseFloat(match[1]) * (units[match[2].toUpperCase()] || 1);
+    }
+    return 0;
+  };
 
-  const matchesStatus = statusFilter === "all" || doc.status === statusFilter;
-  const matchesType =
-    typeFilter === "all" ||
-    (doc.type?.toLowerCase() || "") === typeFilter.toLowerCase();
+  const filteredDocuments = documents.filter((doc) => {
+    const matchesSearch =
+      (doc.name?.toLowerCase() || "").includes(searchTerm.toLowerCase()) ||
+      (doc.uploadedBy?.toLowerCase() || "").includes(searchTerm.toLowerCase()) ||
+      (doc.type?.toLowerCase() || "").includes(searchTerm.toLowerCase());
 
-  return matchesSearch && matchesStatus && matchesType;
-});
+    const matchesStatus = statusFilter === "all" || doc.status === statusFilter;
+    const matchesType =
+      typeFilter === "all" ||
+      (doc.type?.toLowerCase() || "") === typeFilter.toLowerCase();
 
+    return matchesSearch && matchesStatus && matchesType;
+  });
 
   const sortedDocuments = [...filteredDocuments].sort((a, b) => {
     let aVal = a[sortField];
@@ -44,29 +52,17 @@ const filteredDocuments = documents.filter((doc) => {
     }
 
     if (sortField === "size") {
-      // Convert size to bytes for comparison
       aVal = convertSizeToBytes(aVal);
       bVal = convertSizeToBytes(bVal);
     }
 
-    if (sortDirection === "asc") {
-      return aVal > bVal ? 1 : -1;
-    } else {
-      return aVal < bVal ? 1 : -1;
-    }
+    if (typeof aVal === "string") aVal = aVal.toLowerCase();
+    if (typeof bVal === "string") bVal = bVal.toLowerCase();
+
+    return sortDirection === "asc"
+      ? aVal > bVal ? 1 : -1
+      : aVal < bVal ? 1 : -1;
   });
-
-const convertSizeToBytes = (sizeStr) => {
-  const units = { KB: 1024, MB: 1024 * 1024, GB: 1024 * 1024 * 1024 };
-  const match = sizeStr?.match(/^(\d+(?:\.\d+)?)\s*(KB|MB|GB)$/i);
-
-  if (match && match[2]) {
-    return parseFloat(match[1]) * (units[match[2].toUpperCase()] || 1);
-  }
-
-  return 0; // fallback if match fails or unit is missing
-};
-
 
   const handleSort = (field) => {
     if (sortField === field) {
@@ -78,6 +74,7 @@ const convertSizeToBytes = (sizeStr) => {
   };
 
   const formatDate = (dateString) => {
+    if (!dateString) return "N/A";
     return new Date(dateString).toLocaleDateString("en-US", {
       month: "short",
       day: "numeric",
@@ -95,19 +92,17 @@ const convertSizeToBytes = (sizeStr) => {
       pending: "info",
     };
 
- return (
-  <span
-    className={`status-badge status-${statusColors[status?.toLowerCase?.()] || "default"}`}
-  >
-    {status
-      ? status.charAt(0).toUpperCase() + status.slice(1)
-      : "Unknown"}
-  </span>
-);
+    const safeStatus = status?.toLowerCase?.() || "unknown";
+    const badgeColor = statusColors[safeStatus] || "default";
 
+    return (
+      <span className={`status-badge status-${badgeColor}`}>
+        {status ? status.charAt(0).toUpperCase() + status.slice(1) : "Unknown"}
+      </span>
+    );
   };
 
-  const getFileIcon = (type) => {
+  const getFileIcon = (type = "") => {
     const iconMap = {
       pdf: FiFileText,
       doc: FiFileText,
@@ -118,12 +113,11 @@ const convertSizeToBytes = (sizeStr) => {
       png: FiImage,
       gif: FiImage,
     };
-
     const IconComponent = iconMap[type.toLowerCase()] || FiFile;
     return <IconComponent className="file-icon" />;
   };
 
-  const getTypeColors = (type) => {
+  const getTypeColors = (type = "") => {
     const typeColors = {
       pdf: "type-pdf",
       doc: "type-doc",
@@ -134,25 +128,21 @@ const convertSizeToBytes = (sizeStr) => {
       png: "type-image",
       gif: "type-image",
     };
-
     return typeColors[type.toLowerCase()] || "type-default";
   };
 
-  const uniqueTypes = [...new Set(documents.map((doc) => doc.type))];
+  const uniqueTypes = [...new Set(documents.map((doc) => doc.type || ""))];
 
   const handleDownload = (document) => {
     console.log("Downloading document:", document.name);
-    // Implement download logic here
   };
 
   const handleView = (document) => {
     console.log("Viewing document:", document.name);
-    // Implement view logic here
   };
 
   return (
     <div className="document-table-container">
-      {/* Controls */}
       <div className="table-controls">
         <div className="search-and-filters">
           <div className="search-box">
@@ -190,10 +180,10 @@ const convertSizeToBytes = (sizeStr) => {
                 onChange={(e) => setTypeFilter(e.target.value)}
               >
                 <option value="all">All Types</option>
-{uniqueTypes.map((type) => (
-  <option key={type || "unknown"} value={type || ""}>
-    {(type || "Unknown").toUpperCase()}
-  </option>
+                {uniqueTypes.map((type) => (
+                  <option key={type || "unknown"} value={type}>
+                    {(type || "Unknown").toUpperCase()}
+                  </option>
                 ))}
               </select>
             </div>
@@ -201,7 +191,6 @@ const convertSizeToBytes = (sizeStr) => {
         </div>
       </div>
 
-      {/* Stats */}
       <div className="document-stats">
         <div className="stat-item">
           <div className="stat-value">{documents.length}</div>
@@ -233,52 +222,25 @@ const convertSizeToBytes = (sizeStr) => {
         </div>
       </div>
 
-      {/* Table */}
       <div className="table-wrapper">
         <table className="data-table">
           <thead>
             <tr>
-              <th className="sortable" onClick={() => handleSort("name")}>
-                Document
-                {sortField === "name" && (
-                  <span className="sort-indicator">
-                    {sortDirection === "asc" ? "↑" : "↓"}
-                  </span>
-                )}
-              </th>
-              <th className="sortable" onClick={() => handleSort("type")}>
-                Type
-                {sortField === "type" && (
-                  <span className="sort-indicator">
-                    {sortDirection === "asc" ? "↑" : "↓"}
-                  </span>
-                )}
-              </th>
-              <th className="sortable" onClick={() => handleSort("size")}>
-                Size
-                {sortField === "size" && (
-                  <span className="sort-indicator">
-                    {sortDirection === "asc" ? "↑" : "↓"}
-                  </span>
-                )}
-              </th>
-              <th className="sortable" onClick={() => handleSort("uploadedBy")}>
-                Uploaded By
-                {sortField === "uploadedBy" && (
-                  <span className="sort-indicator">
-                    {sortDirection === "asc" ? "↑" : "↓"}
-                  </span>
-                )}
-              </th>
+              {["name", "type", "size", "uploadedBy", "uploadedAt"].map((field) => (
+                <th
+                  key={field}
+                  className="sortable"
+                  onClick={() => handleSort(field)}
+                >
+                  {field === "uploadedAt" ? "Uploaded" : field.charAt(0).toUpperCase() + field.slice(1)}
+                  {sortField === field && (
+                    <span className="sort-indicator">
+                      {sortDirection === "asc" ? "↑" : "↓"}
+                    </span>
+                  )}
+                </th>
+              ))}
               <th>Status</th>
-              <th className="sortable" onClick={() => handleSort("uploadedAt")}>
-                Uploaded
-                {sortField === "uploadedAt" && (
-                  <span className="sort-indicator">
-                    {sortDirection === "asc" ? "↑" : "↓"}
-                  </span>
-                )}
-              </th>
               <th>Actions</th>
             </tr>
           </thead>
@@ -296,9 +258,7 @@ const convertSizeToBytes = (sizeStr) => {
                 <tr key={document.id}>
                   <td>
                     <div className="document-cell">
-                      <div
-                        className={`document-icon ${getTypeColors(document.type)}`}
-                      >
+                      <div className={`document-icon ${getTypeColors(document.type)}`}>
                         {getFileIcon(document.type)}
                       </div>
                       <div className="document-info">
@@ -308,10 +268,9 @@ const convertSizeToBytes = (sizeStr) => {
                     </div>
                   </td>
                   <td>
-                   <span className={`type-badge ${getTypeColors(document.type)}`}>
-  {(document.type || "Unknown").toUpperCase()}
-</span>
-
+                    <span className={`type-badge ${getTypeColors(document.type)}`}>
+                      {(document.type || "Unknown").toUpperCase()}
+                    </span>
                   </td>
                   <td>
                     <div className="size-cell">
@@ -322,7 +281,7 @@ const convertSizeToBytes = (sizeStr) => {
                   <td>
                     <div className="uploader-cell">
                       <FiUser className="uploader-icon" />
-                      {document.uploadedBy}
+                      {document.uploadedBy || "Unknown"}
                     </div>
                   </td>
                   <td>{getStatusBadge(document.status)}</td>
@@ -357,7 +316,6 @@ const convertSizeToBytes = (sizeStr) => {
         </table>
       </div>
 
-      {/* Footer */}
       <div className="table-footer">
         <p className="showing-count">
           Showing {sortedDocuments.length} of {documents.length} documents
