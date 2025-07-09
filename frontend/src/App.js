@@ -23,6 +23,7 @@ import ResetPassword from "./pages/ResetPassword";
 // Super Admin imports
 import Overview from "./pages/SuperAdmin/Overview";
 import Tenants from "./pages/SuperAdmin/Tenants";
+import TenantDetails from "./pages/SuperAdmin/TenantDetails";
 import Payments from "./pages/SuperAdmin/Payments";
 import Analytics from "./pages/SuperAdmin/Analytics";
 
@@ -52,6 +53,10 @@ function App() {
           {/* Super Admin Routes */}
           <Route path="/super-admin/overview" element={<Overview />} />
           <Route path="/super-admin/tenants" element={<Tenants />} />
+          <Route
+            path="/super-admin/tenant-details/:tenantId"
+            element={<TenantDetails />}
+          />
           <Route path="/super-admin/payments" element={<Payments />} />
           <Route path="/super-admin/analytics" element={<Analytics />} />
         </Routes>

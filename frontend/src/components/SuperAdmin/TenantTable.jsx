@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { FiEdit, FiTrash2, FiEye, FiSearch } from "react-icons/fi";
+import { useNavigate } from "react-router-dom";
 import "../../styles/SuperAdmin.css";
 
 const TenantTable = ({
@@ -10,11 +11,11 @@ const TenantTable = ({
   showActions = true,
   limit = null,
 }) => {
+  const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
   const [sortField, setSortField] = useState("createdAt");
   const [sortDirection, setSortDirection] = useState("desc");
   const [expandedTenantId, setExpandedTenantId] = useState(null);
-
 
   // Fix: safely access fields for search
   const filteredTenants = tenants.filter((tenant) => {
@@ -75,16 +76,18 @@ const TenantTable = ({
       inactive: "warning",
       suspended: "danger",
     };
-  const formatDate = (dateString) => {
-  return new Date(dateString).toLocaleDateString("en-US", {
-    month: "short",
-    day: "numeric",
-    year: "numeric",
-  });
-};
+    const formatDate = (dateString) => {
+      return new Date(dateString).toLocaleDateString("en-US", {
+        month: "short",
+        day: "numeric",
+        year: "numeric",
+      });
+    };
 
     return (
-      <span className={`status-badge status-${statusColors[status] || "default"}`}>
+      <span
+        className={`status-badge status-${statusColors[status] || "default"}`}
+      >
         {status?.charAt(0).toUpperCase() + status?.slice(1)}
       </span>
     );
@@ -111,7 +114,10 @@ const TenantTable = ({
         <table className="data-table">
           <thead>
             <tr>
-              <th className="sortable" onClick={() => handleSort("companyName")}>
+              <th
+                className="sortable"
+                onClick={() => handleSort("companyName")}
+              >
                 Company
                 {sortField === "companyName" && (
                   <span className="sort-indicator">
@@ -119,7 +125,10 @@ const TenantTable = ({
                   </span>
                 )}
               </th>
-              <th className="sortable" onClick={() => handleSort("contactEmail")}>
+              <th
+                className="sortable"
+                onClick={() => handleSort("contactEmail")}
+              >
                 Contact Email
                 {sortField === "contactEmail" && (
                   <span className="sort-indicator">
@@ -139,14 +148,14 @@ const TenantTable = ({
               </th>
               <th>Max Users</th>
               <th>Status</th>
-        <th className="sortable" onClick={() => handleSort("created_at")}>
-  Created
-  {sortField === "created_at" && (
-    <span className="sort-indicator">
-      {sortDirection === "asc" ? "↑" : "↓"}
-    </span>
-  )}
-</th>
+              <th className="sortable" onClick={() => handleSort("created_at")}>
+                Created
+                {sortField === "created_at" && (
+                  <span className="sort-indicator">
+                    {sortDirection === "asc" ? "↑" : "↓"}
+                  </span>
+                )}
+              </th>
 
               {showActions && <th>Actions</th>}
             </tr>
@@ -175,7 +184,9 @@ const TenantTable = ({
                   </td>
                   <td>{tenant.contactEmail || tenant.contact_email}</td>
                   <td>
-                    <code className="slug-code">{tenant.slugUrl || tenant.slug_url}</code>
+                    <code className="slug-code">
+                      {tenant.slugUrl || tenant.slug_url}
+                    </code>
                   </td>
                   {/* <td>
                     <span className="plan-badge">{tenant.plan}</span>
@@ -192,28 +203,15 @@ const TenantTable = ({
                   {showActions && (
                     <td>
                       <div className="action-buttons">
-                     <button
-                className="action-btn view-btn"
-                onClick={() =>
-                  setExpandedTenantId(
-                    expandedTenantId === tenant.id ? null : tenant.id
-                  )
-                }
-                title={
-                  expandedTenantId === tenant.id
-                    ? "Hide details"
-                    : "View details"
-                }
-              >
-                <FiEye
-                  style={{
-                    transform:
-                      expandedTenantId === tenant.id
-                        ? "rotate(180deg)"
-                        : "none",
-                  }}
-                />
-              </button>
+                        <button
+                          className="action-btn view-btn"
+                          onClick={() =>
+                            navigate(`/super-admin/tenant-details/${tenant.id}`)
+                          }
+                          title="View tenant details"
+                        >
+                          <FiEye />
+                        </button>
 
                         <button
                           className="action-btn edit-btn"

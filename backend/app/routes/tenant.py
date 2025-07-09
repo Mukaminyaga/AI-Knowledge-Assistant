@@ -1,11 +1,15 @@
 from fastapi import APIRouter, HTTPException, Depends
 from sqlalchemy.orm import Session
+from typing import List
 from app.database import get_db
 from app.models.tenant import Tenant
+from app.models.users import User
 from app.schemas.tenant import TenantCreate, TenantUpdate, TenantOut
+from app.schemas.users import UserOut
 
 router = APIRouter(prefix="/tenants", tags=["Tenants"])
 
+# Create a new tenant
 @router.post("/", response_model=TenantOut)
 def create_tenant(tenant: TenantCreate, db: Session = Depends(get_db)):
     existing = db.query(Tenant).filter(Tenant.slug_url == tenant.slug_url).first()
@@ -26,10 +30,31 @@ def create_tenant(tenant: TenantCreate, db: Session = Depends(get_db)):
     db.refresh(db_tenant)
     return db_tenant
 
-@router.get("/", response_model=list[TenantOut])
+# Get all tenants
+@router.get("/", response_model=List[TenantOut])
 def get_all_tenants(db: Session = Depends(get_db)):
     return db.query(Tenant).all()
 
+#  GET specific tenant by ID (this was missing)
+@router.get("/{tenant_id}", response_model=TenantOut)
+def get_tenant_by_id(tenant_id: int, db: Session = Depends(get_db)):
+    tenant = db.query(Tenant).filter(Tenant.id == tenant_id).first()
+    if not tenant:
+        raise HTTPException(status_code=404, detail="Tenant not found")
+    return tenant
+
+
+# Get users under a tenant
+@router.get("/{tenant_id}/users", response_model=List[UserOut])
+def get_users_by_tenant(tenant_id: int, db: Session = Depends(get_db)):
+    tenant = db.query(Tenant).filter(Tenant.id == tenant_id).first()
+    if not tenant:
+        raise HTTPException(status_code=404, detail="Tenant not found")
+
+    users = db.query(User).filter(User.tenant_id == tenant_id).all()
+    return users
+
+# Update a tenant
 @router.put("/{tenant_id}", response_model=TenantOut)
 def update_tenant(tenant_id: int, tenant: TenantUpdate, db: Session = Depends(get_db)):
     db_tenant = db.query(Tenant).filter(Tenant.id == tenant_id).first()
@@ -57,6 +82,7 @@ def update_tenant(tenant_id: int, tenant: TenantUpdate, db: Session = Depends(ge
     db.refresh(db_tenant)
     return db_tenant
 
+# Delete a tenant
 @router.delete("/{tenant_id}")
 def delete_tenant(tenant_id: int, db: Session = Depends(get_db)):
     db_tenant = db.query(Tenant).filter(Tenant.id == tenant_id).first()
