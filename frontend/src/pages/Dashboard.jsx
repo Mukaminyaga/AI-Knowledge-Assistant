@@ -20,10 +20,10 @@ function Dashboard() {
           <h1 className="dashboard-title">Dashboard</h1>
           <div className="dashboard-nav">
             <Link to="/" className="back-to-home-button">
-              <FiHome /> Home
+               Home
             </Link>
             <Link to="/chat" className="chat-link-button">
-              <FiMessageCircle /> Start Chat
+             Start Chat
             </Link>
           </div>
         </div>

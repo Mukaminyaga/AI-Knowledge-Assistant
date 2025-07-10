@@ -1,5 +1,5 @@
 import React from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 import Home from "./pages/Home";
 import LoggedInHome from "./pages/LoggedInHome";
 import Dashboard from "./pages/Dashboard";
@@ -27,41 +27,47 @@ import TenantDetails from "./pages/SuperAdmin/TenantDetails";
 import Payments from "./pages/SuperAdmin/Payments";
 import Analytics from "./pages/SuperAdmin/Analytics";
 
+// Auth utilities
+import PrivateRoute from "./components/privateRoute"; 
+
 function App() {
   return (
-    <Router>
+
       <div className="App">
         <Routes>
+          {/* Public Routes */}
           <Route path="/" element={<Home />} />
-          <Route path="/home" element={<LoggedInHome />} />
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/chat" element={<Chat />} />
-          <Route path="/upload-documents" element={<UploadDocuments />} />
-          <Route path="/knowledge-base" element={<KnowledgeBase />} />
-          <Route path="/KnowledgeChat" element={<KnowledgeChat />} />
-          <Route path="/chatuser" element={<ChatUser />} />
           <Route path="/features" element={<Features />} />
           <Route path="/about" element={<About />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
-          <Route path="/users" element={<Users />} />
-          <Route path="/settings" element={<Settings />} />
           <Route path="/forgot" element={<ForgotPassword />} />
           <Route path="/reset" element={<ResetPassword />} />
 
-          {/* Super Admin Routes */}
-          <Route path="/super-admin/overview" element={<Overview />} />
-          <Route path="/super-admin/tenants" element={<Tenants />} />
+          {/* Protected Routes */}
+          <Route path="/home" element={<PrivateRoute><LoggedInHome /></PrivateRoute>} />
+          <Route path="/dashboard" element={<PrivateRoute><Dashboard /></PrivateRoute>} />
+          <Route path="/chat" element={<PrivateRoute><Chat /></PrivateRoute>} />
+          <Route path="/chatuser" element={<PrivateRoute><ChatUser /></PrivateRoute>} />
+          <Route path="/upload-documents" element={<PrivateRoute><UploadDocuments /></PrivateRoute>} />
+          <Route path="/knowledge-base" element={<PrivateRoute><KnowledgeBase /></PrivateRoute>} />
+          <Route path="/KnowledgeChat" element={<PrivateRoute><KnowledgeChat /></PrivateRoute>} />
+          <Route path="/users" element={<PrivateRoute><Users /></PrivateRoute>} />
+          <Route path="/settings" element={<PrivateRoute><Settings /></PrivateRoute>} />
+
+          {/* Super Admin Protected Routes */}
+          <Route path="/super-admin/overview" element={<PrivateRoute><Overview /></PrivateRoute>} />
+          <Route path="/super-admin/tenants" element={<PrivateRoute><Tenants /></PrivateRoute>} />
           <Route
             path="/super-admin/tenant-details/:tenantId"
-            element={<TenantDetails />}
+            element={<PrivateRoute><TenantDetails /></PrivateRoute>}
           />
-          <Route path="/super-admin/payments" element={<Payments />} />
-          <Route path="/super-admin/analytics" element={<Analytics />} />
+          <Route path="/super-admin/payments" element={<PrivateRoute><Payments /></PrivateRoute>} />
+          <Route path="/super-admin/analytics" element={<PrivateRoute><Analytics /></PrivateRoute>} />
         </Routes>
       </div>
-    </Router>
+    
   );
 }
 

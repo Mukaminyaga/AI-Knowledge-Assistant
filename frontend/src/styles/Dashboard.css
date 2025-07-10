@@ -205,7 +205,8 @@
 }
 
 .card-button {
-  background-color: var(--primary-color);
+  background-color: #3367D6;
+  /* background-color: var(--primary-color); */
   color: var(--white);
   border: none;
   border-radius: 12px;

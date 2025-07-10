@@ -87,42 +87,53 @@ const handleSubmit = async (e) => {
   }
 
   setIsSubmitting(true);
+  setErrors({}); // clear previous errors
 
   try {
     const response = await axios.post(
-  `${process.env.REACT_APP_API_URL}/auth/login`, {
-      email: formData.email,
-      password: formData.password,
-    });
+      `${process.env.REACT_APP_API_URL}/auth/login`,
+      {
+        email: formData.email,
+        password: formData.password,
+      }
+    );
 
-   const { access_token, user: loggedInUser } = response.data;
+    const { access_token, user: loggedInUser } = response.data;
 
-localStorage.setItem("token", access_token);
-localStorage.setItem("user", JSON.stringify(loggedInUser));
+    localStorage.setItem("token", access_token);
+    localStorage.setItem("user", JSON.stringify(loggedInUser));
 
-
-if (loggedInUser.role === "super_admin") {
-  navigate("/super-admin/overview");
-} else if (loggedInUser.role === "admin") {
-  navigate("/dashboard");
-} else {
-  navigate("/");
-}
+    if (loggedInUser.role === "super_admin") {
+      navigate("/super-admin/overview");
+    } else if (loggedInUser.role === "admin") {
+      navigate("/dashboard");
+    } else {
+      navigate("/home"); // or any public/home route for regular users
+    }
 
   } catch (error) {
     console.error("Login error:", error);
 
-    if (error.response && error.response.status === 401) {
-      setErrors({ general: "Invalid credentials. Please try again." });
-    } else if (error.response && error.response.status === 422) {
-      setErrors({ general: "Validation error. Please check your input." });
+    if (error.response) {
+      const { status, data } = error.response;
+
+      if (status === 401 || status === 400) {
+        setErrors({ general: "Invalid credentials. Please try again." });
+      } else if (status === 403) {
+        setErrors({ general: data.detail || "Access denied. Account not approved." });
+      } else if (status === 422) {
+        setErrors({ general: "Validation error. Please check your input." });
+      } else {
+        setErrors({ general: "Unexpected error. Please try again later." });
+      }
     } else {
-      setErrors({ general: "Login failed. Please try again later." });
+      setErrors({ general: "Network error. Please check your connection." });
     }
   } finally {
     setIsSubmitting(false);
   }
 };
+
 
   return (
     <div className="auth-page">
