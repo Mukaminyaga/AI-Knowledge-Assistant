@@ -2,7 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 import Header from "../components/Header";
 import "../styles/Home.css";
-import { FiSearch, FiBookOpen,FiUsers,FiMessageCircle  } from "react-icons/fi"; 
+import { FiSearch, FiBookOpen, FiUsers, FiMessageCircle } from "react-icons/fi";
 
 function Home() {
   return (
@@ -33,39 +33,46 @@ function Home() {
               </Link>
             </div>
           </div>
-<div className="right-column">
-  <div className="ai-interface">
-    {/* <img
+          <div className="right-column">
+            <div className="ai-interface">
+              {/* <img
       src="https://cdn.builder.io/api/v1/image/assets/TEMP/0e944e7e924c57835acc93c4e90e613f01f1622e?placeholderIfAbsent=true&apiKey=ea5315464b7044b69c5ba8769be22018"
       className="background-image"
       alt="AI Interface Background"
     /> */}
-    <div className="chat-window">
-      <div className="chat-header">💬 Live AI Conversation</div>
-      <div className="conversation-example">
-        <div className="user-message">
-          <div className="message-label">You</div>
-          <div className="message-content">
-            "What are the levels of access control in our internal knowledge base?"
-          </div>
-        </div>
-        <div className="ai-message">
-          <div className="message-label">AI Assistant</div>
-          <div className="message-content">
-            Our knowledge base uses four main access control levels:
-            <br />• <strong>Public</strong>: Visible to all team members across departments
-            <br />• <strong>Team-Restricted</strong>: Only accessible to members of a specific team 
-            <br />• <strong>Role-Based</strong>: Access is granted based on role rather than team
-            <br />• <strong>Confidential</strong>: Limited to executives or project stakeholders with explicit permission
-            <br /><br />
-           
-          </div>
-          <div className="source-reference">
-            📄 Source: Knowledge Base Policy Handbook → Section 2.4: Access Control
-          </div>
-        </div>
-      </div>
-      {/* <div className="quick-searches-title">Try these examples</div>
+              <div className="chat-window">
+                <div className="chat-header">💬 Live AI Conversation</div>
+                <div className="conversation-example">
+                  <div className="user-message">
+                    <div className="message-label">You</div>
+                    <div className="message-content">
+                      "What are the levels of access control in our internal
+                      knowledge base?"
+                    </div>
+                  </div>
+                  <div className="ai-message">
+                    <div className="message-label">AI Assistant</div>
+                    <div className="message-content">
+                      Our knowledge base uses four main access control levels:
+                      <br />• <strong>Public</strong>: Visible to all team
+                      members across departments
+                      <br />• <strong>Team-Restricted</strong>: Only accessible
+                      to members of a specific team
+                      <br />• <strong>Role-Based</strong>: Access is granted
+                      based on role rather than team
+                      <br />• <strong>Confidential</strong>: Limited to
+                      executives or project stakeholders with explicit
+                      permission
+                      <br />
+                      <br />
+                    </div>
+                    <div className="source-reference">
+                      📄 Source: Knowledge Base Policy Handbook → Section 2.4:
+                      Access Control
+                    </div>
+                  </div>
+                </div>
+                {/* <div className="quick-searches-title">Try these examples</div>
       <div className="search-tags">
         <div className="search-tag">
           <div className="tag-text">Permissions</div>
@@ -73,12 +80,12 @@ function Home() {
         <div className="search-tag">
           <div className="tag-text">Access Levels</div>
         </div> */}
-{/*   
+                {/*
       </div> */}
-    </div>
-  </div>
-</div>
-</div>
+              </div>
+            </div>
+          </div>
+        </div>
         {/* Features Section */}
         <div className="features-section">
           <div className="features-header">
@@ -93,7 +100,9 @@ function Home() {
 
           <div className="features-grid">
             <div className="feature-card">
-              <div className="feature-icon"><FiSearch size={40} /></div>
+              <div className="feature-icon">
+                <FiSearch size={40} />
+              </div>
               <h3 className="feature-title">Smart Search</h3>
               <p className="feature-description">
                 Find answers instantly across all your documents, policies, and
@@ -102,8 +111,9 @@ function Home() {
             </div>
 
             <div className="feature-card">
-              
-            <div className="feature-icon"><FiMessageCircle size={40} /></div> 
+              <div className="feature-icon">
+                <FiMessageCircle size={40} />
+              </div>
               <h3 className="feature-title">AI Assistant</h3>
               <p className="feature-description">
                 Get contextual answers and suggestions from your personalized AI
@@ -112,14 +122,16 @@ function Home() {
             </div>
 
             <div className="feature-card">
-              <div className="feature-icon"><FiBookOpen size={40} /></div>
+              <div className="feature-icon">
+                <FiBookOpen size={40} />
+              </div>
               <h3 className="feature-title">Knowledge Base</h3>
               <p className="feature-description">
                 Centralize all your documents, FAQs, and procedures in one
                 searchable, organized knowledge base.
               </p>
             </div>
-{/* 
+            {/*
             <div className="feature-card">
               <div className="feature-icon"><FiZap size={30} /></div>
               <h3 className="feature-title">Quick Actions</h3>
@@ -130,7 +142,9 @@ function Home() {
             </div> */}
 
             <div className="feature-card">
-              <div className="feature-icon"><FiUsers size={40} /></div>
+              <div className="feature-icon">
+                <FiUsers size={40} />
+              </div>
               <h3 className="feature-title">Team Collaboration</h3>
               <p className="feature-description">
                 Share knowledge, insights, and updates seamlessly across teams

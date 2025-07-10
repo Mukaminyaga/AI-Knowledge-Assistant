@@ -18,7 +18,7 @@
   right: 0;
   background-color: rgba(255, 255, 255, 0.98);
   padding: 15px var(--container-padding);
-  width: 100% ;
+  width: 100%;
   box-shadow: 0 2px 15px rgba(0, 0, 0, 0.08);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
@@ -35,6 +35,22 @@
 a {
   text-decoration: none;
 }
+.logo-section {
+  display: flex;
+  align-items: center;
+  /* gap: 12px; */
+}
+
+.logo-link {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  color: inherit;
+}
+.logo-image {
+  height: 120px;
+  width: auto;
+}
 
 .nav-wrapper {
   display: flex;
@@ -47,10 +63,10 @@ a {
 }
 
 .brand-title {
-  font-size: 28px;
+  font-size: 28px !important;
   font-family: var(--font-mitr);
   font-weight: 500;
-  color: var(--primary-color);
+  color: var(--primary-dark) !important;
   transition: all 0.3s ease;
   display: flex;
   align-items: center;
@@ -65,7 +81,6 @@ a {
 .brand-icon {
   font-size: 24px;
 }
-
 
 .nav-links-group {
   margin-top: 20px;
@@ -87,11 +102,11 @@ a {
 
 /* Optional: Add an underline effect on hover */
 .nav-links-group a:hover {
-  color:var(--primary-color); /* change color on hover */
+  color: var(--primary-color); /* change color on hover */
 }
 
 .nav-links-group a:hover::after {
-  content: '';
+  content: "";
   position: absolute;
   bottom: 0;
   left: 0;
@@ -120,7 +135,7 @@ a {
   align-items: center;
   white-space: nowrap;
   margin-top: 20px;
- flex-direction: row !important;
+  flex-direction: row !important;
 }
 
 .signin-button {

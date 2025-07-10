@@ -8,11 +8,7 @@ import {
   FiBookOpen,
   FiUpload,
 } from "react-icons/fi";
-import {
-  MdRecentActors,
-  MdDocumentScanner,
-  MdPersonAdd,
-} from "react-icons/md";
+import { MdRecentActors, MdDocumentScanner, MdPersonAdd } from "react-icons/md";
 import DashboardLayout from "../components/DashboardLayout";
 import "../styles/Dashboard.css";
 

@@ -49,7 +49,7 @@
   align-items: stretch;
   line-height: normal;
   width: 50%;
-  margin-left: 50px ;
+  margin-left: 50px;
 }
 
 @media (max-width: 991px) {
@@ -207,7 +207,7 @@
     transform: scale(1);
   }
 }
-/* 
+/*
 .get-started-button.pulse {
   animation: pulse 2s infinite;
 } */
@@ -1035,7 +1035,7 @@
 }
 
 .feature-card:hover {
-    transform: translateY(-8px);
+  transform: translateY(-8px);
   box-shadow: 0 16px 40px rgba(0, 0, 0, 0.08);
   border-color: transparent !important;
 }
@@ -1402,7 +1402,7 @@
 }
 
 .benefits-cta-button {
-  background-color: var(--primary-color);
+  background: linear-gradient(45deg, var(--primary-dark), var(--primary-color));
   color: var(--white);
   border: none;
   border-radius: 25px;
@@ -1416,7 +1416,7 @@
 }
 
 .benefits-cta-button:hover {
-  background-color: var(--primary-dark);
+  background-color: var(--primary-color);
   transform: translateY(-2px);
   box-shadow: 0 8px 25px rgba(11, 58, 96, 0.3);
 }

@@ -110,13 +110,13 @@ const user = JSON.parse(localStorage.getItem("user"));
           {!isCollapsed && (
             <div className="user-info">
                <p className="user-name">
-  {user?.first_name
-    ? `${user.first_name}.${user.last_name?.charAt(0).toUpperCase() || ""}`
-    : "John.D"}
-</p>
+                  {user?.first_name
+                   ? `${user.first_name}.${user.last_name?.charAt(0).toUpperCase() || ""}`
+                    : "John.D"}
+              </p>
 
-               <p className="user-email">{user?.email || "john@example.com"}</p>
-            </div>
+              <p className="user-email">{user?.email || "john@example.com"}</p>
+               </div>
           )}
           {!isCollapsed && (
             <div className="profile-actions">
