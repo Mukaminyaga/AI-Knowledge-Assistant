@@ -330,157 +330,140 @@ const handleSubmit = async (e) => {
                   )}
                 </div>
 
-                <div className="form-row">
-                  <div className="form-group">
-                    <label htmlFor="password" className="form-label">
-                      Password
-                    </label>
-                    <div className="password-input-wrapper">
-                      <input
-                        type={showPassword ? "text" : "password"}
-                        id="password"
-                        name="password"
-                        value={formData.password}
-                        onChange={handleInputChange}
-                        className={`form-input password-input ${errors.password ? "error" : ""}`}
-                        placeholder="Create password"
-                        autoComplete="new-password"
-                      />
-                      <span
-                        className="password-toggle-btn"
-                        onClick={() => setShowPassword(!showPassword)}
-                        aria-label={
-                          showPassword ? "Hide password" : "Show password"
-                        }
-                      >
-                        {showPassword ? (
-                          <svg
-                            width="20"
-                            height="20"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            xmlns="http://www.w3.org/2000/svg"
-                          >
-                            <path
-                              d="M3 3L21 21M9.9 4.24C10.5 4.07 11.2 4 12 4C19 4 23 12 23 12S22.393 13.1 21.413 14.169M16.5 12.5C16.8 11.8 17 11.2 17 10.5C17 8 15 6 12.5 6C11.8 6 11.2 6.2 10.5 6.5M6.5 6.5C4.5 8.5 2 12 2 12S6 20 13 20C14.5 20 15.8 19.6 17 18.9"
-                              stroke="currentColor"
-                              strokeWidth="2"
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                            />
-                          </svg>
-                        ) : (
-                          <svg
-                            width="20"
-                            height="20"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            xmlns="http://www.w3.org/2000/svg"
-                          >
-                            <path
-                              d="M1 12S5 4 12 4S23 12 23 12S19 20 12 20S1 12 1 12Z"
-                              stroke="currentColor"
-                              strokeWidth="2"
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                            />
-                            <circle
-                              cx="12"
-                              cy="12"
-                              r="3"
-                              stroke="currentColor"
-                              strokeWidth="2"
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                            />
-                          </svg>
-                        )}
-                      </span>
-                    </div>
-                    {errors.password && (
-                      <span className="error-message">{errors.password}</span>
-                    )}
-                  </div>
+               <div className="form-row">
+  {/* Password Field */}
+  <div className="form-group">
+    <label htmlFor="password" className="form-label">Password</label>
+    <div className="password-input-wrapper">
+      <input
+        type={showPassword ? "text" : "password"}
+        id="password"
+        name="password"
+        value={formData.password}
+        onChange={handleInputChange}
+        className={`form-input password-input ${errors.password ? "error" : ""}`}
+        placeholder="Create password"
+        autoComplete="new-password"
+      />
+      <span
+        className="password-toggle-btn"
+        onClick={() => setShowPassword(!showPassword)}
+        aria-label={showPassword ? "Hide password" : "Show password"}
+      >
+        {/* Show icon for hiding password (i.e. eye open) */}
+        {showPassword ? (
+          // Eye Open (Hide)
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path
+              d="M1 12S5 4 12 4S23 12 23 12S19 20 12 20S1 12 1 12Z"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+            <circle
+              cx="12"
+              cy="12"
+              r="3"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </svg>
+        ) : (
+          // Eye Slash (Show)
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path
+              d="M3 3L21 21M9.9 4.24C10.5 4.07 11.2 4 12 4C19 4 23 12 23 12S22.393 13.1 21.413 14.169M16.5 12.5C16.8 11.8 17 11.2 17 10.5C17 8 15 6 12.5 6C11.8 6 11.2 6.2 10.5 6.5M6.5 6.5C4.5 8.5 2 12 2 12S6 20 13 20C14.5 20 15.8 19.6 17 18.9"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </svg>
+        )}
+      </span>
+    </div>
+    {errors.password && (
+      <span className="error-message">{errors.password}</span>
+    )}
+  </div>
+
+  {/* Confirm Password Field */}
+  <div className="form-group">
+    <label htmlFor="confirmPassword" className="form-label">Confirm password</label>
+    <div className="password-input-wrapper">
+      <input
+        type={showConfirmPassword ? "text" : "password"}
+        id="confirmPassword"
+        name="confirmPassword"
+        value={formData.confirmPassword}
+        onChange={handleInputChange}
+        className={`form-input password-input ${errors.confirmPassword ? "error" : ""}`}
+        placeholder="Confirm password"
+        autoComplete="new-password"
+      />
+      <span
+        className="password-toggle-btn"
+        onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+        aria-label={showConfirmPassword ? "Hide password" : "Show password"}
+      >
+        {showConfirmPassword ? (
+          // Eye Open (Hide)
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path
+              d="M1 12S5 4 12 4S23 12 23 12S19 20 12 20S1 12 1 12Z"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+            <circle
+              cx="12"
+              cy="12"
+              r="3"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </svg>
+        ) : (
+          // Eye Slash (Show)
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path
+              d="M3 3L21 21M9.9 4.24C10.5 4.07 11.2 4 12 4C19 4 23 12 23 12S22.393 13.1 21.413 14.169M16.5 12.5C16.8 11.8 17 11.2 17 10.5C17 8 15 6 12.5 6C11.8 6 11.2 6.2 10.5 6.5M6.5 6.5C4.5 8.5 2 12 2 12S6 20 13 20C14.5 20 15.8 19.6 17 18.9"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </svg>
+        )}
+      </span>
+    </div>
+    {errors.confirmPassword && (
+      <span className="error-message">{errors.confirmPassword}</span>
+    )}
+  </div>
+</div>
 
                   <div className="form-group">
-                    <label htmlFor="confirmPassword" className="form-label">
-                      Confirm password
+                    <label htmlFor="companyName" className="form-label">
+                      Company Name
                     </label>
-                    <div className="password-input-wrapper">
-                      <input
-                        type={showConfirmPassword ? "text" : "password"}
-                        id="confirmPassword"
-                        name="confirmPassword"
-                        value={formData.confirmPassword}
-                        onChange={handleInputChange}
-                        className={`form-input password-input ${errors.confirmPassword ? "error" : ""}`}
-                        placeholder="Confirm password"
-                        autoComplete="new-password"
-                      />
-                      <span
-              
-                        className="password-toggle-btn"
-                        onClick={() =>
-                          setShowConfirmPassword(!showConfirmPassword)
-                        }
-                        aria-label={
-                          showConfirmPassword
-                            ? "Hide password"
-                            : "Show password"
-                        }
-                      >
-                        {showConfirmPassword ? (
-                          <svg
-                            width="20"
-                            height="20"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            xmlns="http://www.w3.org/2000/svg"
-                          >
-                            <path
-                              d="M3 3L21 21M9.9 4.24C10.5 4.07 11.2 4 12 4C19 4 23 12 23 12S22.393 13.1 21.413 14.169M16.5 12.5C16.8 11.8 17 11.2 17 10.5C17 8 15 6 12.5 6C11.8 6 11.2 6.2 10.5 6.5M6.5 6.5C4.5 8.5 2 12 2 12S6 20 13 20C14.5 20 15.8 19.6 17 18.9"
-                              stroke="currentColor"
-                              strokeWidth="2"
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                            />
-                          </svg>
-                        ) : (
-                          <svg
-                            width="20"
-                            height="20"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            xmlns="http://www.w3.org/2000/svg"
-                          >
-                            <path
-                              d="M1 12S5 4 12 4S23 12 23 12S19 20 12 20S1 12 1 12Z"
-                              stroke="currentColor"
-                              strokeWidth="2"
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                            />
-                            <circle
-                              cx="12"
-                              cy="12"
-                              r="3"
-                              stroke="currentColor"
-                              strokeWidth="2"
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                            />
-                          </svg>
-                        )}
-                      </span>
-                    </div>
-                    {errors.confirmPassword && (
-                      <span className="error-message">
-                        {errors.confirmPassword}
-                      </span>
-                    )}
+                    <input
+                      type="text"
+                      id="companyName"
+                      name="companyName"
+                      value={formData.companyName}
+                      onChange={handleInputChange}
+                      className="form-input"
+                      placeholder="e.g. Good Partners"
+                      autoComplete="company name"
+                    />
                   </div>
-                </div>
-
                 <div className="form-group">
                   <label htmlFor="role" className="form-label">
                     Job Title(Role)
@@ -499,21 +482,7 @@ const handleSubmit = async (e) => {
                     <span className="error-message">{errors.companyName}</span>
                   )}
                 </div>
-                   <div className="form-group">
-                    <label htmlFor="companyName" className="form-label">
-                      Company Name
-                    </label>
-                    <input
-                      type="text"
-                      id="companyName"
-                      name="companyName"
-                      value={formData.companyName}
-                      onChange={handleInputChange}
-                      className="form-input"
-                      placeholder="e.g. Good Partners"
-                      autoComplete="company name"
-                    />
-                  </div>
+                 
                 {/* <div className="form-row">
                   <div className="form-group">
                     <label htmlFor="jobTitle" className="form-label">
@@ -628,18 +597,18 @@ const handleSubmit = async (e) => {
           <div className="visual-content">
             <div className="success-metrics">
               <h3 className="metrics-title">Join successful teams</h3>
-              <div className="metrics-grid">
+              <div className="metrics-grid1">
                 <div className="metric-item">
-                  <div className="metric-value">5 hours</div>
-                  <div className="metric-label">saved per week</div>
+                  <div className="metric-value1">5 hours</div>
+                  <div className="metric-label1">saved per week</div>
                 </div>
                 <div className="metric-item">
-                  <div className="metric-value">80%</div>
-                  <div className="metric-label">fewer questions</div>
+                  <div className="metric-value1">80%</div>
+                  <div className="metric-label1">fewer questions</div>
                 </div>
                 <div className="metric-item">
-                  <div className="metric-value">3x faster</div>
-                  <div className="metric-label">onboarding</div>
+                  <div className="metric-value1">3x faster</div>
+                  <div className="metric-label1">onboarding</div>
                 </div>
               </div>
             </div>
@@ -676,7 +645,8 @@ const handleSubmit = async (e) => {
                   <div className="trust-description">GDPR & CCPA compliant</div>
                 </div>
               </div>
-            </div>
+           
+              </div>
           </div>
         </div>
       </div>

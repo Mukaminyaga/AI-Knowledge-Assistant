@@ -93,7 +93,7 @@ function Home() {
 
           <div className="features-grid">
             <div className="feature-card">
-              <div className="feature-icon"><FiSearch size={30} /></div>
+              <div className="feature-icon"><FiSearch size={40} /></div>
               <h3 className="feature-title">Smart Search</h3>
               <p className="feature-description">
                 Find answers instantly across all your documents, policies, and
@@ -103,7 +103,7 @@ function Home() {
 
             <div className="feature-card">
               
-            <div className="feature-icon"><FiMessageCircle size={30} /></div> 
+            <div className="feature-icon"><FiMessageCircle size={40} /></div> 
               <h3 className="feature-title">AI Assistant</h3>
               <p className="feature-description">
                 Get contextual answers and suggestions from your personalized AI
@@ -112,7 +112,7 @@ function Home() {
             </div>
 
             <div className="feature-card">
-              <div className="feature-icon"><FiBookOpen size={30} /></div>
+              <div className="feature-icon"><FiBookOpen size={40} /></div>
               <h3 className="feature-title">Knowledge Base</h3>
               <p className="feature-description">
                 Centralize all your documents, FAQs, and procedures in one
@@ -130,7 +130,7 @@ function Home() {
             </div> */}
 
             <div className="feature-card">
-              <div className="feature-icon"><FiUsers size={30} /></div>
+              <div className="feature-icon"><FiUsers size={40} /></div>
               <h3 className="feature-title">Team Collaboration</h3>
               <p className="feature-description">
                 Share knowledge, insights, and updates seamlessly across teams

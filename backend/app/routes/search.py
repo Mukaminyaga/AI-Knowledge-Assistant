@@ -2,7 +2,6 @@ from fastapi import APIRouter, HTTPException, Depends
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
 import re
-
 from app.utils.faiss_search import DocumentSearcher
 from app.utils.embedding_utils import embed_chunks
 from app.utils.llm import llm_pipeline
@@ -14,7 +13,6 @@ from app.database import get_db
 
 router = APIRouter()
 
-print("✅ search.py loaded")
 
 class QueryRequest(BaseModel):
     query: str
@@ -30,7 +28,6 @@ def search_docs(
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
-    print("✅ search_docs endpoint triggered")
 
     try:
         searcher = DocumentSearcher()
@@ -38,10 +35,10 @@ def search_docs(
         raise HTTPException(status_code=500, detail=f"Index or metadata not found: {str(e)}")
 
     query_embedding = embed_chunks([request.query])[0]
-    print("🔍 query embedding:", query_embedding)
+    print(" query embedding:", query_embedding)
 
     results = searcher.search(query_embedding, top_k=request.top_k, tenant_id=current_user.tenant_id)
-    print("📄 Search results:", results)
+    print(" Search results:", results)
 
     if not results:
         raise HTTPException(status_code=404, detail="No matching documents found for your tenant.")

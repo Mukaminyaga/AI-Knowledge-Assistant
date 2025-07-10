@@ -93,6 +93,7 @@
     var(--primary-color) 0%,
     rgba(8, 45, 75, 1) 100%
   );
+  
   position: relative;
   overflow: hidden;
 }
@@ -127,7 +128,7 @@
   font-family: var(--font-gloock);
 }
 
-.metrics-grid {
+.metrics-grid1 {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 20px;
@@ -138,19 +139,19 @@
 }
 
 .metric-item {
-  text-align: center;
+  text-align: center ;
 }
 
-.metric-value {
+.metric-value1 {
   font-size: 20px;
   font-weight: 700;
   margin-bottom: 8px;
-  color: #fbbf24;
+  color: #fbbf24 ;
 }
 
-.metric-label {
-  font-size: 12px;
-  opacity: 0.9;
+.metric-label1 {
+  font-size: 14px;
+   opacity: 0.9;
   line-height: 1.3;
 }
 

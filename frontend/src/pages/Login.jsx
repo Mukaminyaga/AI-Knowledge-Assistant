@@ -2,6 +2,9 @@ import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import "../styles/Login.css";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
+
+
 
 function Login() {
   const [formData, setFormData] = useState({
@@ -13,6 +16,7 @@ function Login() {
   const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const navigate = useNavigate();
 
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -97,11 +101,14 @@ localStorage.setItem("token", access_token);
 localStorage.setItem("user", JSON.stringify(loggedInUser));
 
 
-if (loggedInUser.role === "admin") {
-  window.location.href = "/dashboard";
+if (loggedInUser.role === "super_admin") {
+  navigate("/super-admin/overview");
+} else if (loggedInUser.role === "admin") {
+  navigate("/dashboard");
 } else {
-  window.location.href = "/dashboard";
+  navigate("/");
 }
+
   } catch (error) {
     console.error("Login error:", error);
 
@@ -166,82 +173,85 @@ if (loggedInUser.role === "admin") {
                   )}
                 </div>
 
-                <div className="form-group">
-                  <label htmlFor="password" className="form-label">
-                    Password
-                  </label>
-                  <div className="password-input-wrapper">
-                    <input
-                      type={showPassword ? "text" : "password"}
-                      id="password"
-                      name="password"
-                      value={formData.password}
-                      onChange={handleInputChange}
-                      className={`form-input password-input ${getInputValidationClass("password")}`}
-                      placeholder="Enter your password"
-                      autoComplete="current-password"
-                    />
-                <span
-  role="button"
-  tabIndex={0}
-  className="password-toggle-btn"
-  onClick={() => setShowPassword(!showPassword)}
-  onKeyDown={(e) => {
-    if (e.key === "Enter" || e.key === " ") {
-      setShowPassword(!showPassword);
-    }
-  }}
-  aria-label={showPassword ? "Hide password" : "Show password"}
->
-  {showPassword ? (
-    <svg
-      width="20"
-      height="20"
-      viewBox="0 0 24 24"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
+               <div className="form-group">
+  <label htmlFor="password" className="form-label">
+    Password
+  </label>
+  <div className="password-input-wrapper">
+    <input
+      type={showPassword ? "text" : "password"}
+      id="password"
+      name="password"
+      value={formData.password}
+      onChange={handleInputChange}
+      className={`form-input password-input ${getInputValidationClass("password")}`}
+      placeholder="Enter your password"
+      autoComplete="current-password"
+    />
+    <span
+      role="button"
+      tabIndex={0}
+      className="password-toggle-btn"
+      onClick={() => setShowPassword(!showPassword)}
+      onKeyDown={(e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          setShowPassword(!showPassword);
+        }
+      }}
+      aria-label={showPassword ? "Hide password" : "Show password"}
     >
-      <path
-        d="M3 3L21 21M9.9 4.24C10.5 4.07 11.2 4 12 4C19 4 23 12 23 12S22.393 13.1 21.413 14.169M16.5 12.5C16.8 11.8 17 11.2 17 10.5C17 8 15 6 12.5 6C11.8 6 11.2 6.2 10.5 6.5M6.5 6.5C4.5 8.5 2 12 2 12S6 20 13 20C14.5 20 15.8 19.6 17 18.9"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </svg>
-  ) : (
-    <svg
-      width="20"
-      height="20"
-      viewBox="0 0 24 24"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
-      <path
-        d="M1 12S5 4 12 4S23 12 23 12S19 20 12 20S1 12 1 12Z"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-      <circle
-        cx="12"
-        cy="12"
-        r="3"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </svg>
-  )}
-</span>
+      {/* Corrected: Eye open = password visible, eye slash = hidden */}
+      {showPassword ? (
+        // Eye open icon (password visible)
+        <svg
+          width="20"
+          height="20"
+          viewBox="0 0 24 24"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M1 12S5 4 12 4S23 12 23 12S19 20 12 20S1 12 1 12Z"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+          <circle
+            cx="12"
+            cy="12"
+            r="3"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+        </svg>
+      ) : (
+        // Eye with slash icon (password hidden)
+        <svg
+          width="20"
+          height="20"
+          viewBox="0 0 24 24"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M3 3L21 21M9.9 4.24C10.5 4.07 11.2 4 12 4C19 4 23 12 23 12S22.393 13.1 21.413 14.169M16.5 12.5C16.8 11.8 17 11.2 17 10.5C17 8 15 6 12.5 6C11.8 6 11.2 6.2 10.5 6.5M6.5 6.5C4.5 8.5 2 12 2 12S6 20 13 20C14.5 20 15.8 19.6 17 18.9"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+        </svg>
+      )}
+    </span>
+  </div>
 
-                  </div>
-                  {errors.password && (
-                    <span className="error-message">{errors.password}</span>
-                  )}
-                </div>
+  {errors.password && (
+    <span className="error-message">{errors.password}</span>
+  )}
+</div>
 
                 <div className="form-options">
                   <div className="checkbox-group">

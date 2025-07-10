@@ -6,6 +6,8 @@ from app.models.tenant import Tenant
 from app.models.users import User
 from app.schemas.tenant import TenantCreate, TenantUpdate, TenantOut
 from app.schemas.users import UserOut
+from datetime import datetime
+from fastapi.responses import JSONResponse
 
 router = APIRouter(prefix="/tenants", tags=["Tenants"])
 
@@ -92,3 +94,29 @@ def delete_tenant(tenant_id: int, db: Session = Depends(get_db)):
     db.delete(db_tenant)
     db.commit()
     return {"message": "Tenant deleted successfully"}
+
+@router.get("/dashboard/overview")
+def get_tenant_dashboard_data(db: Session = Depends(get_db)):
+    tenants = db.query(Tenant).all()
+
+    total_tenants = len(tenants)
+    active_tenants = [t for t in tenants if t.status == "active"]
+    mrr = sum(t.monthly_fee for t in active_tenants)
+
+    recent_tenants = sorted(tenants, key=lambda t: t.created_at or datetime.min, reverse=True)[:5]
+
+    return {
+        "total_tenants": total_tenants,
+        "monthly_recurring_revenue": mrr,
+        "recent_tenants": [
+            {
+                "id": t.id,
+                "company_name": t.company_name,
+                "contact_email": t.contact_email,
+                "monthly_fee": t.monthly_fee,
+                "status": t.status,
+                "created_at": t.created_at,
+            }
+            for t in recent_tenants
+        ],
+    }

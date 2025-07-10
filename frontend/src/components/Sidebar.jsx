@@ -130,12 +130,14 @@ const user = JSON.parse(localStorage.getItem("user"));
         </div>
 
         {!isCollapsed && (
-          <div className="help-section">
-            <div className="help-card">
-              <h4 className="help-title">Need Help?</h4>
-              <button className="help-button">Contact Support</button>
-            </div>
-          </div>
+         <div className="help-section">
+  <div className="help-card">
+    <h4 className="help-title">Need Help?</h4>
+    <Link to="/contact">
+      <button className="help-button">Contact Support</button>
+    </Link>
+  </div>
+</div>
         )}
       </div>
     </div>
