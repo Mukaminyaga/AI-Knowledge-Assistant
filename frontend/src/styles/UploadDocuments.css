@@ -712,3 +712,10 @@
   backface-visibility: hidden;
   transform: translateZ(0);
 }
+.upload-success-message {
+  color: #28a745;
+  font-weight: 500;
+  margin-top: 12px;
+  text-align: left;
+}
+

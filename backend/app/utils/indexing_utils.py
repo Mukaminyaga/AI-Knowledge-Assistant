@@ -1,19 +1,18 @@
 import os
-import numpy as np
+import json
 import faiss
+import numpy as np
+from sqlalchemy.orm import Session
 from app.database import SessionLocal
 from app.models.document import Document
-from app.utils.document_utils import (
-    extract_text_from_pdf,
-    extract_text_from_docx,
-    extract_text_from_txt,
-)
-from app.utils.embedding_utils import chunk_text, embed_chunks, save_to_faiss
+from app.utils.document_utils import extract_text_from_pdf, extract_text_from_docx, extract_text_from_txt
+from app.utils.embedding_utils import chunk_text, embed_chunks
 
-UPLOAD_DIR = "uploads"
+INDEX_FILE = "vector.index"
+METADATA_FILE = "vector_metadata.json"
+DOCUMENTS_DIR = "uploads"
 
 def extract_text_for_file(filename, filepath):
-    """Extract text based on file extension."""
     ext = filename.lower().split(".")[-1]
     if ext == "pdf":
         return extract_text_from_pdf(filepath)
@@ -23,56 +22,55 @@ def extract_text_for_file(filename, filepath):
         return extract_text_from_txt(filepath)
     return ""
 
-def index_document_file(file_path: str, document: Document):
-    """
-    Index a newly uploaded document (extract, chunk, embed, save to FAISS).
-    """
-    text = extract_text_for_file(document.filename, file_path)
+def index_and_update(file_path: str, document_id: int):
+    """Index a single newly uploaded document and update vector.index and metadata."""
+    db: Session = SessionLocal()
+    doc = db.query(Document).filter(Document.id == document_id).first()
+    if not doc:
+        print(f"Document ID {document_id} not found.")
+        return
 
-    if not text or not text.strip():
-        raise ValueError("No text could be extracted from the document.")
+    text = extract_text_for_file(doc.filename, file_path)
+    if not text:
+        print(f" No text extracted from {doc.filename}")
+        return
 
     chunks = chunk_text(text, chunk_size=300, overlap=50)
-    if not chunks:
-        raise ValueError("No chunks generated from the document.")
-
     embeddings = embed_chunks(chunks)
+    embeddings = np.asarray(embeddings, dtype=np.float32)
     faiss.normalize_L2(embeddings)
 
-    metadata = [
-        {
-            "filename": document.filename,
-            "chunk_index": i,
+    # Load or create index
+    dim = embeddings.shape[1]
+    if os.path.exists(INDEX_FILE):
+        index = faiss.read_index(INDEX_FILE)
+    else:
+        index = faiss.IndexFlatIP(dim)
+    index.add(embeddings)
+    faiss.write_index(index, INDEX_FILE)
+
+    # Load or create metadata
+    metadata = []
+    if os.path.exists(METADATA_FILE):
+        with open(METADATA_FILE, "r") as f:
+            metadata = json.load(f)
+
+    for idx, chunk in enumerate(chunks):
+        metadata.append({
+            "filename": doc.filename,
+            "chunk_index": idx,
             "chunk_text": chunk,
-            "document_id": document.id,
-            "tenant_id": document.tenant_id  
-        }
-        for i, chunk in enumerate(chunks)
-    ]
+            "document_id": doc.id,
+            "tenant_id": doc.tenant_id
+        })
 
-    save_to_faiss(np.array(embeddings), metadata)
-    return chunks
+    with open(METADATA_FILE, "w") as f:
+        json.dump(metadata, f, indent=2)
 
+    # Update DB
+    doc.num_chunks = len(chunks)
+    doc.indexed = True
+    db.commit()
+    db.close()
 
-def index_and_update(file_path: str, document_id: int):
-    """
-    Background-safe indexing task that also updates the document record.
-    """
-    db = SessionLocal()
-    try:
-        document = db.query(Document).filter(Document.id == document_id).first()
-        if not document:
-            print(f"Document ID {document_id} not found in DB.")
-            return
-
-        chunks = index_document_file(file_path, document)
-        document.num_chunks = len(chunks)
-        document.preview = chunks[0] if chunks else ""
-        document.indexed = True
-        db.commit()
-        print(f"Successfully indexed {document.filename} for tenant {document.tenant_id}")
-
-    except Exception as e:
-        print(f"Error indexing document ID {document_id}: {e}")
-    finally:
-        db.close()
+    print(f" Indexed {len(chunks)} chunks for '{doc.filename}' (doc_id={doc.id})")

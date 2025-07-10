@@ -1,6 +1,6 @@
 import os
 import numpy as np
-import faiss  # ✅ Needed for normalization
+import faiss  
 from sqlalchemy.orm import Session
 from app.database import SessionLocal
 from app.models.document import Document
@@ -68,13 +68,13 @@ def reindex_docs():
     embeddings = embed_chunks(all_chunks)
     embeddings_array = np.asarray(embeddings, dtype=np.float32)
 
-    # ✅ Normalize embeddings for cosine similarity
+    #  Normalize embeddings for cosine similarity
     faiss.normalize_L2(embeddings_array)
 
     # Save to Faiss index
     save_to_faiss(embeddings_array, all_metadata)
 
-    print(f"✅ Done reindexing {len(all_chunks)} chunks from {len(documents)} files.")
+    print(f"Done reindexing {len(all_chunks)} chunks from {len(documents)} files.")
 
 if __name__ == "__main__":
     reindex_docs()
