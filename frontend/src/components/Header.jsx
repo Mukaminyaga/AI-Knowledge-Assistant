@@ -9,7 +9,7 @@ function Header() {
         <div className="logo-section">
           <Link to="/" className="logo-link">
             <img
-              src="8.png"
+              src="6.png"
               alt="AI Knowledge Assistant Logo"
               className="logo-image"
               style={{

@@ -17,7 +17,7 @@ function Footer() {
         <div className="footer-section">
           <div className="footer-brand">
             <img
-              src="https://images.pexels.com/photos/7661590/pexels-photo-7661590.jpeg?auto=compress&cs=tinysrgb&w=100&h=100&dpr=1"
+              src="6.png"
               alt="AI Knowledge Assistant Logo"
               className="footer-logo"
             />
