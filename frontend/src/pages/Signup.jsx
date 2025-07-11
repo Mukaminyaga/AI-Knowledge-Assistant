@@ -630,7 +630,7 @@ const handleSubmit = async (e) => {
 
             <div className="trust-indicators">
               <div className="trust-item">
-                <div className="trust-icon">🔒</div>
+                {/* <div className="trust-icon">🔒</div> */}
                 <div className="trust-text">
                   <div className="trust-title">Enterprise Security</div>
                   <div className="trust-description">
@@ -639,7 +639,7 @@ const handleSubmit = async (e) => {
                 </div>
               </div>
               <div className="trust-item">
-                <div className="trust-icon">🌍</div>
+                {/* <div className="trust-icon">🌍</div> */}
                 <div className="trust-text">
                   <div className="trust-title">Global Compliance</div>
                   <div className="trust-description">GDPR & CCPA compliant</div>

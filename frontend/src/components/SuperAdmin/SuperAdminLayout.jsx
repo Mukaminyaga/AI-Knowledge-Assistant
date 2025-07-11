@@ -16,3 +16,4 @@ const SuperAdminLayout = ({ children, activePage }) => {
 };
 
 export default SuperAdminLayout;
+

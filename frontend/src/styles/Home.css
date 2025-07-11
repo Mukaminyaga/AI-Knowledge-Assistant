@@ -401,6 +401,13 @@
   gap: 16px;
 }
 
+.conversation-example {
+  margin: 20px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
 .user-message,
 .ai-message {
   display: flex;

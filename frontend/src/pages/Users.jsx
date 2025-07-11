@@ -31,8 +31,9 @@ const Users = () => {
       total: userList.length,
       approved: userList.filter((u) => u.is_approved).length,
       pending: userList.filter((u) => !u.is_approved).length,
-      active: userList.filter((u) =>
-        u.last_active?.includes("minutes") || u.last_active?.includes("hour")
+      active: userList.filter(
+        (u) =>
+          u.last_active?.includes("minutes") || u.last_active?.includes("hour"),
       ).length,
     };
   };
@@ -41,7 +42,6 @@ const Users = () => {
     total: 0,
     approved: 0,
     pending: 0,
-    
   });
 
   // Fetch all users
@@ -70,7 +70,7 @@ const Users = () => {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
-        }
+        },
       );
 
       if (res.status === 200) {
@@ -86,7 +86,9 @@ const Users = () => {
 
   // Delete user
   const deleteUser = async (userId) => {
-    const confirmDelete = window.confirm("Are you sure you want to delete this user?");
+    const confirmDelete = window.confirm(
+      "Are you sure you want to delete this user?",
+    );
     if (!confirmDelete) return;
 
     try {
@@ -120,7 +122,9 @@ const Users = () => {
             <h2 className="users-title">
               <FiUsers size={28} /> User Management
             </h2>
-            <p className="users-subtitle">Manage team members, permissions, and user activity</p>
+            <p className="users-subtitle">
+              Manage team members, permissions, and user activity
+            </p>
           </div>
           <button className="add-user-btn">
             <FiUserPlus size={18} />
@@ -133,7 +137,9 @@ const Users = () => {
         {/* Statistics Cards */}
         <div className="user-stats-grid">
           <div className="user-stat-card primary">
-            <div className="stat-icon"><FiUsers size={24} /></div>
+            <div className="stat-icon">
+              <FiUsers size={24} />
+            </div>
             <div className="stat-content">
               <h3 className="stat-number">{userStats.total}</h3>
               <p className="stat-label">Total Users</p>
@@ -141,7 +147,9 @@ const Users = () => {
           </div>
 
           <div className="user-stat-card success">
-            <div className="stat-icon"><FiUserCheck size={24} /></div>
+            <div className="stat-icon">
+              <FiUserCheck size={24} />
+            </div>
             <div className="stat-content">
               <h3 className="stat-number">{userStats.approved}</h3>
               <p className="stat-label">Approved</p>
@@ -149,7 +157,9 @@ const Users = () => {
           </div>
 
           <div className="user-stat-card warning">
-            <div className="stat-icon"><FiUserX size={24} /></div>
+            <div className="stat-icon">
+              <FiUserX size={24} />
+            </div>
             <div className="stat-content">
               <h3 className="stat-number">{userStats.pending}</h3>
               <p className="stat-label">Pending</p>
@@ -198,7 +208,9 @@ const Users = () => {
                     </td>
                     <td>
                       <span className={`role-badge ${user.role.toLowerCase()}`}>
-                        {user.role === "Admin" && <MdAdminPanelSettings size={14} />}
+                        {user.role === "Admin" && (
+                          <MdAdminPanelSettings size={14} />
+                        )}
                         {user.role === "Manager" && <FiShield size={14} />}
                         {user.role === "Developer" && <FiActivity size={14} />}
                         {user.role === "User" && <MdPerson size={14} />}
@@ -206,7 +218,9 @@ const Users = () => {
                       </span>
                     </td>
                     <td>
-                      <span className={`status-badge ${user.is_approved ? "approved" : "pending"}`}>
+                      <span
+                        className={`status-badge ${user.is_approved ? "approved" : "pending"}`}
+                      >
                         {user.is_approved ? (
                           <>
                             <MdVerified size={14} /> Approved

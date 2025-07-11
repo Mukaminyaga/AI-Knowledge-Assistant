@@ -90,32 +90,37 @@ const handleSubmit = async (e) => {
   setErrors({}); // clear previous errors
 
   try {
-    const response = await axios.post(
-      `${process.env.REACT_APP_API_URL}/auth/login`,
-      {
-        email: formData.email,
-        password: formData.password,
-      }
-    );
-
-    const { access_token, user: loggedInUser } = response.data;
-
-    localStorage.setItem("token", access_token);
-    localStorage.setItem("user", JSON.stringify(loggedInUser));
-
-    if (loggedInUser.role === "super_admin") {
-      navigate("/super-admin/overview");
-    } else if (loggedInUser.role === "admin") {
-      navigate("/dashboard");
-    } else {
-      navigate("/home"); // or any public/home route for regular users
+  const response = await axios.post(
+    `${process.env.REACT_APP_API_URL}/auth/login`,
+    {
+      email: formData.email,
+      password: formData.password,
     }
+  );
+
+  const { access_token, user: loggedInUser } = response.data;
+
+  localStorage.setItem("token", access_token);
+  localStorage.setItem("user", JSON.stringify(loggedInUser));
+
+  console.log("Login successful:", loggedInUser);
+
+  if (loggedInUser.role === "super_admin") {
+    window.location.href = "/super-admin/overview";
+  } else if (loggedInUser.role === "admin") {
+    window.location.href = "/dashboard";
+  } else {
+    window.location.href = "/home";
+  }
+
 
   } catch (error) {
     console.error("Login error:", error);
+    
 
     if (error.response) {
       const { status, data } = error.response;
+      
 
       if (status === 401 || status === 400) {
         setErrors({ general: "Invalid credentials. Please try again." });
@@ -133,6 +138,7 @@ const handleSubmit = async (e) => {
     setIsSubmitting(false);
   }
 };
+ 
 
 
   return (

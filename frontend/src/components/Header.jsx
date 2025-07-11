@@ -4,15 +4,23 @@ import "../styles/Header.css";
 
 function Header() {
   return (
-    <div className="header-container">
+    <div className="header-container1">
       <div className="nav-wrapper">
-         <div className="logo-section">
+        <div className="logo-section">
           <Link to="/" className="logo-link">
-            {/* <img
-              src="/1.png"
+            <img
+              src="8.png"
               alt="AI Knowledge Assistant Logo"
               className="logo-image"
-            /> */}
+              style={{
+                width: "115px",
+                height: "125px",
+                borderRadius: "8px",
+                objectFit: "cover",
+                marginRight: "-22px",
+                marginTop: "-30px",
+              }}
+            />
             <div className="brand-title">
               AI Knowledge <br />
               Assistant

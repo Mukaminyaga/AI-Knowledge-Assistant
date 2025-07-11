@@ -47,21 +47,41 @@ def startup():
     database.Base.metadata.create_all(bind=database.engine)
     from app import auth
     db = database.SessionLocal()
+
+    # Super Admin
+    super_admin_email = "superadmin@example.com"
+    existing_super = db.query(users.User).filter(users.User.email == super_admin_email).first()
+    if not existing_super:
+        super_admin_user = users.User(
+            first_name="Super",
+            last_name="Admin",
+            email=super_admin_email,
+            hashed_password=auth.hash_password("SuperAdmin123"),
+            role="super_admin",
+            is_approved=True,
+            tenant_id=2
+        )
+        db.add(super_admin_user)
+        print("Super admin user created:", super_admin_email)
+
+    # Regular Admin
     admin_email = "admin@example.com"
     existing_admin = db.query(users.User).filter(users.User.email == admin_email).first()
     if not existing_admin:
         admin_user = users.User(
-            first_name="Super",
-            last_name="Admin",
+            first_name="Admin",
+            last_name="User",
             email=admin_email,
             hashed_password=auth.hash_password("AdminPassword123"),
             role="admin",
             is_approved=True
         )
         db.add(admin_user)
-        db.commit()
         print("Admin user created:", admin_email)
+
+    db.commit()
     db.close()
+
 
 # Include Routers
 app.include_router(auth_routes.router, prefix="/auth", tags=["Auth"])

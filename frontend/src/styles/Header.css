@@ -10,7 +10,7 @@
   --background-light: #f0f2f5;
 }
 
-.header-container {
+.header-container1 {
   height: var(--header-height);
   position: fixed;
   top: 0;
