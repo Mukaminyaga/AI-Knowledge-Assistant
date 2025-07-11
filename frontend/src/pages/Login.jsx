@@ -110,7 +110,7 @@ const handleSubmit = async (e) => {
   } else if (loggedInUser.role === "admin") {
     window.location.href = "/dashboard";
   } else {
-    window.location.href = "/home";
+    window.location.href = "/dashboard";
   }
 
 

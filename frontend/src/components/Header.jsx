@@ -8,7 +8,7 @@ function Header() {
       <div className="nav-wrapper">
         <div className="logo-section">
           <Link to="/" className="logo-link">
-            <img
+            {/* <img
               src="6.png"
               alt="AI Knowledge Assistant Logo"
               className="logo-image"
@@ -20,7 +20,7 @@ function Header() {
                 marginRight: "-22px",
                 marginTop: "-30px",
               }}
-            />
+            /> */}
             <div className="brand-title">
               AI Knowledge <br />
               Assistant
