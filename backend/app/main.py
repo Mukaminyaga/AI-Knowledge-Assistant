@@ -56,7 +56,7 @@ def startup():
             first_name="Super",
             last_name="Admin",
             email=super_admin_email,
-            hashed_password=auth.hash_password("SuperAdmin123"),
+            hashed_password=auth.hash_password("StrongPassword123!"),
             role="super_admin",
             is_approved=True,
             tenant_id=2
