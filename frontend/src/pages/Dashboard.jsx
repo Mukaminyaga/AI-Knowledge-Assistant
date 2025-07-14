@@ -174,11 +174,11 @@ function Dashboard() {
             ))}
           </div>
 
-          <div className="view-all-section">
+          {/* <div className="view-all-section">
             <Link to="/activity" className="view-all-link">
               View All Activity
             </Link>
-          </div>
+          </div> */}
         </div>
       </div>
     </DashboardLayout>

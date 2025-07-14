@@ -280,7 +280,7 @@ const handleSubmit = async (e) => {
                   
                   <div className="form-group">
                     <label htmlFor="firstName" className="form-label">
-                      First name
+                      First name <span className="required">*</span>
                     </label>
                     <input
                       type="text"
@@ -299,7 +299,7 @@ const handleSubmit = async (e) => {
 
                   <div className="form-group">
                     <label htmlFor="lastName" className="form-label">
-                      Last name
+                      Last name <span className="required">*</span>
                     </label>
                     <input
                       type="text"
@@ -319,7 +319,7 @@ const handleSubmit = async (e) => {
 
                 <div className="form-group">
                   <label htmlFor="email" className="form-label">
-                    Work email
+                    Work email  <span className="required">*</span>
                   </label>
                   <input
                     type="email"
@@ -339,7 +339,7 @@ const handleSubmit = async (e) => {
                <div className="form-row">
   {/* Password Field */}
   <div className="form-group">
-    <label htmlFor="password" className="form-label">Password</label>
+    <label htmlFor="password" className="form-label">Password  <span className="required">*</span> </label>
     <div className="password-input-wrapper">
       <input
         type={showPassword ? "text" : "password"}
@@ -398,7 +398,7 @@ const handleSubmit = async (e) => {
 
   {/* Confirm Password Field */}
   <div className="form-group">
-    <label htmlFor="confirmPassword" className="form-label">Confirm password</label>
+    <label htmlFor="confirmPassword" className="form-label">Confirm password <span className="required">*</span> </label>
     <div className="password-input-wrapper">
       <input
         type={showConfirmPassword ? "text" : "password"}
@@ -457,7 +457,7 @@ const handleSubmit = async (e) => {
 
 <div className="form-group">
   <label htmlFor="serialCode" className="form-label">
-    Serial Code
+    Serial Code <span className="required">*</span>
   </label>
   <input
     type="text"
@@ -477,7 +477,7 @@ const handleSubmit = async (e) => {
 
                 <div className="form-group">
                   <label htmlFor="role" className="form-label">
-                    Job Title(Role)
+                    Job Title(Role) 
                   </label>
                   <input
                     type="text"
@@ -546,7 +546,7 @@ const handleSubmit = async (e) => {
                       className={`form-checkbox ${errors.agreeToTerms ? "error" : ""}`}
                     />
                     <label htmlFor="agreeToTerms" className="checkbox-label">
-                      I agree to the{" "}
+                      <span className="required">*</span>  I agree to the {" "}
                       <Link to="/terms" className="terms-link">
                         Terms of Service
                       </Link>{" "}

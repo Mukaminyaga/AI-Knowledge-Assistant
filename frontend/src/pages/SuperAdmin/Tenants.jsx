@@ -5,6 +5,10 @@ import TenantTable from "../../components/SuperAdmin/TenantTable";
 import TenantForm from "../../components/SuperAdmin/TenantForm";
 import { FiPlus, FiDownload } from "react-icons/fi";
 import "../../styles/SuperAdmin.css";
+import * as XLSX from "xlsx";
+import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable";
+
 
 const API_URL = process.env.REACT_APP_API_URL;
 
@@ -67,9 +71,71 @@ const Tenants = () => {
     setEditingTenant(null);
   };
 
-  const handleExport = () => {
-    console.log("Export tenants data");
-  };
+const handleExport = (type, exportData = []) => {
+  if (!exportData.length) return;
+
+  const tableColumn = [
+    "Company", "Email", "Slug", "Phone", "Billing Address",
+    "Monthly Fee", "Max Users", "Status", "Serial Code", "Created At", "Updated At"
+  ];
+
+  const tableRows = exportData.map((tenant) => [
+    tenant.company_name,
+    tenant.contact_email,
+    tenant.slug_url,
+    tenant.contact_phone,
+    tenant.billing_address,
+    tenant.monthly_fee,
+    tenant.max_users,
+    tenant.status,
+    tenant.serial_code,
+    new Date(tenant.created_at).toLocaleString(),
+    new Date(tenant.updated_at).toLocaleString()
+  ]);
+
+  if (type === "pdf") {
+    const doc = new jsPDF();
+    doc.setFontSize(12);
+    doc.text("Tenant List", 14, 15);
+
+    autoTable(doc, {
+      head: [tableColumn],
+      body: tableRows,
+      startY: 20,
+      styles: {
+        fontSize: 7,
+        cellPadding: 2,
+        overflow: 'linebreak',
+      },
+      columnStyles: {
+        0: { cellWidth: 40 },
+        1: { cellWidth: 50 },
+        2: { cellWidth: 35 },
+        3: { cellWidth: 30 },
+        4: { cellWidth: 60 },
+        5: { cellWidth: 20, halign: 'right' },
+        6: { cellWidth: 20, halign: 'right' },
+        7: { cellWidth: 25 },
+        8: { cellWidth: 30 },
+        9: { cellWidth: 35 },
+        10: { cellWidth: 35 },
+      },
+    });
+
+    doc.save(`tenants-${statusFilter}.pdf`);
+  }
+
+  if (type === "csv") {
+    const wsData = [tableColumn, ...tableRows];
+    const ws = XLSX.utils.aoa_to_sheet(wsData);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Tenants");
+    XLSX.writeFile(wb, `tenants-${statusFilter}.xlsx`);
+  }
+};
+
+
+
 
   const filteredTenants =
     statusFilter === "all"
@@ -96,10 +162,25 @@ const Tenants = () => {
             </p>
           </div>
           <div className="page-header-actions">
-            <button className="btn btn-secondary" onClick={handleExport}>
-              <FiDownload className="btn-icon" />
-              Export
-            </button>
+           <div className="btn-group">
+<div className="export-dropdown">
+  <button className="btn btn-secondary dropdown-toggle">
+    <FiDownload className="btn-icon" />
+    Export
+  </button>
+  <div className="dropdown-menu">
+    <button className="dropdown-item" onClick={() => handleExport("csv", filteredTenants)}>
+      Export as CSV
+    </button>
+    <button className="dropdown-item" onClick={() => handleExport("pdf", filteredTenants)}>
+      Export as PDF
+    </button>
+  </div>
+
+</div>
+
+</div>
+
             <button className="btn btn-primary" onClick={handleAddTenant}>
               <FiPlus className="btn-icon" />
               Add Tenant

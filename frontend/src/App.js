@@ -19,6 +19,8 @@ import "./App.css";
 import KnowledgeChat from "./pages/KnowledgeChat";
 import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
+import TermsOfService from "./pages/Terms";
+import PrivacyPolicy from "./pages/PrivacyPolicy";
 
 // Super Admin imports
 import Overview from "./pages/SuperAdmin/Overview";
@@ -29,6 +31,8 @@ import Analytics from "./pages/SuperAdmin/Analytics";
 
 // Auth utilities
 import PrivateRoute from "./components/privateRoute"; 
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 function App() {
   return (
@@ -44,6 +48,8 @@ function App() {
           <Route path="/signup" element={<Signup />} />
           <Route path="/forgot" element={<ForgotPassword />} />
           <Route path="/reset" element={<ResetPassword />} />
+           <Route path="/terms" element={<TermsOfService />} />
+          <Route path="/privacy" element={<PrivacyPolicy />} />
 
           {/* Protected Routes */}
           <Route path="/home" element={<PrivateRoute><LoggedInHome /></PrivateRoute>} />
@@ -65,7 +71,9 @@ function App() {
           />
           <Route path="/super-admin/payments" element={<PrivateRoute><Payments /></PrivateRoute>} />
           <Route path="/super-admin/analytics" element={<PrivateRoute><Analytics /></PrivateRoute>} />
+      
         </Routes>
+        <ToastContainer />
       </div>
     
   );

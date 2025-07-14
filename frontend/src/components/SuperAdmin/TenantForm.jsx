@@ -2,6 +2,9 @@ import React, { useState, useEffect } from "react";
 import { FiX } from "react-icons/fi";
 import axios from "axios";
 import "../../styles/SuperAdmin.css";
+import { toast } from "react-toastify";
+
+
 
 const TenantForm = ({ isOpen, onClose, onSubmit, initialData = null }) => {
   const [formData, setFormData] = useState({
@@ -47,32 +50,30 @@ const TenantForm = ({ isOpen, onClose, onSubmit, initialData = null }) => {
     }
   }, [initialData]);
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
+const handleChange = (e) => {
+  const { name, value } = e.target;
 
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+  setFormData((prev) => {
+    const updated = { ...prev, [name]: value };
 
+    // Only regenerate slug if company_name is being typed
     if (name === "company_name") {
-      const slug = value
+      updated.slug_url = value
         .toLowerCase()
         .replace(/[^a-z0-9]+/g, "-")
         .replace(/^-+|-+$/g, "");
-      setFormData((prev) => ({
-        ...prev,
-        slug_url: slug,
-      }));
     }
 
-    if (errors[name]) {
-      setErrors((prev) => ({
-        ...prev,
-        [name]: "",
-      }));
-    }
-  };
+    return updated;
+  });
+
+  // Clear field error on change
+  if (errors[name]) {
+    setErrors((prev) => ({ ...prev, [name]: "" }));
+  }
+};
+
+
 
   const validateForm = () => {
     const newErrors = {};
@@ -120,20 +121,25 @@ const TenantForm = ({ isOpen, onClose, onSubmit, initialData = null }) => {
    try {
   setSubmitting(true);
   let response;
-
-  if (initialData?.id) {
-    response = await axios.put(
-      `${process.env.REACT_APP_API_URL}/tenants/tenants/${initialData.id}`,
-      payload
-    );
-    setSuccessMessage("Tenant updated successfully!");
-  } else {
-    response = await axios.post(
-      `${process.env.REACT_APP_API_URL}/tenants/tenants/`,
-      payload
-    );
-    setSuccessMessage("Tenant created successfully!");
-  }
+if (initialData?.id) {
+  response = await axios.put(
+    `${process.env.REACT_APP_API_URL}/tenants/tenants/${initialData.id}`,
+    payload
+  );
+  toast.success("Tenant updated successfully!", {
+    position: "top-right",
+    autoClose: 2000,
+  });
+} else {
+  response = await axios.post(
+    `${process.env.REACT_APP_API_URL}/tenants/tenants/`,
+    payload
+  );
+  toast.success("Tenant created successfully!", {
+    position: "top-right",
+    autoClose: 2000,
+  });
+}
 
   onSubmit(response.data);
 
@@ -145,17 +151,25 @@ const TenantForm = ({ isOpen, onClose, onSubmit, initialData = null }) => {
 } catch (error) {
   console.error("Error submitting tenant:", error);
   if (error.response?.data?.detail) {
-    alert(error.response.data.detail);
+    toast.error(error.response.data.detail, {
+      position: "top-right",
+      autoClose: 3000,
+    });
   } else {
-    alert("An error occurred. Please try again.");
+    toast.error("An error occurred. Please try again.", {
+      position: "top-right",
+      autoClose: 3000,
+    });
   }
-} finally {
+}finally {
   setSubmitting(false);
 }
 
   };
 
   if (!isOpen) return null;
+
+
 
   return (
     <div className="modal-overlay">

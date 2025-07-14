@@ -154,6 +154,10 @@
    opacity: 0.9;
   line-height: 1.3;
 }
+.required {
+  color: rgb(202, 25, 25);
+  margin-left: 2px;
+}
 
 .feature-list {
   margin-bottom: 48px;
@@ -180,6 +184,7 @@
   color: #10b981;
   font-weight: bold;
 }
+
 
 .feature-text {
   font-size: 14px;

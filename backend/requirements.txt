@@ -9,4 +9,5 @@ python-multipart PyPDF2
 python-docx
 itsdangerous
 python-dotenv aiosmtplib
+jspdf jspdf-autotable xlsx
 # pip install -r ../requirements.txt
