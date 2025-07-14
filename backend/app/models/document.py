@@ -14,6 +14,7 @@ class Document(Base):
     upload_time = Column(DateTime(timezone=True), server_default=func.now())
     num_chunks = Column(Integer)
     indexed = Column(Boolean, default=False)
+    status = Column(String, default="pending") 
 
     tenant_id = Column(Integer, ForeignKey("tenants.id"), nullable=False)
     tenant = relationship("Tenant", back_populates="documents")  

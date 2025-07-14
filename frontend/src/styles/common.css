@@ -113,7 +113,7 @@ body {
 
 /* Button styles */
 .btn {
-  border: none;
+  border: none ;
   border-radius: 25px;
   padding: 18px 40px;
   font-size: 18px;
@@ -132,13 +132,15 @@ body {
 }
 
 .btn-primary:hover {
-  background-color: var(--primary-dark);
+  background-color: var(--primary-color);
+ 
 }
 
 .btn-secondary {
   background-color: var(--white);
   color: var(--text-dark);
-  border: 1px solid var(--border-gray);
+  border: none;
+  /* border: 1px solid var(--border-gray); */
   box-shadow: var(--shadow-light);
 }
 

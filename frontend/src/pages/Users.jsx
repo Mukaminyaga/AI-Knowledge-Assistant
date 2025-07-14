@@ -9,7 +9,7 @@ import {
   FiTrash2,
   FiShield,
   FiEdit,
-  FiUserPlus,
+  // FiUserPlus,
 } from "react-icons/fi";
 import {
   MdVerified,
@@ -126,10 +126,10 @@ const Users = () => {
               Manage team members, permissions, and user activity
             </p>
           </div>
-          <button className="add-user-btn">
+          {/* <button className="add-user-btn">
             <FiUserPlus size={18} />
             Add New User
-          </button>
+          </button> */}
         </div>
 
         {error && <div className="error-message">{error}</div>}

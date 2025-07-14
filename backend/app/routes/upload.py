@@ -9,11 +9,14 @@ from app.database import get_db
 from app.models.document import Document
 from app.auth import get_current_user
 from app.models.users import User
+from fastapi.responses import FileResponse
+from urllib.parse import unquote
+
+
 
 router = APIRouter()
 UPLOAD_DIR = "uploads"
 os.makedirs(UPLOAD_DIR, exist_ok=True)
-
 
 @router.post("/upload")
 async def upload_documents(
@@ -39,13 +42,14 @@ async def upload_documents(
         with open(dest, "wb") as buffer:
             shutil.copyfileobj(file.file, buffer)
 
-        # Save to DB
+        # Save to DB with status = pending
         document = Document(
             filename=filename,
             file_type=ext,
             size=os.path.getsize(dest),
             tenant_id=current_user.tenant_id,
             num_chunks=0,
+            status="pending"
         )
         db.add(document)
         db.commit()
@@ -64,13 +68,13 @@ async def upload_documents(
             "file_type": document.file_type,
             "size": document.size,
             "tenant_id": document.tenant_id,
+            "status": document.status
         })
 
     return {
         "message": f"{len(uploaded_docs)} file(s) uploaded successfully. Indexing in background.",
         "documents": uploaded_docs
     }
-
 
 @router.get("/")
 def get_all_documents(
@@ -85,12 +89,12 @@ def get_all_documents(
             "file_type": doc.file_type,
             "size": doc.size,
             "num_chunks": doc.num_chunks,
-            "indexed": doc.indexed,
+            "uploaded_at": doc.upload_time,
             "tenant_id": doc.tenant_id,
+            "status": doc.status
         }
         for doc in documents
     ]
-
 
 @router.get("/tenants/{tenant_id}/documents")
 def get_documents_by_tenant_id(
@@ -106,12 +110,12 @@ def get_documents_by_tenant_id(
             "size": doc.size,
             "num_chunks": doc.num_chunks,
             "indexed": doc.indexed,
-            "uploaded_at": getattr(doc, "created_at", None),
+            "uploaded_at": doc.upload_time,
             "tenant_id": doc.tenant_id,
+            "status": doc.status  # ✅ use status from DB
         }
         for doc in documents
     ]
-
 
 @router.delete("/{doc_id}")
 def delete_document(
@@ -135,3 +139,74 @@ def delete_document(
     db.commit()
 
     return {"message": f"Deleted document '{document.filename}' successfully."}
+
+
+
+
+@router.get("/download/{filename}")
+def download_file(
+    filename: str,
+    current_user: User = Depends(get_current_user)
+):
+    file_path = os.path.join(UPLOAD_DIR, filename)
+
+    if not os.path.exists(file_path):
+        raise HTTPException(status_code=404, detail="File not found")
+
+    return FileResponse(
+        path=file_path,
+        filename=filename,
+        media_type="application/octet-stream"
+    )
+
+
+@router.get("/documents/view/{filename}")
+def view_document(
+    filename: str,
+    current_user: User = Depends(get_current_user),
+):
+    filename = unquote(filename)
+    file_path = os.path.join("uploads", filename)
+
+    if not os.path.exists(file_path):
+        raise HTTPException(status_code=404, detail="File not found")
+
+    ext = filename.split(".")[-1].lower()
+    media_type = {
+        "pdf": "application/pdf",
+        "txt": "text/plain",
+        "docx": "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+    }.get(ext, "application/octet-stream")
+
+    return FileResponse(
+        file_path,
+        media_type=media_type,
+        filename=filename
+    )
+@router.get("/stats")
+def get_tenant_stats(db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
+    total = db.query(Document).filter(Document.tenant_id == current_user.tenant_id).count()
+    processed = db.query(Document).filter(Document.tenant_id == current_user.tenant_id, Document.status == "processed").count()
+    processing = db.query(Document).filter(Document.tenant_id == current_user.tenant_id, Document.status == "processing").count()
+    failed = db.query(Document).filter(Document.tenant_id == current_user.tenant_id, Document.status == "failed").count()
+    pending = db.query(Document).filter(Document.tenant_id == current_user.tenant_id, Document.status == "pending").count()
+    return {"total": total, "processed": processed, "processing": processing, "failed": failed, "pending": pending}
+
+@router.get("/recent-activity")
+def recent_activity(db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
+    docs = (
+        db.query(Document)
+        .filter(Document.tenant_id == current_user.tenant_id)
+        .order_by(Document.upload_time.desc())
+        .limit(5)
+        .all()
+    )
+    return [
+        {
+            "filename": doc.filename,
+            "status": doc.status,
+            "uploaded_at": doc.upload_time.isoformat(),
+        }
+        for doc in docs
+    ]
+
