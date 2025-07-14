@@ -10,11 +10,14 @@ class TenantCreate(BaseModel):
     billing_address: str
     monthly_fee: float
     max_users: int
+    serial_code: str  
+    status: Optional[str] = "active" 
 
 class TenantOut(TenantCreate):
     id: int
     created_at: datetime
     status: str
+    serial_code: str
 
     class Config:
         orm_mode = True
@@ -28,6 +31,7 @@ class TenantUpdate(BaseModel):
     monthly_fee: Optional[float]
     max_users: Optional[int]
     status: Optional[str]
+    serial_code: Optional[str]  
 
     class Config:
         orm_mode = True

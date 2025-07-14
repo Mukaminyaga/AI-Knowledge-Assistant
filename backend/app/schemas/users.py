@@ -6,7 +6,7 @@ class UserCreate(BaseModel):
     email: EmailStr
     password: str
     role: str
-    company_name: str
+    serial_code: str
 
 class UserLogin(BaseModel):
     email: EmailStr

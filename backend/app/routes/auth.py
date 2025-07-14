@@ -9,22 +9,28 @@ router = APIRouter()
 
 @router.post("/register", response_model=schemas.UserOut)
 def register(user: schemas.UserCreate, db: Session = Depends(database.get_db)):
+    # Check if email already exists
     db_user = db.query(users.User).filter(users.User.email == user.email).first()
     if db_user:
         raise HTTPException(status_code=400, detail="Email already registered")
 
+    # Look up tenant by serial_code 
     tenant = (
-    db.query(tenant_model.Tenant)
-    .filter(func.lower(tenant_model.Tenant.company_name) == user.company_name.strip().lower())
-    .first()
-)
+        db.query(tenant_model.Tenant)
+        .filter(tenant_model.Tenant.serial_code == user.serial_code.strip())
+        .first()
+    )
 
     if not tenant:
-        raise HTTPException(status_code=404, detail="Tenant (company) not found")
+        raise HTTPException(status_code=404, detail="Tenant with provided serial code not found")
 
+    # Hash password
     hashed_pw = auth.hash_password(user.password)
-    is_approved = user.role.lower() == "admin"
 
+    # Automatically approve the tenant creator (whose email matches contact_email)
+    is_approved = user.email.lower() == tenant.contact_email.lower()
+
+    # Create user
     new_user = users.User(
         first_name=user.first_name,
         last_name=user.last_name,
@@ -32,13 +38,14 @@ def register(user: schemas.UserCreate, db: Session = Depends(database.get_db)):
         hashed_password=hashed_pw,
         role=user.role,
         is_approved=is_approved,
-        tenant_id=tenant.id  
+        tenant_id=tenant.id
     )
 
     db.add(new_user)
     db.commit()
     db.refresh(new_user)
     return new_user
+
 
 
 @router.post("/login")

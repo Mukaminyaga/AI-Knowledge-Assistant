@@ -38,17 +38,17 @@ const Tenants = () => {
     setIsFormOpen(true);
   };
 
-  const handleDeleteTenant = async (tenant) => {
-    if (!window.confirm(`Delete ${tenant.company_name}?`)) return;
+  // const handleDeleteTenant = async (tenant) => {
+  //   if (!window.confirm(`Delete ${tenant.company_name}?`)) return;
 
-    try {
-      await axios.delete(`${API_URL}/tenants/tenants/${tenant.id}`);
-      setTenants((prev) => prev.filter((t) => t.id !== tenant.id));
-    } catch (err) {
-      console.error(err);
-      alert("Failed to delete tenant");
-    }
-  };
+  //   try {
+  //     await axios.delete(`${API_URL}/tenants/tenants/${tenant.id}`);
+  //     setTenants((prev) => prev.filter((t) => t.id !== tenant.id));
+  //   } catch (err) {
+  //     console.error(err);
+  //     alert("Failed to delete tenant");
+  //   }
+  // };
 
   const handleFormSubmit = (tenantData) => {
     if (editingTenant) {
@@ -142,7 +142,7 @@ const Tenants = () => {
             tenants={filteredTenants}
             onView={(t) => console.log("Viewing tenant:", t)}
             onEdit={handleEditTenant}
-            onDelete={handleDeleteTenant}
+            // onDelete={handleDeleteTenant}
             showActions={true}
           />
         </div>

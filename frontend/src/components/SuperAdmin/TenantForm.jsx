@@ -13,12 +13,12 @@ const TenantForm = ({ isOpen, onClose, onSubmit, initialData = null }) => {
     monthly_fee: "",
     max_users: "",
     status: "active",
+    serial_code: "",
   });
 
   const [errors, setErrors] = useState({});
   const [submitting, setSubmitting] = useState(false);
 
-  // 👇 Sync formData with initialData
   useEffect(() => {
     if (initialData) {
       setFormData({
@@ -30,6 +30,7 @@ const TenantForm = ({ isOpen, onClose, onSubmit, initialData = null }) => {
         monthly_fee: initialData.monthly_fee || "",
         max_users: initialData.max_users || "",
         status: initialData.status || "active",
+        serial_code: initialData.serial_code || "",
       });
     } else {
       setFormData({
@@ -41,6 +42,7 @@ const TenantForm = ({ isOpen, onClose, onSubmit, initialData = null }) => {
         monthly_fee: "",
         max_users: "",
         status: "active",
+        serial_code: "",
       });
     }
   }, [initialData]);
@@ -90,9 +92,19 @@ const TenantForm = ({ isOpen, onClose, onSubmit, initialData = null }) => {
     else if (isNaN(formData.max_users) || parseInt(formData.max_users) < 1)
       newErrors.max_users = "Max users must be at least 1";
 
+
+    if (!formData.serial_code.trim()) {
+      newErrors.serial_code = "Serial code is required";
+    } else if (!/^\d{6}$/.test(formData.serial_code.trim())) {
+      newErrors.serial_code = "Serial code must be 6 digits";
+    }
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
+
+  const [successMessage, setSuccessMessage] = useState("");
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -102,37 +114,45 @@ const TenantForm = ({ isOpen, onClose, onSubmit, initialData = null }) => {
       ...formData,
       monthly_fee: parseFloat(formData.monthly_fee),
       max_users: parseInt(formData.max_users),
-      status: formData.status || "active",
+      serial_code: formData.serial_code,
     };
 
-    try {
-      setSubmitting(true);
-      let response;
+   try {
+  setSubmitting(true);
+  let response;
 
-      if (initialData?.id) {
-        response = await axios.put(
-          `${process.env.REACT_APP_API_URL}/tenants/tenants/${initialData.id}/`,
-          payload
-        );
-      } else {
-        response = await axios.post(
-          `${process.env.REACT_APP_API_URL}/tenants/tenants/`,
-          payload
-        );
-      }
+  if (initialData?.id) {
+    response = await axios.put(
+      `${process.env.REACT_APP_API_URL}/tenants/tenants/${initialData.id}`,
+      payload
+    );
+    setSuccessMessage("Tenant updated successfully!");
+  } else {
+    response = await axios.post(
+      `${process.env.REACT_APP_API_URL}/tenants/tenants/`,
+      payload
+    );
+    setSuccessMessage("Tenant created successfully!");
+  }
 
-      onSubmit(response.data);
-      onClose();
-    } catch (error) {
-      console.error("Error submitting tenant:", error);
-      if (error.response?.data?.detail) {
-        alert(error.response.data.detail);
-      } else {
-        alert("An error occurred. Please try again.");
-      }
-    } finally {
-      setSubmitting(false);
-    }
+  onSubmit(response.data);
+
+  // Delay closing so user sees the message
+  setTimeout(() => {
+    setSuccessMessage("");
+    onClose();
+  }, 2000);
+} catch (error) {
+  console.error("Error submitting tenant:", error);
+  if (error.response?.data?.detail) {
+    alert(error.response.data.detail);
+  } else {
+    alert("An error occurred. Please try again.");
+  }
+} finally {
+  setSubmitting(false);
+}
+
   };
 
   if (!isOpen) return null;
@@ -158,7 +178,6 @@ const TenantForm = ({ isOpen, onClose, onSubmit, initialData = null }) => {
                 value={formData.company_name}
                 onChange={handleChange}
                 className={`form-input ${errors.company_name ? "error" : ""}`}
-                placeholder="Enter company name"
               />
               {errors.company_name && <span className="error-text">{errors.company_name}</span>}
             </div>
@@ -171,7 +190,6 @@ const TenantForm = ({ isOpen, onClose, onSubmit, initialData = null }) => {
                 value={formData.contact_email}
                 onChange={handleChange}
                 className={`form-input ${errors.contact_email ? "error" : ""}`}
-                placeholder="contact@company.com"
               />
               {errors.contact_email && <span className="error-text">{errors.contact_email}</span>}
             </div>
@@ -184,7 +202,6 @@ const TenantForm = ({ isOpen, onClose, onSubmit, initialData = null }) => {
                 value={formData.slug_url}
                 onChange={handleChange}
                 className={`form-input ${errors.slug_url ? "error" : ""}`}
-                placeholder="company-slug"
               />
               {errors.slug_url && <span className="error-text">{errors.slug_url}</span>}
             </div>
@@ -197,7 +214,6 @@ const TenantForm = ({ isOpen, onClose, onSubmit, initialData = null }) => {
                 value={formData.contact_phone}
                 onChange={handleChange}
                 className={`form-input ${errors.contact_phone ? "error" : ""}`}
-                placeholder="+254 712 345678"
               />
               {errors.contact_phone && <span className="error-text">{errors.contact_phone}</span>}
             </div>
@@ -209,8 +225,6 @@ const TenantForm = ({ isOpen, onClose, onSubmit, initialData = null }) => {
                 value={formData.billing_address}
                 onChange={handleChange}
                 className={`form-textarea ${errors.billing_address ? "error" : ""}`}
-                placeholder="Enter full billing address"
-                rows="3"
               />
               {errors.billing_address && <span className="error-text">{errors.billing_address}</span>}
             </div>
@@ -223,9 +237,6 @@ const TenantForm = ({ isOpen, onClose, onSubmit, initialData = null }) => {
                 value={formData.monthly_fee}
                 onChange={handleChange}
                 className={`form-input ${errors.monthly_fee ? "error" : ""}`}
-                placeholder="1200"
-                min="0"
-                step="0.01"
               />
               {errors.monthly_fee && <span className="error-text">{errors.monthly_fee}</span>}
             </div>
@@ -238,8 +249,6 @@ const TenantForm = ({ isOpen, onClose, onSubmit, initialData = null }) => {
                 value={formData.max_users}
                 onChange={handleChange}
                 className={`form-input ${errors.max_users ? "error" : ""}`}
-                placeholder="10"
-                min="1"
               />
               {errors.max_users && <span className="error-text">{errors.max_users}</span>}
             </div>
@@ -258,6 +267,23 @@ const TenantForm = ({ isOpen, onClose, onSubmit, initialData = null }) => {
               </select>
               {errors.status && <span className="error-text">{errors.status}</span>}
             </div>
+
+
+            <div className="form-group">
+              <label className="form-label">Serial Code *</label>
+              <input
+                type="text"
+                name="serial_code"
+                value={formData.serial_code}
+                onChange={handleChange}
+                className={`form-input ${errors.serial_code ? "error" : ""}`}
+                placeholder="e.g. 000001"
+                pattern="\d{6}"
+                title="Serial code must be 6 digits"
+              />
+              {errors.serial_code && <span className="error-text">{errors.serial_code}</span>}
+            </div>
+
           </div>
 
           <div className="form-actions">
@@ -267,6 +293,8 @@ const TenantForm = ({ isOpen, onClose, onSubmit, initialData = null }) => {
             <button type="submit" className="btn btn-primary" disabled={submitting}>
               {submitting ? "Submitting..." : initialData ? "Update Tenant" : "Add Tenant"}
             </button>
+            {successMessage && <div className="success-message">{successMessage}</div>}
+
           </div>
         </form>
       </div>

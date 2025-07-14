@@ -1,14 +1,17 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import {
   FiHome,
   FiUsers,
+  FiUser,
+  FiLogOut,
   FiCreditCard,
   FiBarChart2,
   FiSettings,
   FiActivity,
 } from "react-icons/fi";
 import "../../styles/SuperAdminSidebar.css";
+import { logout } from "../../utils/auth"; 
 
 const SuperAdminSidebar = ({ activePage }) => {
   const navigation = [
@@ -37,6 +40,14 @@ const SuperAdminSidebar = ({ activePage }) => {
       key: "analytics",
     },
   ];
+  const navigate = useNavigate();
+   const location = useLocation();
+   const handleLogout = () => {
+      logout();
+      navigate("/login");
+    };
+    // Get the user data from localStorage
+  const user = JSON.parse(localStorage.getItem("user"));
 
   return (
     <div className="super-admin-sidebar">
@@ -67,6 +78,33 @@ const SuperAdminSidebar = ({ activePage }) => {
           })}
         </ul>
       </nav>
+       <div className="sidebar-footer">
+              <div className="user-profile">
+                <div className="user-avatar1">
+                  <FiUser size={20} />
+                </div>
+               
+                  <div className="user-info">
+                     <p className="user-name">
+                        {user?.first_name
+                         ? `${user.first_name}.${user.last_name?.charAt(0).toUpperCase() || ""}`
+                          : "John.D"}
+                    </p>
+      
+                    <p className="user-email">{user?.email || "john@example.com"}</p>
+                     </div>
+                
+                
+                  <div className="profile-actions">
+                    <FiLogOut
+                      className="logout-icon"
+                      title="Logout"
+                      onClick={handleLogout}
+                    />
+                  </div>
+              
+              </div>
+              </div>
 
       <div className="sidebar-footer">
         <Link to="/settings" className="nav-link">

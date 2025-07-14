@@ -17,6 +17,8 @@ class Tenant(Base):
     max_users = Column(Integer, nullable=False)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     status = Column(String, default="active")
+    serial_code = Column(String(6), nullable=False, unique=True)
+
 
     # One-to-many: one tenant has many users
     users = relationship("User", back_populates="tenant", cascade="all, delete")

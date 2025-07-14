@@ -1,6 +1,6 @@
 /* Super Admin Sidebar Styles - Following reference design */
 .super-admin-sidebar {
-  width: 256px;
+  width: 266px;
   background: rgb(255, 255, 255);
   border-right: 1px solid rgb(229, 231, 235); /* gray-100 */
   position: fixed;

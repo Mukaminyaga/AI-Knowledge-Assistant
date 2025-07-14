@@ -11,11 +11,14 @@ function Signup() {
     email: "",
     password: "",
     confirmPassword: "",
-    companyName: "",
+    serialCode: "",
     jobTitle: "",
     teamSize: "",
     agreeToTerms: false,
   });
+
+ 
+
 
   const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -145,13 +148,15 @@ function Signup() {
     }
 
     // Company name validation
-    if (!formData.companyName.trim()) {
-      newErrors.companyName = "Company name is required";
-    } else if (formData.companyName.trim().length < 2) {
-      newErrors.companyName = "Company name must be at least 2 characters";
-    } else if (formData.companyName.trim().length > 100) {
-      newErrors.companyName = "Company name is too long";
-    }
+// Serial Code validation
+if (!formData.serialCode.trim()) {
+  newErrors.serialCode = "Serial code is required";
+} else if (formData.serialCode.trim().length !== 6) {
+  newErrors.serialCode = "Serial code must be exactly 6 characters";
+} else if (!/^[A-Za-z0-9]+$/.test(formData.serialCode.trim())) {
+  newErrors.serialCode = "Serial code must be alphanumeric only";
+}
+
 
     // Job title validation (optional field)
     if (formData.jobTitle.trim() && formData.jobTitle.trim().length > 100) {
@@ -186,17 +191,19 @@ const handleSubmit = async (e) => {
 
   setIsSubmitting(true);
 
+  const payload = {
+    first_name: formData.firstName,
+    last_name: formData.lastName,
+    email: formData.email,
+    password: formData.password,
+    role: formData.jobTitle || "User",
+    serial_code: formData.serialCode, // correctly mapped
+  };
+
   try {
     const response = await axios.post(
       `${process.env.REACT_APP_API_URL}/auth/register`,
-      {
-        first_name: formData.firstName,
-        last_name: formData.lastName,
-        email: formData.email,
-        password: formData.password,
-        role: formData.jobTitle || "User",
-        company_name: formData.companyName,
-      }
+      payload
     );
 
     console.log("Signup successful:", response.data);
@@ -211,7 +218,7 @@ const handleSubmit = async (e) => {
       email: "",
       password: "",
       confirmPassword: "",
-      companyName: "",
+      serialCode: "",        // ✅ reset it too
       jobTitle: "",
       teamSize: "",
       agreeToTerms: false,
@@ -220,14 +227,13 @@ const handleSubmit = async (e) => {
 
     // Redirect after delay
     setTimeout(() => {
-      navigate("/"); // home/login
+      navigate("/");
     }, 3000);
   } catch (error) {
     console.error("Signup error:", error);
     const detail = error.response?.data?.detail;
 
     if (Array.isArray(detail)) {
-      // FastAPI returns a list of error objects
       setErrors({
         general: detail.map((err) => err.msg).join(" "),
       });
@@ -449,21 +455,26 @@ const handleSubmit = async (e) => {
   </div>
 </div>
 
-                  <div className="form-group">
-                    <label htmlFor="companyName" className="form-label">
-                      Company Name
-                    </label>
-                    <input
-                      type="text"
-                      id="companyName"
-                      name="companyName"
-                      value={formData.companyName}
-                      onChange={handleInputChange}
-                      className="form-input"
-                      placeholder="e.g. Good Partners"
-                      autoComplete="company name"
-                    />
-                  </div>
+<div className="form-group">
+  <label htmlFor="serialCode" className="form-label">
+    Serial Code
+  </label>
+  <input
+    type="text"
+    id="serialCode"
+    name="serialCode"
+    value={formData.serialCode}
+    onChange={handleInputChange}
+    className={`form-input ${errors.serialCode ? "error" : ""}`}
+    placeholder="Enter 6-digit serial code"
+    autoComplete="off"
+  />
+  {errors.serialCode && (
+    <span className="error-message">{errors.serialCode}</span>
+  )}
+</div>
+
+
                 <div className="form-group">
                   <label htmlFor="role" className="form-label">
                     Job Title(Role)

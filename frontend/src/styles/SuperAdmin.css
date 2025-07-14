@@ -40,6 +40,12 @@
   gap: 12px;
   align-items: center;
 }
+.success-message {
+  margin-bottom: 1rem;
+  color: green;
+  font-weight: bold;
+}
+
 
 /* Buttons */
 .btn {

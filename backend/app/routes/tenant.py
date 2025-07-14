@@ -18,6 +18,10 @@ def create_tenant(tenant: TenantCreate, db: Session = Depends(get_db)):
     if existing:
         raise HTTPException(status_code=400, detail="Tenant with this slug already exists.")
 
+    # Optional: Ensure serial code is 6-digit string
+    if len(tenant.serial_code) != 6 or not tenant.serial_code.isdigit():
+        raise HTTPException(status_code=400, detail="Serial code must be 6-digit numeric.")
+
     db_tenant = Tenant(
         company_name=tenant.company_name,
         contact_email=tenant.contact_email,
@@ -25,12 +29,15 @@ def create_tenant(tenant: TenantCreate, db: Session = Depends(get_db)):
         contact_phone=tenant.contact_phone,
         billing_address=tenant.billing_address,
         monthly_fee=tenant.monthly_fee,
-        max_users=tenant.max_users
+        max_users=tenant.max_users,
+        status=tenant.status,
+        serial_code=tenant.serial_code,
     )
     db.add(db_tenant)
     db.commit()
     db.refresh(db_tenant)
     return db_tenant
+
 
 # Get all tenants
 @router.get("/", response_model=List[TenantOut])

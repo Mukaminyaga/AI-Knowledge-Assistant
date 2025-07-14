@@ -110,11 +110,11 @@ useEffect(() => {
                 <div className="tenant-amount">
                   KES {tenant.monthly_fee.toLocaleString()}
                 </div>
-                <div className="tenant-actions">
+                {/* <div className="tenant-actions">
                   <button className="action-btn" onClick={() => console.log("View", tenant)}>
                     View
                   </button>
-                </div>
+                </div> */}
               </div>
             ))}
           </div>
