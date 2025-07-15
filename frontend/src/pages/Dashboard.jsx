@@ -5,9 +5,10 @@ import {
   FiUsers,
   FiUpload,
   FiTrendingUp,
-  FiFileText,
+  // FiFileText,
 } from "react-icons/fi";
-import { MdDocumentScanner, MdRecentActors, MdPersonAdd } from "react-icons/md";
+import { MdPersonAdd } from "react-icons/md";
+// import { MdDocumentScanner, MdRecentActors } from "react-icons/md";
 import DashboardLayout from "../components/DashboardLayout";
 import axios from "axios";
 import "../styles/SuperAdmin.css";

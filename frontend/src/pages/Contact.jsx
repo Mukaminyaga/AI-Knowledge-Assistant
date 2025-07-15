@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import Header from "../components/Header";
 import "../styles/Contact.css";
 import axios from "axios";
+import { MdEmail, MdPhone, MdLocationOn } from "react-icons/md";
+
 
 function Contact() {
   const [formData, setFormData] = useState({
@@ -42,39 +44,52 @@ function Contact() {
       <div className="contact-content">
         <div className="contact-grid">
           
-          <div className="contact-left-column">
-            <div className="contact-hero">
-              <div className="contact-title">Get in Touch<br />with Our Team</div>
-              <div className="contact-description">
-                Have questions about our AI Knowledge Assistant? <br />
-                We're here to help you find the perfect solution <br />
-                for your team's needs.
-              </div>
-              <div className="contact-info">
-                <div className="contact-item">
-                  <div className="contact-icon">📧</div>
-                  <div className="contact-text">
-                    <div className="contact-label">Email Us</div>
-                    <div className="contact-value">info@goodpartnerske.org</div>
-                  </div>
-                </div>
-                <div className="contact-item">
-                  <div className="contact-icon">📞</div>
-                  <div className="contact-text">
-                    <div className="contact-label">Call Us</div>
-                    <div className="contact-value">+254 711 085 400</div>
-                  </div>
-                </div>
-                <div className="contact-item">
-                  <div className="contact-icon">🏢</div>
-                  <div className="contact-text">
-                    <div className="contact-label">Visit Us</div>
-                    <div className="contact-value">Marsabit Plaza, Ngong Road</div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
+          <div className="contact-left-column ">
+  <div className="contact-hero">
+    <div className="contact-title">
+      Get in Touch<br />with Our Team
+    </div>
+
+    <div className="contact-description">
+      Have questions about our AI Knowledge Assistant? <br />
+      We're here to help you find the perfect solution <br />
+      for your team's needs.
+    </div>
+
+    <div className="contact-info">
+      <div className="contact-item">
+        <div className="contact-icon text-blue-600">
+          <MdEmail size={24} />
+        </div>
+        <div className="contact-text">
+          <div className="contact-label">Email Us</div>
+          <div className="contact-value">info@goodpartnerske.org</div>
+        </div>
+      </div>
+
+      <div className="contact-item">
+        <div className="contact-icon text-green-600">
+          <MdPhone size={24} />
+        </div>
+        <div className="contact-text">
+          <div className="contact-label">Call Us</div>
+          <div className="contact-value">+254 711 085 400</div>
+        </div>
+      </div>
+
+      <div className="contact-item">
+        <div className="contact-icon text-red-600">
+          <MdLocationOn size={24} />
+        </div>
+        <div className="contact-text">
+          <div className="contact-label">Visit Us</div>
+          <div className="contact-value">Marsabit Plaza, Ngong Road</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
           
           <div className="contact-right-column">
             <div className="contact-form-container">
