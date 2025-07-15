@@ -165,9 +165,9 @@ function Dashboard() {
                   <div className="tenant-email">Status: {item.status}</div>
                 </div>
                 <div className="tenant-status">
-                  <span className="status-badge">
+                  {/* <span className="status-badge">
                     <MdDocumentScanner size={16} />
-                  </span>
+                  </span> */}
                 </div>
                 <div className="tenant-amount">{new Date(item.uploaded_at).toLocaleTimeString()}</div>
               </div>
