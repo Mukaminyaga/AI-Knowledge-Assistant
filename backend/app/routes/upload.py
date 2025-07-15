@@ -112,7 +112,7 @@ def get_documents_by_tenant_id(
             "indexed": doc.indexed,
             "uploaded_at": doc.upload_time,
             "tenant_id": doc.tenant_id,
-            "status": doc.status  # ✅ use status from DB
+            "status": doc.status  # use status from DB
         }
         for doc in documents
     ]
@@ -209,4 +209,15 @@ def recent_activity(db: Session = Depends(get_db), current_user: User = Depends(
         }
         for doc in docs
     ]
+
+@router.get("/superadmin/stats/total-documents")
+def get_total_documents_for_all_tenants(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    if current_user.role != "super_admin":
+        raise HTTPException(status_code=403, detail="Access denied")
+
+    total_documents = db.query(Document).count()
+    return {"total_documents": total_documents}
 

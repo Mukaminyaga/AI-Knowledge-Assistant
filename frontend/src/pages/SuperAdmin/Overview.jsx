@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import SuperAdminLayout from "../../components/SuperAdmin/SuperAdminLayout";
-import { FiUsers, FiDollarSign, FiAlertTriangle, FiTrendingUp, FiPlus } from "react-icons/fi";
+import { FiUsers, FiDollarSign, FiAlertTriangle, FiTrendingUp, FiPlus, FiFileText } from "react-icons/fi";
 import { Link } from "react-router-dom";
 import "../../styles/SuperAdmin.css";
 
@@ -19,17 +19,32 @@ const Overview = () => {
 useEffect(() => {
   const fetchOverview = async () => {
     try {
-      const res = await axios.get(`${API_URL}/tenants/tenants/dashboard/overview`);
-      console.log("Dashboard data:", res.data);
-      setDashboardData(res.data);
+      const token = localStorage.getItem("token"); // or sessionStorage or wherever you store the token
+
+      const headers = {
+        Authorization: `Bearer ${token}`
+      };
+
+      const [overviewRes, documentsRes] = await Promise.all([
+        axios.get(`${API_URL}/tenants/tenants/dashboard/overview`, { headers }),
+        axios.get(`${API_URL}/documents/superadmin/stats/total-documents`, { headers })
+      ]);
+
+      const mergedData = {
+        ...overviewRes.data,
+        total_documents: documentsRes.data.total_documents
+      };
+
+      console.log("Dashboard data:", mergedData);
+      setDashboardData(mergedData);
     } catch (err) {
       console.error("Failed to fetch dashboard data:", err);
-      // Optional: set an error state to show in the UI
     }
   };
 
   fetchOverview();
 }, []);
+
 
   return (
     <SuperAdminLayout activePage="overview">
@@ -63,6 +78,16 @@ useEffect(() => {
               <div className="metric-label">Total Tenants</div>
             </div>
           </div>
+
+          
+  <div className="metric-card">
+    <div className="metric-icon"><FiFileText /></div>
+    <div className="metric-content">
+      <div className="metric-value">{dashboardData.total_documents}</div>
+      <div className="metric-label">Total Documents</div>
+    </div>
+  </div>
+
 
           <div className="metric-card">
             <div className="metric-icon"><FiDollarSign /></div>
