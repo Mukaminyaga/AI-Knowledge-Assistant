@@ -113,7 +113,7 @@ body {
 
 /* Button styles */
 .btn {
-  border: none ;
+  border: none;
   border-radius: 25px;
   padding: 18px 40px;
   font-size: 18px;
@@ -133,7 +133,6 @@ body {
 
 .btn-primary:hover {
   background-color: var(--primary-color);
- 
 }
 
 .btn-secondary {

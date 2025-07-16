@@ -1,5 +1,4 @@
 /* Super Admin Main Styles - Following reference design */
-
 /* Page Layout */
 .overview-page,
 .tenants-page,
@@ -18,6 +17,7 @@
 
 .page-header-content {
   flex: 1;
+  margin-left: 25px !important;
 }
 
 .page-title {
@@ -31,7 +31,6 @@
 
 .page-subtitle {
   color: rgb(75, 85, 99); /* gray-600 */
-  margin-left: 20px;
   margin: 0;
   font-size: 14px;
   line-height: 20px;
@@ -52,7 +51,6 @@
   gap: 0.5rem;
 }
 
-
 /* Buttons */
 .btn {
   display: inline-flex;
@@ -68,6 +66,12 @@
   cursor: pointer;
   transition: all 0.2s ease;
   border: 1px solid transparent;
+  outline: none;
+}
+
+.btn:focus {
+  outline: none;
+  box-shadow: none;
 }
 
 .btn-primary {
@@ -143,7 +147,7 @@
   border-radius: 6px;
   min-width: 160px;
   z-index: 1;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
 }
 
 .export-dropdown:hover .dropdown-menu {
@@ -163,7 +167,6 @@
 .dropdown-item:hover {
   background-color: #f5f5f5;
 }
-
 
 /* Metrics Grid */
 .metrics-grid {
@@ -339,10 +342,17 @@
   font-weight: 500;
   cursor: pointer;
   transition: all 0.2s ease;
+  outline: none;
 }
 
 .action-btn:hover {
   background-color: rgb(243, 244, 246); /* gray-100 */
+}
+
+.action-btn:focus {
+  outline: none;
+  box-shadow: none;
+  border-color: rgb(229, 231, 235);
 }
 
 .view-all-section {
@@ -1505,10 +1515,17 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  outline: none;
 }
 
 .action-btn:hover {
   background-color: rgb(249, 250, 251);
+}
+
+.action-btn:focus {
+  outline: none;
+  box-shadow: none;
+  border-color: rgb(229, 231, 235);
 }
 
 .view-btn:hover {
@@ -1617,4 +1634,121 @@
 .table-footer {
   margin-top: 16px;
   text-align: center;
+}
+
+/* Pagination Styles */
+.pagination-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
+  margin-top: 24px;
+  padding: 20px;
+  background: linear-gradient(
+    135deg,
+    #ffffff 0%,
+    rgba(240, 242, 245, 0.3) 100%
+  );
+  border-radius: 12px;
+  border: 1px solid rgba(240, 242, 245, 0.8);
+}
+
+.pagination-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 16px;
+  border: 1px solid rgba(240, 242, 245, 1);
+  border-radius: 8px;
+  background-color: #ffffff;
+  color: rgb(55, 65, 81);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-width: 100px;
+}
+
+.pagination-btn:hover:not(:disabled) {
+  border-color: #3b82f6;
+  background-color: rgba(59, 130, 246, 0.05);
+  color: #3b82f6;
+}
+
+.pagination-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  background-color: rgba(240, 242, 245, 0.5);
+}
+
+.pagination-numbers {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.pagination-number {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(240, 242, 245, 1);
+  border-radius: 8px;
+  background-color: #ffffff;
+  color: rgb(55, 65, 81);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.pagination-number:hover {
+  border-color: #3b82f6;
+  background-color: rgba(59, 130, 246, 0.05);
+  color: #3b82f6;
+}
+
+.pagination-number.active {
+  background-color: #3b82f6;
+  border-color: #3b82f6;
+  color: #ffffff;
+}
+
+@media (max-width: 768px) {
+  .pagination-container {
+    flex-direction: column;
+    gap: 12px;
+    padding: 16px;
+  }
+
+  .pagination-numbers {
+    order: 2;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .pagination-btn {
+    order: 1;
+    width: 100%;
+    max-width: 120px;
+  }
+}
+
+@media (max-width: 480px) {
+  .pagination-numbers {
+    gap: 4px;
+  }
+
+  .pagination-number {
+    width: 36px;
+    height: 36px;
+    font-size: 12px;
+  }
+
+  .pagination-btn {
+    padding: 8px 12px;
+    font-size: 12px;
+  }
 }

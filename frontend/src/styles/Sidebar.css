@@ -231,6 +231,7 @@
   flex: 1;
   min-width: 0;
   flex-direction: column;
+
 }
 
 .user-name {
@@ -460,6 +461,7 @@
   cursor: pointer;
   color: #555;
   transition: color 0.2s ease;
+ margin-left: -30px ;
 }
 
 .logout-icon:hover {

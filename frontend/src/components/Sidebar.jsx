@@ -10,8 +10,9 @@ import {
   FiUsers,
   FiSettings,
   FiLogOut,
+  FiActivity,
 } from "react-icons/fi";
-import { logout } from "../utils/auth"; 
+import { logout } from "../utils/auth";
 
 function Sidebar({ isOpen = false, onClose, isMobile = false }) {
   const location = useLocation();
@@ -35,13 +36,22 @@ function Sidebar({ isOpen = false, onClose, isMobile = false }) {
     navigate("/login");
   };
   // Get the user data from localStorage
-const user = JSON.parse(localStorage.getItem("user"));
+  const user = JSON.parse(localStorage.getItem("user"));
 
   const menuItems = [
     { icon: <FiHome size={20} />, label: "Dashboard", path: "/dashboard" },
-    { icon: <FiUpload size={20} />, label: "Upload Documents", path: "/upload-documents" },
+    {
+      icon: <FiUpload size={20} />,
+      label: "Upload Documents",
+      path: "/upload-documents",
+    },
     { icon: <FiMessageSquare size={20} />, label: "Chat", path: "/chat" },
-    { icon: <FiBook size={20} />, label: "Knowledge Base", path: "/knowledge-base" },
+    {
+      icon: <FiBook size={20} />,
+      label: "Knowledge Base",
+      path: "/knowledge-base",
+    },
+    { icon: <FiActivity size={20} />, label: "Activity", path: "/activity" },
     { icon: <FiUsers size={20} />, label: "Team", path: "/users" },
     { icon: <FiSettings size={20} />, label: "Settings", path: "/settings" },
   ];
@@ -64,8 +74,8 @@ const user = JSON.parse(localStorage.getItem("user"));
                     isMobile
                       ? "Close sidebar"
                       : isCollapsed
-                      ? "Expand sidebar"
-                      : "Collapse sidebar"
+                        ? "Expand sidebar"
+                        : "Collapse sidebar"
                   }
                 >
                   {isMobile ? "✕" : "←"}
@@ -95,7 +105,9 @@ const user = JSON.parse(localStorage.getItem("user"));
                 onClick={handleLinkClick}
               >
                 <span className="nav-icon">{item.icon}</span>
-                {!isCollapsed && <span className="nav-label">{item.label}</span>}
+                {!isCollapsed && (
+                  <span className="nav-label">{item.label}</span>
+                )}
               </Link>
             </li>
           ))}
@@ -109,14 +121,14 @@ const user = JSON.parse(localStorage.getItem("user"));
           </div>
           {!isCollapsed && (
             <div className="user-info">
-               <p className="user-name">
-                  {user?.first_name
-                   ? `${user.first_name}.${user.last_name?.charAt(0).toUpperCase() || ""}`
-                    : "John.D"}
+              <p className="user-name">
+                {user?.first_name
+                  ? `${user.first_name}.${user.last_name?.charAt(0).toUpperCase() || ""}`
+                  : "John.D"}
               </p>
 
               <p className="user-email">{user?.email || "john@example.com"}</p>
-               </div>
+            </div>
           )}
           {!isCollapsed && (
             <div className="profile-actions">
@@ -130,14 +142,14 @@ const user = JSON.parse(localStorage.getItem("user"));
         </div>
 
         {!isCollapsed && (
-         <div className="help-section">
-  <div className="help-card">
-    <h4 className="help-title">Need Help?</h4>
-    <Link to="/contact">
-      <button className="help-button">Contact Support</button>
-    </Link>
-  </div>
-</div>
+          <div className="help-section">
+            <div className="help-card">
+              <h4 className="help-title">Need Help?</h4>
+              <Link to="/contact">
+                <button className="help-button">Contact Support</button>
+              </Link>
+            </div>
+          </div>
         )}
       </div>
     </div>

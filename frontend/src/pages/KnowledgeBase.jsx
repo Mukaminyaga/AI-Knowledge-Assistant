@@ -12,10 +12,10 @@ import {
   FiEye,
   FiHardDrive,
   FiTrash2,
+  FiChevronLeft,
+  FiChevronRight,
 } from "react-icons/fi";
 import "../styles/SuperAdmin.css";
-
-
 
 const ITEMS_PER_PAGE = 5;
 
@@ -52,79 +52,81 @@ const KnowledgeBase = () => {
   useEffect(() => {
     fetchDocuments();
   }, []);
-useEffect(() => {
-  let result = [...documents];
+  useEffect(() => {
+    let result = [...documents];
 
-  if (filter === "indexed")
-    result = result.filter((doc) => doc.status === "processed");
-  else if (filter === "indexing")
-    result = result.filter((doc) => doc.status === "processing");
-  else if (filter === "failed")
-    result = result.filter((doc) => doc.status === "failed");
-  else if (filter === "pending")
-    result = result.filter((doc) => doc.status === "pending");
+    if (filter === "indexed")
+      result = result.filter((doc) => doc.status === "processed");
+    else if (filter === "indexing")
+      result = result.filter((doc) => doc.status === "processing");
+    else if (filter === "failed")
+      result = result.filter((doc) => doc.status === "failed");
+    else if (filter === "pending")
+      result = result.filter((doc) => doc.status === "pending");
 
-  if (searchTerm.trim()) {
-    result = result.filter((doc) =>
-      doc.filename.toLowerCase().includes(searchTerm.toLowerCase())
-    );
-  }
+    if (searchTerm.trim()) {
+      result = result.filter((doc) =>
+        doc.filename.toLowerCase().includes(searchTerm.toLowerCase()),
+      );
+    }
 
-  setFilteredDocs(result);
-  setCurrentPage(1);
-}, [documents, filter, searchTerm]);
+    setFilteredDocs(result);
+    setCurrentPage(1);
+  }, [documents, filter, searchTerm]);
 
+  const handleView = async (filename) => {
+    const encodedFilename = encodeURIComponent(filename);
 
-
-const handleView = async (filename) => {
-  try {
-    const res = await axios.get(
-      `${process.env.REACT_APP_API_URL}/documents/view/${encodeURIComponent(filename)}`,
-      {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
+    try {
+      const res = await axios.get(
+        `${process.env.REACT_APP_API_URL}/documents/view/${encodedFilename}`,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+          responseType: "blob",
         },
-        responseType: "blob",
-      }
-    );
+      );
 
-    const fileBlob = new Blob([res.data], { type: res.headers["content-type"] });
-    const fileURL = URL.createObjectURL(fileBlob);
-    window.open(fileURL, "_blank");
-  } catch (err) {
-    console.error("View error", err);
-    toast.error("Failed to preview document");
-  }
-};
+      const fileBlob = new Blob([res.data], {
+        type: res.headers["content-type"],
+      });
+      const fileURL = URL.createObjectURL(fileBlob);
+      window.open(fileURL, "_blank");
+    } catch (err) {
+      console.error("View error", err);
+      toast.error("Failed to preview document");
+    }
+  };
 
+  const handleDownload = async (filename) => {
+    const encodedFilename = encodeURIComponent(filename);
 
-const handleDownload = async (filename) => {
-  try {
-    const res = await axios.get(
-      `${process.env.REACT_APP_API_URL}/documents/download/${filename}`,
-      {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
+    try {
+      const res = await axios.get(
+        `${process.env.REACT_APP_API_URL}/documents/download/${encodedFilename}`,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+          responseType: "blob",
         },
-        responseType: "blob",
-      }
-    );
+      );
 
-    const blob = new Blob([res.data]);
-    const url = window.URL.createObjectURL(blob);
+      const blob = new Blob([res.data]);
+      const url = window.URL.createObjectURL(blob);
 
-    const link = document.createElement("a");
-    link.href = url;
-    link.setAttribute("download", filename);
-    document.body.appendChild(link);
-    link.click();
-    link.remove();
-  } catch (err) {
-    console.error("Download error", err);
-    toast.error("Failed to download document");
-  }
-};
-
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", filename);
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+    } catch (err) {
+      console.error("Download error", err);
+      toast.error("Failed to download document");
+    }
+  };
 
   const deleteDocument = async (docId) => {
     if (!window.confirm("Are you sure you want to delete this document?"))
@@ -152,7 +154,7 @@ const handleDownload = async (filename) => {
       );
     }
   };
- 
+
   // const handleDownload = (filename) => {
   //   const link = document.createElement("a");
   //   link.href = `${process.env.REACT_APP_API_URL}/uploads/${filename}`;
@@ -201,22 +203,22 @@ const handleDownload = async (filename) => {
     return typeColors[type.toLowerCase()] || "type-default";
   };
 
-const getStatusBadge = (status) => {
-  const statusColors = {
-    processed: "status-success",   // green
-    processing: "status-warning",  // yellow
-    failed: "status-danger",       // red
-    pending: "status-info",        // blue
+  const getStatusBadge = (status) => {
+    const statusColors = {
+      processed: "status-success", // green
+      processing: "status-warning", // yellow
+      failed: "status-danger", // red
+      pending: "status-info", // blue
+    };
+
+    return (
+      <span
+        className={`status-badge ${statusColors[status] || "status-default"}`}
+      >
+        {status ? status.charAt(0).toUpperCase() + status.slice(1) : "Unknown"}
+      </span>
+    );
   };
-
-  return (
-    <span className={`status-badge ${statusColors[status] || "status-default"}`}>
-      {status ? status.charAt(0).toUpperCase() + status.slice(1) : "Unknown"}
-    </span>
-  );
-};
-
-
 
   const formatFileSize = (sizeInBytes) => {
     return (sizeInBytes / 1024).toFixed(1) + " KB";
@@ -282,40 +284,41 @@ const getStatusBadge = (status) => {
             <div className="filter-section">
               <div className="filter-group">
                 <label className="filter-label">Status:</label>
-               <select
-  className="filter-select"
-  value={filter}
-  onChange={(e) => setFilter(e.target.value)}
->
-  <option value="all">All Status</option>
-  <option value="indexed">Indexed</option>     {/* maps to processed */}
-  <option value="indexing">Indexing</option>   {/* maps to processing */}
-  <option value="failed">Failed</option>
-  <option value="pending">Pending</option>
-</select>
-
+                <select
+                  className="filter-select"
+                  value={filter}
+                  onChange={(e) => setFilter(e.target.value)}
+                >
+                  <option value="all">All Status</option>
+                  <option value="indexed">Indexed</option>{" "}
+                  {/* maps to processed */}
+                  <option value="indexing">Indexing</option>{" "}
+                  {/* maps to processing */}
+                  <option value="failed">Failed</option>
+                  <option value="pending">Pending</option>
+                </select>
               </div>
             </div>
           </div>
         </div>
 
         <div className="document-stats">
-             <div className="stat-item">
-          <div className="stat-value">{documents.length}</div>
-          <div className="stat-label">Total Documents</div>
-        </div>
-        <div className="stat-item">
-  <div className="stat-value">
-    {documents.filter((d) => d.status === "processed").length}
-  </div>
-  <div className="stat-label">Indexed</div>
-</div>
-<div className="stat-item">
-  <div className="stat-value">
-    {documents.filter((d) => d.status === "processing").length}
-  </div>
-  <div className="stat-label">Processing</div>
-</div>
+          <div className="stat-item">
+            <div className="stat-value">{documents.length}</div>
+            <div className="stat-label">Total Documents</div>
+          </div>
+          <div className="stat-item">
+            <div className="stat-value">
+              {documents.filter((d) => d.status === "processed").length}
+            </div>
+            <div className="stat-label">Indexed</div>
+          </div>
+          <div className="stat-item">
+            <div className="stat-value">
+              {documents.filter((d) => d.status === "processing").length}
+            </div>
+            <div className="stat-label">Processing</div>
+          </div>
 
           <div className="stat-item">
             <div className="stat-value">
@@ -370,7 +373,7 @@ const getStatusBadge = (status) => {
                       )}
                     </th>
                     <th>Status</th>
-                
+
                     <th>Actions</th>
                   </tr>
                 </thead>
@@ -416,25 +419,23 @@ const getStatusBadge = (status) => {
                         </td>
                         <td>{getStatusBadge(doc.status)}</td>
 
-                    
                         <td>
                           <div className="action-buttons">
-        <button
-  className="action-btn view-btn"
-  onClick={() => handleView(doc.filename)}
-  title="View document"
->
-  <FiEye />
-</button>
+                            <button
+                              className="action-btn view-btn"
+                              onClick={() => handleView(doc.filename)}
+                              title="View document"
+                            >
+                              <FiEye />
+                            </button>
 
-<button
-  className="action-btn download-btn"
-  onClick={() => handleDownload(doc.filename)}
-  title="Download document"
->
-  <FiDownload />
-</button>
-
+                            <button
+                              className="action-btn download-btn"
+                              onClick={() => handleDownload(doc.filename)}
+                              title="Download document"
+                            >
+                              <FiDownload />
+                            </button>
 
                             <button
                               className="action-btn delete-btn"
@@ -459,17 +460,39 @@ const getStatusBadge = (status) => {
               </p>
             </div>
 
-            {totalPages > 1 && (
-              <div className="pagination">
-                {[...Array(totalPages).keys()].map((num) => (
+            {totalPages >= 1 && (
+              <div className="pagination-container">
+                {currentPage > 1 && (
                   <button
-                    key={num + 1}
-                    className={currentPage === num + 1 ? "active" : ""}
-                    onClick={() => paginate(num + 1)}
+                    className="pagination-btn"
+                    onClick={() => setCurrentPage(currentPage - 1)}
                   >
-                    {num + 1}
+                    <FiChevronLeft size={16} />
+                    Previous
                   </button>
-                ))}
+                )}
+
+                <div className="pagination-numbers">
+                  {[...Array(totalPages).keys()].map((num) => (
+                    <button
+                      key={num + 1}
+                      className={`pagination-number ${currentPage === num + 1 ? "active" : ""}`}
+                      onClick={() => paginate(num + 1)}
+                    >
+                      {num + 1}
+                    </button>
+                  ))}
+                </div>
+
+                {currentPage < totalPages && (
+                  <button
+                    className="pagination-btn"
+                    onClick={() => setCurrentPage(currentPage + 1)}
+                  >
+                    Next
+                    <FiChevronRight size={16} />
+                  </button>
+                )}
               </div>
             )}
           </>

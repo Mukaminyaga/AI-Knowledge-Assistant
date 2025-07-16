@@ -9,6 +9,8 @@ import {
   FiTrash2,
   FiShield,
   FiEdit,
+  FiChevronLeft,
+  FiChevronRight,
   // FiUserPlus,
 } from "react-icons/fi";
 import {
@@ -24,6 +26,11 @@ const API_URL = process.env.REACT_APP_API_URL;
 const Users = () => {
   const [users, setUsers] = useState([]);
   const [error, setError] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage] = useState(10);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [selectedUser, setSelectedUser] = useState(null);
+  const [selectedRole, setSelectedRole] = useState("");
 
   // User statistics
   const calculateStats = (userList) => {
@@ -106,6 +113,65 @@ const Users = () => {
     } catch (err) {
       console.error("Delete error:", err.response || err);
       setError("Error deleting user");
+    }
+  };
+
+  // Edit user functions
+  const openEditModal = (user) => {
+    setSelectedUser(user);
+    setSelectedRole(user.role);
+    setShowEditModal(true);
+  };
+
+  const closeEditModal = () => {
+    setShowEditModal(false);
+    setSelectedUser(null);
+    setSelectedRole("");
+  };
+
+  const updateUserRole = async () => {
+    try {
+      const res = await axios.put(
+        `${API_URL}/users/role/${selectedUser.id}`,
+        { role: selectedRole },
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        },
+      );
+
+      if (res.status === 200) {
+        fetchUsers();
+        closeEditModal();
+      } else {
+        setError("Failed to update user role");
+      }
+    } catch (err) {
+      console.error("Update role error:", err.response || err);
+      setError("Error updating user role");
+    }
+  };
+
+  // Pagination calculations
+  const totalPages = Math.ceil(users.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const currentUsers = users.slice(startIndex, endIndex);
+
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+  };
+
+  const handlePrevious = () => {
+    if (currentPage > 1) {
+      setCurrentPage(currentPage - 1);
+    }
+  };
+
+  const handleNext = () => {
+    if (currentPage < totalPages) {
+      setCurrentPage(currentPage + 1);
     }
   };
 
@@ -195,7 +261,7 @@ const Users = () => {
                 </tr>
               </thead>
               <tbody>
-                {users.map((user) => (
+                {currentUsers.map((user) => (
                   <tr key={user.id} className="user-row">
                     <td className="user-info">
                       {/* <div className="user-avatar">{user.first_name?.[0]}{user.last_name?.[0]}</div> */}
@@ -248,7 +314,11 @@ const Users = () => {
                             <FiUserCheck size={16} />
                           </button>
                         )}
-                        <button className="action-btn edit" title="Edit User">
+                        <button
+                          className="action-btn edit"
+                          title="Edit User"
+                          onClick={() => openEditModal(user)}
+                        >
                           <FiEdit size={16} />
                         </button>
                         <button
@@ -266,6 +336,151 @@ const Users = () => {
             </table>
           </div>
         </div>
+
+        {users.length > 0 && (
+          <>
+            <div className="activity-results">
+              <p>
+                Showing {startIndex + 1} to {Math.min(endIndex, users.length)}{" "}
+                of {users.length} users
+              </p>
+            </div>
+
+            {totalPages >= 1 && (
+              <div className="pagination-container">
+                {currentPage > 1 && (
+                  <button className="pagination-btn" onClick={handlePrevious}>
+                    <FiChevronLeft size={16} />
+                    Previous
+                  </button>
+                )}
+
+                <div className="pagination-numbers">
+                  {Array.from({ length: totalPages }, (_, i) => i + 1).map(
+                    (page) => (
+                      <button
+                        key={page}
+                        className={`pagination-number ${currentPage === page ? "active" : ""}`}
+                        onClick={() => handlePageChange(page)}
+                      >
+                        {page}
+                      </button>
+                    ),
+                  )}
+                </div>
+
+                {currentPage < totalPages && (
+                  <button className="pagination-btn" onClick={handleNext}>
+                    Next
+                    <FiChevronRight size={16} />
+                  </button>
+                )}
+              </div>
+            )}
+          </>
+        )}
+
+        {/* Edit User Modal */}
+        {showEditModal && (
+          <div className="modal-overlay">
+            <div className="modal-content">
+              <div className="modal-header">
+                <h3>Edit User Role</h3>
+                <button className="close-btn" onClick={closeEditModal}>
+                  ×
+                </button>
+              </div>
+
+              <div className="modal-body">
+                <div className="user-info-section">
+                  <h4>User Information</h4>
+                  <p>
+                    <strong>Name:</strong> {selectedUser?.first_name}{" "}
+                    {selectedUser?.last_name}
+                  </p>
+                  <p>
+                    <strong>Email:</strong> {selectedUser?.email}
+                  </p>
+                </div>
+
+                <div className="role-permissions-section">
+                  <h4>Knowledge Base Permissions</h4>
+                  <div className="permission-grid">
+                    <div className="permission-item admin">
+                      <h5>Admin</h5>
+                      <ul>
+                        <li>✓ Upload documents</li>
+                        <li>✓ Download documents</li>
+                        <li>✓ View documents</li>
+                        <li>✓ Delete documents</li>
+                      </ul>
+                    </div>
+                    <div className="permission-item editor">
+                      <h5>Editor</h5>
+                      <ul>
+                        <li>✓ Upload documents</li>
+                        <li>✓ View documents</li>
+                        <li>✓ Download documents</li>
+                      </ul>
+                    </div>
+                    <div className="permission-item viewer">
+                      <h5>Viewer</h5>
+                      <ul>
+                        <li>✓ View documents</li>
+                        <li>✓ Download documents</li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="role-selection-section">
+                  <h4>Assign Role</h4>
+                  <div className="role-options">
+                    <label className="role-option">
+                      <input
+                        type="radio"
+                        name="role"
+                        value="Admin"
+                        checked={selectedRole === "Admin"}
+                        onChange={(e) => setSelectedRole(e.target.value)}
+                      />
+                      <span className="role-label">Admin</span>
+                    </label>
+                    <label className="role-option">
+                      <input
+                        type="radio"
+                        name="role"
+                        value="Editor"
+                        checked={selectedRole === "Editor"}
+                        onChange={(e) => setSelectedRole(e.target.value)}
+                      />
+                      <span className="role-label">Editor</span>
+                    </label>
+                    <label className="role-option">
+                      <input
+                        type="radio"
+                        name="role"
+                        value="Viewer"
+                        checked={selectedRole === "Viewer"}
+                        onChange={(e) => setSelectedRole(e.target.value)}
+                      />
+                      <span className="role-label">Viewer</span>
+                    </label>
+                  </div>
+                </div>
+              </div>
+
+              <div className="modal-footer">
+                <button className="cancel-btn" onClick={closeEditModal}>
+                  Cancel
+                </button>
+                <button className="save-btn" onClick={updateUserRole}>
+                  Save Changes
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </DashboardLayout>
   );
