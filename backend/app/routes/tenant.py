@@ -11,6 +11,16 @@ from fastapi.responses import JSONResponse
 
 router = APIRouter(prefix="/tenants", tags=["Tenants"])
 
+import random
+
+def generate_unique_serial_code(db: Session):
+    while True:
+        code = str(random.randint(100000, 999999))  # Always 6 digits
+        exists = db.query(Tenant).filter(Tenant.serial_code == code).first()
+        if not exists:
+            return code
+
+
 # Create a new tenant
 @router.post("/", response_model=TenantOut)
 def create_tenant(tenant: TenantCreate, db: Session = Depends(get_db)):
@@ -26,13 +36,16 @@ def create_tenant(tenant: TenantCreate, db: Session = Depends(get_db)):
     if db.query(Tenant).filter(Tenant.slug_url == tenant.slug_url).first():
         raise HTTPException(status_code=400, detail="Tenant with this slug already exists.")
 
-    # Check if serial code already exists
-    if db.query(Tenant).filter(Tenant.serial_code == tenant.serial_code).first():
-        raise HTTPException(status_code=400, detail="Serial code already in use.")
-
-    # Validate serial code format
-    if len(tenant.serial_code) != 6 or not tenant.serial_code.isdigit():
-        raise HTTPException(status_code=400, detail="Serial code must be a 6-digit number.")
+    # Automatically generate serial code if not provided
+    serial_code = tenant.serial_code
+    if not serial_code:
+        serial_code = generate_unique_serial_code(db)
+    else:
+        # Validate manually entered one
+        if len(serial_code) != 6 or not serial_code.isdigit():
+            raise HTTPException(status_code=400, detail="Serial code must be a 6-digit number.")
+        if db.query(Tenant).filter(Tenant.serial_code == serial_code).first():
+            raise HTTPException(status_code=400, detail="Serial code already in use.")
 
     db_tenant = Tenant(
         company_name=tenant.company_name,
@@ -43,7 +56,9 @@ def create_tenant(tenant: TenantCreate, db: Session = Depends(get_db)):
         monthly_fee=tenant.monthly_fee,
         max_users=tenant.max_users,
         status=tenant.status,
-        serial_code=tenant.serial_code,
+        serial_code=serial_code,
+        plan=tenant.plan,       
+        country=tenant.country,
     )
 
     db.add(db_tenant)
@@ -121,6 +136,10 @@ def update_tenant(tenant_id: int, tenant: TenantUpdate, db: Session = Depends(ge
         db_tenant.max_users = tenant.max_users
     if tenant.status is not None:
         db_tenant.status = tenant.status
+    if tenant.plan is not None:
+        db_tenant.plan = tenant.plan
+    if tenant.country is not None:
+        db_tenant.country = tenant.country
 
     db.commit()
     db.refresh(db_tenant)

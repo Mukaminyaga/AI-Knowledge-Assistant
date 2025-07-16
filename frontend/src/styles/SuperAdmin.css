@@ -1797,3 +1797,135 @@
     font-size: 12px;
   }
 }
+
+/* Status Change Dropdown Styles */
+.status-action-dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.action-btn.status-btn {
+  background: rgb(249, 250, 251);
+  border: 1px solid rgb(229, 231, 235);
+  color: rgb(75, 85, 99);
+  padding: 8px;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+}
+
+.action-btn.status-btn:hover {
+  background: rgb(243, 244, 246);
+  border-color: rgb(209, 213, 219);
+}
+
+.action-btn.status-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.loading-spinner {
+  width: 14px;
+  height: 14px;
+  border: 2px solid rgb(229, 231, 235);
+  border-top: 2px solid rgb(32, 148, 243);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.status-dropdown-menu {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background: rgb(255, 255, 255);
+  border: 1px solid rgb(229, 231, 235);
+  border-radius: 8px;
+  box-shadow:
+    0 10px 15px -3px rgba(0, 0, 0, 0.1),
+    0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  z-index: 1000;
+  min-width: 140px;
+  margin-top: 4px;
+  padding: 4px 0;
+  overflow: hidden;
+}
+
+.status-dropdown-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 8px 12px;
+  background: none;
+  border: none;
+  font-size: 13px;
+  font-weight: 500;
+  text-align: left;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  color: rgb(75, 85, 99);
+}
+
+.status-dropdown-item:hover {
+  background: rgb(249, 250, 251);
+  color: rgb(17, 24, 39);
+}
+
+.status-dropdown-item.active-item:hover {
+  background: rgba(34, 197, 94, 0.1);
+  color: rgb(21, 128, 61);
+}
+
+.status-dropdown-item.inactive-item:hover {
+  background: rgba(245, 158, 11, 0.1);
+  color: rgb(146, 64, 14);
+}
+
+.status-dropdown-item.suspended-item:hover {
+  background: rgba(239, 68, 68, 0.1);
+  color: rgb(185, 28, 28);
+}
+
+.status-icon {
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+}
+
+.status-icon.active {
+  color: rgb(34, 197, 94);
+  font-size: 16px;
+}
+
+.status-dropdown-item.active-item .status-icon {
+  color: rgb(34, 197, 94);
+}
+
+.status-dropdown-item.inactive-item .status-icon {
+  color: rgb(245, 158, 11);
+}
+
+.status-dropdown-item.suspended-item .status-icon {
+  color: rgb(239, 68, 68);
+}
+
+/* Plan Badge Styling */
+.plan-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 8px;
+  background: rgb(243, 244, 246);
+  color: rgb(75, 85, 99);
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 500;
+  text-transform: capitalize;
+}

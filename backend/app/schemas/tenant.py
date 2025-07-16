@@ -10,8 +10,11 @@ class TenantCreate(BaseModel):
     billing_address: str
     monthly_fee: float
     max_users: int
-    serial_code: str  
+    serial_code: Optional[str] = None  
     status: Optional[str] = "active" 
+    plan: Optional[str] = "basic"
+    country: Optional[str] = None
+
 
 class TenantOut(TenantCreate):
     id: int
@@ -32,6 +35,8 @@ class TenantUpdate(BaseModel):
     max_users: Optional[int]
     status: Optional[str]
     serial_code: Optional[str]  
+    plan: Optional[str]
+    country: Optional[str]
 
     class Config:
         orm_mode = True

@@ -475,7 +475,7 @@ const handleSubmit = async (e) => {
 </div>
 
 
-                <div className="form-group">
+                {/* <div className="form-group">
                   <label htmlFor="role" className="form-label">
                     Job Title(Role) 
                   </label>
@@ -492,7 +492,7 @@ const handleSubmit = async (e) => {
                   {errors.companyName && (
                     <span className="error-message">{errors.companyName}</span>
                   )}
-                </div>
+                </div> */}
                  
                 {/* <div className="form-row">
                   <div className="form-group">

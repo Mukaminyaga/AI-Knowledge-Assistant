@@ -9,7 +9,6 @@ import * as XLSX from "xlsx";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 
-
 const API_URL = process.env.REACT_APP_API_URL;
 
 const Tenants = () => {
@@ -57,7 +56,7 @@ const Tenants = () => {
   const handleFormSubmit = (tenantData) => {
     if (editingTenant) {
       setTenants((prev) =>
-        prev.map((t) => (t.id === tenantData.id ? tenantData : t))
+        prev.map((t) => (t.id === tenantData.id ? tenantData : t)),
       );
     } else {
       setTenants((prev) => [...prev, tenantData]);
@@ -71,71 +70,85 @@ const Tenants = () => {
     setEditingTenant(null);
   };
 
-const handleExport = (type, exportData = []) => {
-  if (!exportData.length) return;
+  const handleStatusChange = (tenantId, newStatus) => {
+    setTenants((prev) =>
+      prev.map((tenant) =>
+        tenant.id === tenantId ? { ...tenant, status: newStatus } : tenant,
+      ),
+    );
+  };
 
-  const tableColumn = [
-    "Company", "Email", "Slug", "Phone", "Billing Address",
-    "Monthly Fee", "Max Users", "Status", "Serial Code", "Created At", "Updated At"
-  ];
+  const handleExport = (type, exportData = []) => {
+    if (!exportData.length) return;
 
-  const tableRows = exportData.map((tenant) => [
-    tenant.company_name,
-    tenant.contact_email,
-    tenant.slug_url,
-    tenant.contact_phone,
-    tenant.billing_address,
-    tenant.monthly_fee,
-    tenant.max_users,
-    tenant.status,
-    tenant.serial_code,
-    new Date(tenant.created_at).toLocaleString(),
-    new Date(tenant.updated_at).toLocaleString()
-  ]);
+    const tableColumn = [
+      "Company",
+      "Email",
+      "Slug",
+      "Phone",
+      "Billing Address",
+      "Monthly Fee",
+      "Max Users",
+      "Status",
+      "Serial Code",
+      "Created At",
+      "Updated At",
+    ];
 
-  if (type === "pdf") {
-    const doc = new jsPDF();
-    doc.setFontSize(12);
-    doc.text("Tenant List", 14, 15);
+    const tableRows = exportData.map((tenant) => [
+      tenant.company_name,
+      tenant.contact_email,
+      tenant.slug_url,
+      tenant.contact_phone,
+      tenant.billing_address,
+      tenant.monthly_fee,
+      tenant.max_users,
+      tenant.status,
+      tenant.serial_code,
+      new Date(tenant.created_at).toLocaleString(),
+      new Date(tenant.updated_at).toLocaleString(),
+    ]);
 
-    autoTable(doc, {
-      head: [tableColumn],
-      body: tableRows,
-      startY: 20,
-      styles: {
-        fontSize: 7,
-        cellPadding: 2,
-        overflow: 'linebreak',
-      },
-      columnStyles: {
-        0: { cellWidth: 40 },
-        1: { cellWidth: 50 },
-        2: { cellWidth: 35 },
-        3: { cellWidth: 30 },
-        4: { cellWidth: 60 },
-        5: { cellWidth: 20, halign: 'right' },
-        6: { cellWidth: 20, halign: 'right' },
-        7: { cellWidth: 25 },
-        8: { cellWidth: 30 },
-        9: { cellWidth: 35 },
-        10: { cellWidth: 35 },
-      },
-    });
+    if (type === "pdf") {
+      const doc = new jsPDF();
+      doc.setFontSize(12);
+      doc.text("Tenant List", 14, 15);
 
-    doc.save(`tenants-${statusFilter}.pdf`);
-  }
+      autoTable(doc, {
+        head: [tableColumn],
+        body: tableRows,
+        startY: 20,
+        styles: {
+          fontSize: 7,
+          cellPadding: 2,
+          overflow: "linebreak",
+        },
+        columnStyles: {
+          0: { cellWidth: 40 },
+          1: { cellWidth: 50 },
+          2: { cellWidth: 35 },
+          3: { cellWidth: 30 },
+          4: { cellWidth: 60 },
+          5: { cellWidth: 20, halign: "right" },
+          6: { cellWidth: 20, halign: "right" },
+          7: { cellWidth: 25 },
+          8: { cellWidth: 30 },
+          9: { cellWidth: 35 },
+          10: { cellWidth: 35 },
+        },
+      });
 
-  if (type === "csv") {
-    const wsData = [tableColumn, ...tableRows];
-    const ws = XLSX.utils.aoa_to_sheet(wsData);
-    const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, "Tenants");
-    XLSX.writeFile(wb, `tenants-${statusFilter}.xlsx`);
-  }
-};
+      doc.save(`tenants-${statusFilter}.pdf`);
+    }
 
-
-
+    if (type === "csv") {
+      const wsData = [tableColumn, ...tableRows];
+      const ws = XLSX.utils.aoa_to_sheet(wsData);
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, "Tenants");
+      XLSX.writeFile(wb, `tenants-${statusFilter}.xlsx`);
+    }
+  };
 
   const filteredTenants =
     statusFilter === "all"
@@ -145,7 +158,9 @@ const handleExport = (type, exportData = []) => {
   const totalTenants = tenants.length;
   const activeTenants = tenants.filter((t) => t.status === "active").length;
   const inactiveTenants = tenants.filter((t) => t.status === "inactive").length;
-  const suspendedTenants = tenants.filter((t) => t.status === "suspended").length;
+  const suspendedTenants = tenants.filter(
+    (t) => t.status === "suspended",
+  ).length;
   const totalMRR = tenants
     .filter((t) => t.status === "active")
     .reduce((sum, t) => sum + (t.monthly_fee || 0), 0);
@@ -162,24 +177,28 @@ const handleExport = (type, exportData = []) => {
             </p>
           </div>
           <div className="page-header-actions">
-           <div className="btn-group">
-<div className="export-dropdown">
-  <button className="btn btn-secondary dropdown-toggle">
-    <FiDownload className="btn-icon" />
-    Export
-  </button>
-  <div className="dropdown-menu">
-    <button className="dropdown-item" onClick={() => handleExport("csv", filteredTenants)}>
-      Export as CSV
-    </button>
-    <button className="dropdown-item" onClick={() => handleExport("pdf", filteredTenants)}>
-      Export as PDF
-    </button>
-  </div>
-
-</div>
-
-</div>
+            <div className="btn-group">
+              <div className="export-dropdown">
+                <button className="btn btn-secondary dropdown-toggle">
+                  <FiDownload className="btn-icon" />
+                  Export
+                </button>
+                <div className="dropdown-menu">
+                  <button
+                    className="dropdown-item"
+                    onClick={() => handleExport("csv", filteredTenants)}
+                  >
+                    Export as CSV
+                  </button>
+                  <button
+                    className="dropdown-item"
+                    onClick={() => handleExport("pdf", filteredTenants)}
+                  >
+                    Export as PDF
+                  </button>
+                </div>
+              </div>
+            </div>
 
             <button className="btn btn-primary" onClick={handleAddTenant}>
               <FiPlus className="btn-icon" />
@@ -203,11 +222,26 @@ const handleExport = (type, exportData = []) => {
 
         {/* Stats */}
         <div className="tenant-stats">
-          <div className="stat-item"><div className="stat-value">{totalTenants}</div><div className="stat-label">Total Tenants</div></div>
-          <div className="stat-item"><div className="stat-value">{activeTenants}</div><div className="stat-label">Active</div></div>
-          <div className="stat-item"><div className="stat-value">{inactiveTenants}</div><div className="stat-label">Inactive</div></div>
-          <div className="stat-item"><div className="stat-value">{suspendedTenants}</div><div className="stat-label">Suspended</div></div>
-          <div className="stat-item"><div className="stat-value">KES {totalMRR.toLocaleString()}</div><div className="stat-label">Monthly Revenue</div></div>
+          <div className="stat-item">
+            <div className="stat-value">{totalTenants}</div>
+            <div className="stat-label">Total Tenants</div>
+          </div>
+          <div className="stat-item">
+            <div className="stat-value">{activeTenants}</div>
+            <div className="stat-label">Active</div>
+          </div>
+          <div className="stat-item">
+            <div className="stat-value">{inactiveTenants}</div>
+            <div className="stat-label">Inactive</div>
+          </div>
+          <div className="stat-item">
+            <div className="stat-value">{suspendedTenants}</div>
+            <div className="stat-label">Suspended</div>
+          </div>
+          <div className="stat-item">
+            <div className="stat-value">KES {totalMRR.toLocaleString()}</div>
+            <div className="stat-label">Monthly Revenue</div>
+          </div>
         </div>
 
         {/* Filter Results */}
@@ -223,6 +257,7 @@ const handleExport = (type, exportData = []) => {
             tenants={filteredTenants}
             onView={(t) => console.log("Viewing tenant:", t)}
             onEdit={handleEditTenant}
+            onStatusChange={handleStatusChange}
             // onDelete={handleDeleteTenant}
             showActions={true}
           />
