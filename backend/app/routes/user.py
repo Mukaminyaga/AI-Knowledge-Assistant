@@ -90,3 +90,37 @@ def delete_user(
     db.delete(user)
     db.commit()
     return {"message": f"{user.email} has been deleted."}
+
+@router.put("/users/role/{user_id}")
+def update_user_role(
+    user_id: int,
+    role_data: dict,
+    db: Session = Depends(get_db),
+    current_user: users.User = Depends(get_current_user),
+):
+    if current_user.role.lower() != "admin" or not current_user.is_approved:
+      raise HTTPException(status_code=403, detail="Only approved Admins can assign roles")
+
+
+    allowed_roles = ["Admin", "Editor", "Viewer"]
+    new_role = role_data.get("role")
+
+    if new_role not in allowed_roles:
+        raise HTTPException(status_code=400, detail=f"Role must be one of: {', '.join(allowed_roles)}")
+
+    user = db.query(users.User).filter(users.User.id == user_id, users.User.tenant_id == current_user.tenant_id).first()
+
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    user.role = new_role
+    db.commit()
+    db.refresh(user)
+
+    return {"message": f"User role updated to {new_role}", "user": {
+        "id": user.id,
+        "email": user.email,
+        "role": user.role,
+        "is_approved": user.is_approved
+    }}
+

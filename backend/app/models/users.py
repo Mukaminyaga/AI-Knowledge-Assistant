@@ -1,3 +1,4 @@
+
 from sqlalchemy import Column, Integer, String, Boolean, ForeignKey
 from sqlalchemy.orm import relationship
 from ..database import Base
@@ -10,9 +11,7 @@ class User(Base):
     last_name = Column(String, nullable=False)
     email = Column(String, unique=True, index=True, nullable=False)
     hashed_password = Column(String, nullable=False)
-    role = Column(String, nullable=False, default="user")
+    role = Column(String, nullable=False, default="Viewer")  # 'Viewer', 'Editor', 'Admin'
     is_approved = Column(Boolean, nullable=False, default=False)
-
-    # Foreign key to tenant
     tenant_id = Column(Integer, ForeignKey("tenants.id"), nullable=False)
     tenant = relationship("Tenant", back_populates="users")

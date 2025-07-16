@@ -23,7 +23,7 @@ const Activity = () => {
   const [activeFilter, setActiveFilter] = useState("all");
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage] = useState(10);
+  const [itemsPerPage] = useState(6);
 
   const calculateStats = (activityList) => {
     return {
@@ -79,6 +79,20 @@ const Activity = () => {
       setFilteredActivities(activities.filter((a) => a.action === filter));
     }
   };
+//   const formatTimestamp = (timestamp) => {
+//   const date = new Date(timestamp);
+//   const options = {
+//     day: "2-digit",
+//     month: "short", // gives "Jul"
+//     year: "numeric",
+//     hour: "2-digit",
+//     minute: "2-digit",
+//     hour12: false, // 24-hour format
+//   };
+
+//   return date.toLocaleString("en-GB", options).replace(",", "");
+// };
+
 
   const formatTimestamp = (timestamp) => {
     const date = new Date(timestamp);
@@ -214,13 +228,13 @@ const Activity = () => {
                 <FiDownload size={14} />
                 Downloads
               </button>
-              <button
+              {/* <button
                 className={`filter-btn ${activeFilter === "delete" ? "active" : ""}`}
                 onClick={() => filterActivities("delete")}
               >
                 <FiFileText size={14} />
                 Deletes
-              </button>
+              </button> */}
             </div>
           </div>
 
@@ -253,6 +267,8 @@ const Activity = () => {
                         {new Date(activity.timestamp).toLocaleString()}
                       </div>
                     </td>
+                    {/* <td>{formatTimestamp(activity.timestamp)}</td> */}
+
                   </tr>
                 ))}
               </tbody>

@@ -27,8 +27,12 @@ def register(user: schemas.UserCreate, db: Session = Depends(database.get_db)):
     # Hash password
     hashed_pw = auth.hash_password(user.password)
 
-    # Automatically approve the tenant creator (whose email matches contact_email)
-    is_approved = user.email.lower() == tenant.contact_email.lower()
+    # Automatically approve and assign Admin to the tenant creator
+    is_creator = user.email.lower() == tenant.contact_email.lower()
+    assigned_role = "Admin" if is_creator else (
+        user.role.capitalize() if user.role.capitalize() in ["Editor", "Viewer"] else "Viewer"
+    )
+    is_approved = is_creator  # Only tenant creator gets auto-approved
 
     # Create user
     new_user = users.User(
@@ -36,7 +40,7 @@ def register(user: schemas.UserCreate, db: Session = Depends(database.get_db)):
         last_name=user.last_name,
         email=user.email,
         hashed_password=hashed_pw,
-        role=user.role,
+        role=assigned_role,
         is_approved=is_approved,
         tenant_id=tenant.id
     )
@@ -45,6 +49,7 @@ def register(user: schemas.UserCreate, db: Session = Depends(database.get_db)):
     db.commit()
     db.refresh(new_user)
     return new_user
+
 
 
 

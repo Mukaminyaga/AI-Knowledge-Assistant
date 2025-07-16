@@ -103,7 +103,7 @@ function UploadDocuments() {
       );
 
       //  Success message
-      setUploadMessage("Documents uploaded successfully and are now being processed...");
+      // setUploadMessage("Documents uploaded successfully and are now being processed...");
     } catch (err) {
       console.error(err);
       setUploadedFiles((prev) =>

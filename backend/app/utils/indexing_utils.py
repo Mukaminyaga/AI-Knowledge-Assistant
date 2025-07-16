@@ -27,17 +27,22 @@ def extract_text_for_file(filename, filepath):
     return ""
 
 def index_and_update(file_path: str, document_id: int):
-    """Index a single newly uploaded document and update vector.index and metadata."""
+    """Index an approved document, updating vector index and metadata."""
     db: Session = SessionLocal()
     try:
         doc = db.query(Document).filter(Document.id == document_id).first()
         if not doc:
-            print(f"Document ID {document_id} not found.")
+            print(f"[✗] Document ID {document_id} not found.")
+            return
+
+        # Ensure it's only indexing approved docs
+        if doc.status != "processing":
+            print(f"[!] Document ID {document_id} not in 'processing' state. Current status: {doc.status}")
             return
 
         text = extract_text_for_file(doc.filename, file_path)
         if not text:
-            print(f"No text extracted from {doc.filename}")
+            print(f"[✗] No text extracted from '{doc.filename}'")
             doc.status = "failed"
             db.commit()
             return
@@ -47,7 +52,7 @@ def index_and_update(file_path: str, document_id: int):
         embeddings = np.asarray(embeddings, dtype=np.float32)
         faiss.normalize_L2(embeddings)
 
-        # Load or create index
+        # Load or create FAISS index
         dim = embeddings.shape[1]
         if os.path.exists(INDEX_FILE):
             index = faiss.read_index(INDEX_FILE)
@@ -56,7 +61,7 @@ def index_and_update(file_path: str, document_id: int):
         index.add(embeddings)
         faiss.write_index(index, INDEX_FILE)
 
-        # Load or create metadata
+        # Load or update metadata
         metadata = []
         if os.path.exists(METADATA_FILE):
             with open(METADATA_FILE, "r") as f:
@@ -74,19 +79,17 @@ def index_and_update(file_path: str, document_id: int):
         with open(METADATA_FILE, "w") as f:
             json.dump(metadata, f, indent=2)
 
-        # Update DB with successful indexing info
+        # Update DB
         doc.num_chunks = len(chunks)
         doc.indexed = True
-        doc.status = "processed" 
+        doc.status = "processed"
         db.commit()
-
-        print(f"Indexed {len(chunks)} chunks for '{doc.filename}' (doc_id={doc.id})")
+        print(f"[✓] Indexed {len(chunks)} chunks for '{doc.filename}' (ID: {doc.id})")
 
     except Exception as e:
-        print(f"Indexing failed for document {document_id}: {e}")
+        print(f"[✗] Indexing failed for document ID {document_id}: {e}")
         if 'doc' in locals() and doc:
             doc.status = "failed"
             db.commit()
-
     finally:
         db.close()

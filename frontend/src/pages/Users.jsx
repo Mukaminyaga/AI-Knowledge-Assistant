@@ -132,7 +132,7 @@ const Users = () => {
   const updateUserRole = async () => {
     try {
       const res = await axios.put(
-        `${API_URL}/users/role/${selectedUser.id}`,
+        `${API_URL}/users/users/role/${selectedUser.id}`,
         { role: selectedRole },
         {
           headers: {

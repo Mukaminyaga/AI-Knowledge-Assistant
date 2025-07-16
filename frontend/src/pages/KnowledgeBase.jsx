@@ -319,7 +319,12 @@ const KnowledgeBase = () => {
             </div>
             <div className="stat-label">Processing</div>
           </div>
-
+          <div className="stat-item pending-highlight">
+            <div className="stat-value">
+              {documents.filter((d) => d.status === "pending").length}
+            </div>
+            <div className="stat-label">Pending Approval</div>
+          </div>
           <div className="stat-item">
             <div className="stat-value">
               {(
