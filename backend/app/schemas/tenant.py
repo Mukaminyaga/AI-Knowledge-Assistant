@@ -21,6 +21,8 @@ class TenantOut(TenantCreate):
     created_at: datetime
     status: str
     serial_code: str
+    first_name: Optional[str]
+    last_name: Optional[str]
 
     class Config:
         orm_mode = True

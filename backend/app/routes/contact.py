@@ -3,8 +3,18 @@ from pydantic import BaseModel
 import aiosmtplib
 from email.mime.text import MIMEText
 import os
+from dotenv import load_dotenv
+from pathlib import Path
+
 
 router = APIRouter()
+
+env_path = Path(__file__).resolve().parents[2] / ".env"
+load_dotenv(dotenv_path=env_path)
+
+print("Loaded .env from:", env_path)
+print("SENDER_EMAIL =", os.getenv("SENDER_EMAIL"))
+
 
 
 class ContactForm(BaseModel):
@@ -13,12 +23,17 @@ class ContactForm(BaseModel):
     subject: str
     message: str
 
+    
+
 
 @router.post("/send-email")
 async def send_email(data: ContactForm):
+    
     sender_email = os.getenv("SENDER_EMAIL")           # your account
     sender_password = os.getenv("SENDER_PASSWORD")     # your app password
-    recipient_email = "knowledgeassistantai@gmail.com"
+    recipient_email = "vala.ai@goodpartnerske.org"
+    print("Sending from:", sender_email)
+
 
     #  Preprocess the message
     formatted_message = data.message.replace("\n", "<br/>")
@@ -26,7 +41,7 @@ async def send_email(data: ContactForm):
     html_body = f"""
     <html>
     <body style="font-family: Arial, sans-serif;">
-      <h2>New Contact Form Submission</h2>
+      <h3>New Contact Form Submission</h3>
       <table style="border-collapse: collapse;">
         <tr>
             <td style="font-weight: bold; padding: 5px;">Name:</td>
@@ -47,7 +62,7 @@ async def send_email(data: ContactForm):
 
     msg = MIMEText(html_body, "html")
     msg["Subject"] = f"Contact Form: {data.subject}"
-    msg["From"] = sender_email
+    msg["From"] = f"Vala AI Support <{sender_email}>"
     msg["To"] = recipient_email
     msg["Reply-To"] = data.email
 

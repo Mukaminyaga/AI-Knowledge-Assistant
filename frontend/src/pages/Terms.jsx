@@ -148,10 +148,10 @@ const TermsOfService = () => {
                   <br />
                   <br />
                <a
-  href="mailto:knowledgeassistantai@gmail.com"
+  href="mailto:vala.ai@goodpartnerske.org"
   className="contact-email text-blue-600 hover:underline"
 >
-  knowledgeassistantai@gmail.com
+  vala.ai@goodpartnerske.org
 </a>
 
                 </div>

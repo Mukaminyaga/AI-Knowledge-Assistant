@@ -63,7 +63,7 @@ function Contact() {
         </div>
         <div className="contact-text">
           <div className="contact-label">Email Us</div>
-          <div className="contact-value">info@goodpartnerske.org</div>
+          <div className="contact-value">vala.ai@goodpartnerske.org</div>
         </div>
       </div>
 

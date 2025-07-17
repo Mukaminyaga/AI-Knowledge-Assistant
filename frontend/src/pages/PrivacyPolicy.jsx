@@ -276,11 +276,11 @@ const PrivacyPolicy = () => {
                   <br />
                   <br />
                   <strong>Email:</strong>{" "}
-                              <a
-  href="mailto:knowledgeassistantai@gmail.com"
+   <a
+  href="mailto:vala.ai@goodpartnerske.org"
   className="contact-email text-blue-600 hover:underline"
 >
-  knowledgeassistantai@gmail.com
+  vala.ai@goodpartnerske.org
 </a>
                   <br />
                   <strong>General Support:</strong>{" "}

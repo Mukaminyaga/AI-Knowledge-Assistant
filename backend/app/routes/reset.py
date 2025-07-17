@@ -41,6 +41,7 @@ def forgot_password(request: EmailRequest):
             <p>We received a request to reset your password. Click the link below to reset it:</p>
             <p><a href="{reset_link}">Reset Your Password</a></p>
             <p>If you didn’t request this, you can ignore this email.</p>
+             <p>Regards,<br/><strong>Vala AI Support</strong></p>
             """
         )
         return {"message": "Password reset link sent to your email."}

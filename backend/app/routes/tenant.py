@@ -72,7 +72,18 @@ def create_tenant(tenant: TenantCreate, db: Session = Depends(get_db)):
 # Get all tenants
 @router.get("/", response_model=List[TenantOut])
 def get_all_tenants(db: Session = Depends(get_db)):
-    return db.query(Tenant).all()
+    tenants = db.query(Tenant).all()
+    tenant_list = []
+
+    for tenant in tenants:
+        user = db.query(User).filter(User.email == tenant.contact_email).first()
+        tenant_data = tenant.__dict__.copy()
+        tenant_data["first_name"] = user.first_name if user else ""
+        tenant_data["last_name"] = user.last_name if user else ""
+        tenant_list.append(tenant_data)
+
+    return tenant_list
+
 
 #  GET specific tenant by ID (this was missing)
 @router.get("/{tenant_id}", response_model=TenantOut)
