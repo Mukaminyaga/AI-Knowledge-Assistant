@@ -1,6 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import Header from "../components/Header";
+// import Footer from "../components/Footer";
 import "../styles/About.css";
 
 function About() {
@@ -80,11 +81,11 @@ function About() {
         <section className="about-section">
           <h2 className="about-section-title">Our Story</h2>
           <p className="about-text">
-            Founded in 2021, AI Knowledge Assistant was born from a simple
-            observation: most organizations struggle with knowledge silos and
-            information overload. Our founders, having experienced these
-            challenges firsthand at major tech companies, set out to create a
-            solution that would make organizational knowledge truly accessible.
+            Founded in 2021, Vala.ai was born from a simple observation: most
+            organizations struggle with knowledge silos and information
+            overload. Our founders, having experienced these challenges
+            firsthand at major tech companies, set out to create a solution that
+            would make organizational knowledge truly accessible.
           </p>
           <p className="about-text">
             Today, we serve thousands of teams worldwide, from startups to
@@ -165,7 +166,10 @@ function About() {
           </Link>
         </section>
       </main>
+  
+
     </div>
+    
   );
 }
 

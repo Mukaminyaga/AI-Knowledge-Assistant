@@ -48,8 +48,11 @@ a {
   color: inherit;
 }
 .logo-image {
-  height: 120px;
-  width: auto;
+  height: 50px;
+  width: 50px;
+  margin-top: -20px;
+  object-fit: contain;
+  border-radius: 8px;
 }
 
 .nav-wrapper {
@@ -83,16 +86,16 @@ a {
 }
 
 .nav-links-group {
-  margin-top: 20px;
+  margin-top: -20px;
   display: flex;
   gap: 2rem; /* space between links */
   align-items: center;
-  margin-right: 50px;
+  margin-right: -70px;
 }
 
 .nav-links-group a {
   text-decoration: none; /* removes underline */
-  color: #333; /* default color */
+  color: #0b3a60; /* default color */
   font-weight: 600;
   font-size: 1.1rem;
   position: relative;
@@ -102,7 +105,7 @@ a {
 
 /* Optional: Add an underline effect on hover */
 .nav-links-group a:hover {
-  color: var(--primary-color); /* change color on hover */
+  color: var(--primary-color); 
 }
 
 .nav-links-group a:hover::after {
@@ -134,7 +137,7 @@ a {
   gap: 30px !important;
   align-items: center;
   white-space: nowrap;
-  margin-top: 20px;
+  margin-top: -20px;
   flex-direction: row !important;
 }
 

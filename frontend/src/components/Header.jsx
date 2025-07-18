@@ -8,23 +8,17 @@ function Header() {
       <div className="nav-wrapper">
         <div className="logo-section">
           <Link to="/" className="logo-link">
-            {/* <img
-              src="6.png"
-              alt="AI Knowledge Assistant Logo"
+            <img
+              src="Vala Logo.png"
+              alt="Vala.ai Logo"
               className="logo-image"
               style={{
-                width: "115px",
-                height: "125px",
+                width: "120px",
+                height: "120px",
                 borderRadius: "8px",
-                objectFit: "cover",
-                marginRight: "-22px",
-                marginTop: "-30px",
+                objectFit: "contain",
               }}
-            /> */}
-            <div className="brand-title">
-              AI Knowledge <br />
-              Assistant
-            </div>
+            />
           </Link>
         </div>
         <div className="nav-links-group">

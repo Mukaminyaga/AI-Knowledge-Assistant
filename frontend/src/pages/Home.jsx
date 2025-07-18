@@ -42,7 +42,7 @@ function Home() {
       alt="AI Interface Background"
     /> */}
               <div className="chat-window">
-                <div className="chat-header">💬 Live AI Conversation</div>
+                <div className="chat-header">Live AI Conversation</div>
                 <div className="conversation-example">
                   <div className="user-message">
                     <div className="message-label">You</div>
@@ -67,10 +67,10 @@ function Home() {
                       <br />
                       <br />
                     </div>
-                    <div className="source-reference">
+                    {/* <div className="source-reference">
                       📄 Source: Knowledge Base Policy Handbook → Section 2.4:
                       Access Control
-                    </div>
+                    </div> */}
                   </div>
                 </div>
                 {/* <div className="quick-searches-title">Try these examples</div>
@@ -95,7 +95,7 @@ function Home() {
             </h2>
             <p className="features-subtitle">
               Everything you need to transform how your team finds and shares
-              knowledge
+              knowledge with our knowledge assistant
             </p>
           </div>
 
@@ -204,9 +204,7 @@ function Home() {
         <div className="benefits-section">
           <div className="benefits-content">
             <div className="benefits-text">
-              <h2 className="benefits-title">
-                Why Teams Choose Our AI Assistant
-              </h2>
+              <h2 className="benefits-title">Why Teams Choose Vala.ai</h2>
               <div className="benefits-list">
                 <div className="benefit-item">
                   <div className="benefit-icon">✅</div>

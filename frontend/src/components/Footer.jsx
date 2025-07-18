@@ -17,12 +17,12 @@ function Footer() {
         <div className="footer-section">
           <div className="footer-brand">
             <img
-              src="6.png"
-              alt="AI Knowledge Assistant Logo"
+              src="Vala Logo.png"
+              alt="Vala.ai Logo"
               className="footer-logo"
             />
             <div className="footer-brand-text">
-              <h3 className="footer-brand-title">AI Knowledge Assistant</h3>
+              <h3 className="footer-brand-title">Vala.ai</h3>
               <p className="footer-brand-subtitle">
                 Empowering teams with intelligent knowledge discovery
               </p>
@@ -33,6 +33,14 @@ function Footer() {
             AI-powered platform. Get instant answers from your documents,
             policies, and knowledge base.
           </p>
+          <div className="footer-partners">
+            <div className="partners-label">Powered by</div>
+            <img
+              src="Good Partners Main Logo II.jpg"
+              alt="Good Partners Logo"
+              className="partners-logo"
+            />
+          </div>
         </div>
 
         <div className="footer-section">
@@ -118,15 +126,15 @@ function Footer() {
           <div className="footer-contact">
             <div className="contact-item">
               <FiMail className="contact-icon" />
-              <span>hello@aiknowledge.com</span>
+              <span>@vala.ai@goodpartnerske.org</span>
             </div>
             <div className="contact-item">
               <FiPhone className="contact-icon" />
-              <span>+1 (555) 123-4567</span>
+              <span>+254 711 085 400</span>
             </div>
             <div className="contact-item">
               <FiMapPin className="contact-icon" />
-              <span>San Francisco, CA</span>
+              <span>Marsabit Plaza,Ngong Rd</span>
             </div>
           </div>
 
@@ -147,7 +155,7 @@ function Footer() {
       <div className="footer-bottom">
         <div className="footer-bottom-content">
           <p className="footer-copyright">
-            © 2024 AI Knowledge Assistant. All rights reserved.
+            © 2025 Vala.ai by Good Partners. All rights reserved.
           </p>
           <div className="footer-bottom-links">
             <Link to="/terms" className="footer-bottom-link">

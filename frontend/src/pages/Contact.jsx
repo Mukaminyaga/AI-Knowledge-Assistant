@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import Header from "../components/Header";
+import Footer from "../components/Footer";
 import "../styles/Contact.css";
 import axios from "axios";
 import { MdEmail, MdPhone, MdLocationOn } from "react-icons/md";
@@ -154,13 +155,16 @@ function Contact() {
                     </div>
                   )}
                 </form>
+                
               </div>
-            </div>
-          </div>
-          
-        </div>
+        
+            </div>           
+          </div>     
+        </div>        
       </div> 
+       <Footer />
     </div>
+   
   );
 }
 
