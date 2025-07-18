@@ -5,12 +5,10 @@ import numpy as np
 from app.utils.embedding_utils import embed_chunks
 
 # BASE_DIR is app/utils
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-ROOT_DIR = os.path.abspath(os.path.join(BASE_DIR, "../../")) 
+BASE_DIR = "/var/www/GPKnowledgeManagementAI"
+INDEX_FILE = os.path.join(BASE_DIR, "vector.index")
+METADATA_FILE = os.path.join(BASE_DIR, "vector_metadata.json")
 
-# Paths to index and metadata
-INDEX_FILE = os.path.join(ROOT_DIR, 'vector.index')
-METADATA_FILE = os.path.join(ROOT_DIR, 'vector_metadata.json')
 
 class DocumentSearcher:
     def __init__(self):

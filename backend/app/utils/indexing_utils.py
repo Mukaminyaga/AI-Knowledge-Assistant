@@ -12,9 +12,10 @@ from app.utils.document_utils import (
 )
 from app.utils.embedding_utils import chunk_text, embed_chunks
 
-INDEX_FILE = "vector.index"
-METADATA_FILE = "vector_metadata.json"
-DOCUMENTS_DIR = "uploads"
+BASE_DIR = "/var/www/GPKnowledgeManagementAI"
+INDEX_FILE = os.path.join(BASE_DIR, "vector.index")
+METADATA_FILE = os.path.join(BASE_DIR, "vector_metadata.json")
+DOCUMENTS_DIR = os.path.join(BASE_DIR,"uploads")
 
 def extract_text_for_file(filename, filepath):
     ext = filename.lower().split(".")[-1]

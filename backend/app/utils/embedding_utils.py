@@ -8,8 +8,11 @@ from sentence_transformers import SentenceTransformer
 # Load the model once
 model = SentenceTransformer("intfloat/e5-small-v2", device="cpu")  # Use 'cuda' if on GPU
 
-INDEX_FILE = "vector.index"
-METADATA_FILE = "vector_metadata.json"
+BASE_DIR = "/var/www/GPKnowledgeManagementAI"
+
+INDEX_FILE = os.path.join(BASE_DIR, "vector.index")
+METADATA_FILE = os.path.join(BASE_DIR, "vector_metadata.json")
+
 
 
 def chunk_text(text, chunk_size=300, overlap=50):

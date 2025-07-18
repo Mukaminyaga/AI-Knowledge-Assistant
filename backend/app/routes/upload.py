@@ -17,13 +17,15 @@ from sqlalchemy import extract, func
 from datetime import datetime
 from logging import getLogger
 from app.utils.permissions import ensure_permission
+from pathlib import Path
 
 
 
 
 router = APIRouter()
 logger = getLogger("uvicorn.error")
-UPLOAD_DIR = "uploads"
+UPLOAD_DIR = "/var/www/GPKnowledgeManagementAI/uploads"
+
 os.makedirs(UPLOAD_DIR, exist_ok=True)
 
 # --- Helper ---
@@ -46,7 +48,9 @@ async def upload_documents(
     uploaded_docs = []
 
     for file in files:
-        filename = file.filename
+       
+        filename = os.path.basename(file.filename.replace("\\", "/"))
+        file_path = os.path.join(UPLOAD_DIR, filename)
         ext = filename.split(".")[-1].lower()
         logger.info(f"Uploading file: {filename} (type: {ext})")
 
@@ -54,7 +58,8 @@ async def upload_documents(
             logger.warning(f"{filename}: unsupported file type {ext}")
             raise HTTPException(status_code=400, detail=f"{filename}: unsupported file type {ext}")
 
-        dest = os.path.join(UPLOAD_DIR, filename)
+        
+        dest = os.path.normpath(os.path.join(UPLOAD_DIR, filename))
         with open(dest, "wb") as buffer:
             shutil.copyfileobj(file.file, buffer)
         logger.info(f"Saved file to: {dest}")
@@ -131,7 +136,7 @@ def approve_document(
     db.commit()
 
     # Trigger background indexing
-    file_path = os.path.join("uploads", document.filename)
+    file_path = os.path.join(UPLOAD_DIR, document.filename)
     if os.path.exists(file_path):
         from app.utils.indexing_utils import index_and_update
         background_tasks.add_task(index_and_update, file_path=file_path, document_id=document.id)

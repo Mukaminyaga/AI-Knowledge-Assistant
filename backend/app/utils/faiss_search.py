@@ -3,8 +3,11 @@ import json
 import numpy as np
 import os
 
-INDEX_FILE = "vector.index"
-METADATA_FILE = "vector_metadata.json"
+
+BASE_DIR = "/var/www/GPKnowledgeManagementAI"
+INDEX_FILE = os.path.join(BASE_DIR, "vector.index")
+METADATA_FILE = os.path.join(BASE_DIR, "vector_metadata.json")
+
 
 class DocumentSearcher:
     """Perform searches over a FAISS index and associated metadata."""
