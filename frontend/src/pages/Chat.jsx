@@ -187,7 +187,7 @@ try {
 
         <div className="chat-main">
           <div className="chat-header">
-            <h2>💬 Live AI Conversation</h2>
+            <h2> Live AI Conversation</h2>
           </div>
 
           <div className="chat-messages">

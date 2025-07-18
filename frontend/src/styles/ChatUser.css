@@ -40,7 +40,7 @@
   letter-spacing: 0.5px;
 }
 
-.chat-sidebar-item {
+.chat-sidebar-item1 {
   padding: 12px 16px;
   border-radius: 8px;
   font-size: 14px;
@@ -50,7 +50,7 @@
   transition: all 0.2s;
 }
 
-.chat-sidebar-item:hover {
+.chat-sidebar-item:hover1 {
   background-color: var(--primary-light);
 }
 
@@ -312,7 +312,7 @@
   position: relative;
 }
 
-.chat-sidebar-item.active {
+.chat-sidebar-item.active1 {
   background-color: var(--primary-color);
   color: white;
   font-weight: bold;
