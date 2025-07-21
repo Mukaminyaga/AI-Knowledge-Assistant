@@ -111,7 +111,7 @@ const UserTable = ({ users, tenantId }) => {
             />
           </div>
 
-          <div className="filter-buttons">
+          {/* <div className="filter-buttons">
             {["all", "active", "inactive", "suspended"].map((status) => (
               <button
                 key={status}
@@ -121,7 +121,7 @@ const UserTable = ({ users, tenantId }) => {
                 {status.charAt(0).toUpperCase() + status.slice(1)}
               </button>
             ))}
-          </div>
+          </div> */}
         </div>
       </div>
 
@@ -131,24 +131,24 @@ const UserTable = ({ users, tenantId }) => {
           <div className="stat-value">{users.length}</div>
           <div className="stat-label">Total Users</div>
         </div>
-        <div className="stat-item">
+        {/* <div className="stat-item">
           <div className="stat-value">
             {users.filter((u) => u.status === "active").length}
           </div>
           <div className="stat-label">Active</div>
-        </div>
+        </div> */}
         <div className="stat-item">
           <div className="stat-value">
             {users.filter((u) => u.role.toLowerCase() === "admin").length}
           </div>
           <div className="stat-label">Admins</div>
         </div>
-        <div className="stat-item">
+        {/* <div className="stat-item">
           <div className="stat-value">
             {users.filter((u) => u.status === "inactive").length}
           </div>
           <div className="stat-label">Inactive</div>
-        </div>
+        </div> */}
       </div>
 
       {/* Table */}
@@ -180,23 +180,23 @@ const UserTable = ({ users, tenantId }) => {
                   </span>
                 )}
               </th>
-              <th>Status</th>
-              <th className="sortable" onClick={() => handleSort("lastActive")}>
+              {/* <th>Status</th> */}
+              {/* <th className="sortable" onClick={() => handleSort("lastActive")}>
                 Last Active
                 {sortField === "lastActive" && (
                   <span className="sort-indicator">
                     {sortDirection === "asc" ? "↑" : "↓"}
                   </span>
                 )}
-              </th>
-              <th className="sortable" onClick={() => handleSort("createdAt")}>
+              </th> */}
+              {/* <th className="sortable" onClick={() => handleSort("createdAt")}>
                 Created
                 {sortField === "createdAt" && (
                   <span className="sort-indicator">
                     {sortDirection === "asc" ? "↑" : "↓"}
                   </span>
                 )}
-              </th>
+              </th> */}
             </tr>
           </thead>
           <tbody>
@@ -213,9 +213,9 @@ const UserTable = ({ users, tenantId }) => {
                 <tr key={user.id}>
                   <td>
                     <div className="user-cell">
-                      <div className="user-avatar">
+                      {/* <div className="user-avatar">
                         <FiUser />
-                      </div>
+                      </div> */}
                       <div className="user-info">
                         <div className="user-name">{user.name}</div>
                         <div className="user-id">ID: {user.id}</div>
@@ -229,8 +229,8 @@ const UserTable = ({ users, tenantId }) => {
                     </div>
                   </td>
                   <td>{getRoleBadge(user.role)}</td>
-                  <td>{getStatusBadge(user.status)}</td>
-                  <td>
+                  {/* <td>{getStatusBadge(user.status)}</td> */}
+                  {/* <td>
                     <div className="date-cell">
                       <FiClock className="date-icon" />
                       {formatDateTime(user.lastActive)}
@@ -241,7 +241,7 @@ const UserTable = ({ users, tenantId }) => {
                       <FiCalendar className="date-icon" />
                       {formatDate(user.createdAt)}
                     </div>
-                  </td>
+                  </td> */}
                 </tr>
               ))
             )}

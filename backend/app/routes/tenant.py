@@ -93,7 +93,16 @@ def get_tenant_by_id(tenant_id: int, db: Session = Depends(get_db)):
     tenant = db.query(Tenant).filter(Tenant.id == tenant_id).first()
     if not tenant:
         raise HTTPException(status_code=404, detail="Tenant not found")
-    return tenant
+
+    user = db.query(User).filter(User.email == tenant.contact_email).first()
+
+    # Manually construct the response to include additional fields
+    tenant_data = tenant.__dict__.copy()
+    tenant_data["first_name"] = user.first_name if user else ""
+    tenant_data["last_name"] = user.last_name if user else ""
+
+    return tenant_data
+
 
 
 # Get users under a tenant
