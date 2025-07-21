@@ -106,12 +106,12 @@ const SuperAdminSidebar = ({ activePage }) => {
               </div>
               </div>
 
-      <div className="sidebar-footer">
+      {/* <div className="sidebar-footer">
         <Link to="/settings" className="nav-link">
           <FiSettings className="nav-icon" />
           <span className="nav-text">Settings</span>
         </Link>
-      </div>
+      </div> */}
     </div>
   );
 };

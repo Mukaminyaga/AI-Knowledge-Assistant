@@ -7,6 +7,7 @@ from app.routes import search
 from app.routes import reset
 from app.routes import contact
 from app.routes import user_profile
+from app.routes import payment 
 from app import database
 from app.models import users
 from dotenv import load_dotenv
@@ -91,6 +92,7 @@ app.include_router(search.router, prefix="/search", tags=["Search"])
 app.include_router(reset.router, prefix="/reset", tags=["Reset"])
 app.include_router(contact.router, prefix="/contact", tags=["Contact"])
 app.include_router(user_profile.router)
+app.include_router(payment.router)
 # app.mount("/uploads", StaticFiles(directory=UPLOADS_PATH), name="uploads")
 app.include_router(tenant.router, prefix="/tenants", tags=["Tenants"])
 

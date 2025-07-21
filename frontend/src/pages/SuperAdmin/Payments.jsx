@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import SuperAdminLayout from "../../components/SuperAdmin/SuperAdminLayout";
 import PaymentTable from "../../components/SuperAdmin/PaymentTable";
 import {
@@ -10,42 +10,59 @@ import {
   FiCreditCard,
 } from "react-icons/fi";
 import "../../styles/SuperAdmin.css";
+import axios from "axios";
 
-// Mock data...
-const mockPayments = [
-  // ... your existing mock data remains unchanged
-  {
-    id: 1,
-    invoiceId: "INV-2024-001",
-    tenantId: 1,
-    tenantName: "Acme Corporation",
-    tenantEmail: "admin@acme.com",
-    amount: 4500,
-    status: "paid",
-    paymentMethod: "credit_card",
-    dueDate: "2024-02-15T00:00:00Z",
-    date: "2024-02-14T10:30:00Z",
-    description: "Enterprise Plan - February 2024",
-  },
-  // ... rest of the mock payments
-];
+const API_URL = process.env.REACT_APP_API_URL;
+
 
 const Payments = () => {
-  const [payments] = useState(mockPayments);
+  const [payments, setPayments] = useState([]);
   const [selectedPayment, setSelectedPayment] = useState(null);
   const [dateFilter, setDateFilter] = useState("all");
   const [statusFilter, setStatusFilter] = useState("all");
+  const [loading, setLoading] = useState(false);
+const fetchPayments = async () => {
+  try {
+    setLoading(true);
+    const res = await axios.get(`${API_URL}/payments`);
+      // const response = await axios.get(`${API_URL}/tenants/tenants`);
+    setPayments(res.data);
+  } catch (err) {
+    console.error("Error fetching payments:", err);
+  } finally {
+    setLoading(false);
+  }
+};
+
+
+  useEffect(() => {
+    fetchPayments();
+  }, []);
 
   const handleViewPaymentDetails = (payment) => {
     setSelectedPayment(payment);
   };
 
-  const handleExport = () => {
-    console.log("Export payments data");
-  };
+ const handleExport = async (format = "csv") => {
+  try {
+    const res = await axios.get(`${API_URL}/payments/export/${format}`, {
+      responseType: "blob",
+    });
+    const url = window.URL.createObjectURL(new Blob([res.data]));
+    const link = document.createElement("a");
+    link.href = url;
+    link.setAttribute("download", `payments_export.${format}`);
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+  } catch (err) {
+    console.error("Export error:", err);
+  }
+};
+
 
   const handleRefresh = () => {
-    console.log("Refresh payments data");
+    fetchPayments();
   };
 
   const filteredPayments = payments.filter((payment) => {
@@ -75,7 +92,7 @@ const Payments = () => {
           const quarterStart = new Date(
             now.getFullYear(),
             Math.floor(now.getMonth() / 3) * 3,
-            1,
+            1
           );
           dateMatch = paymentDate >= quarterStart;
           break;
@@ -95,18 +112,10 @@ const Payments = () => {
     .filter((p) => p.status === "paid")
     .reduce((sum, p) => sum + p.amount, 0);
 
-  const paidPayments = filteredPayments.filter(
-    (p) => p.status === "paid",
-  ).length;
-  const pendingPayments = filteredPayments.filter(
-    (p) => p.status === "pending",
-  ).length;
-  const overduePayments = filteredPayments.filter(
-    (p) => p.status === "overdue",
-  ).length;
-  const failedPayments = filteredPayments.filter(
-    (p) => p.status === "failed",
-  ).length;
+  const paidPayments = filteredPayments.filter((p) => p.status === "paid").length;
+  const pendingPayments = filteredPayments.filter((p) => p.status === "pending").length;
+  const overduePayments = filteredPayments.filter((p) => p.status === "overdue").length;
+  const failedPayments = filteredPayments.filter((p) => p.status === "failed").length;
 
   const currentMonth = new Date().getMonth();
   const currentYear = new Date().getFullYear();
@@ -147,6 +156,7 @@ const Payments = () => {
     };
   });
 
+
   return (
     <SuperAdminLayout activePage="payments">
       <div className="payments-page">
@@ -158,14 +168,15 @@ const Payments = () => {
               Track and manage all tenant payments and billing history
             </p>
           </div>
-          <div className="page-header-actions">
+           <div className="page-header-actions">
             <button className="btn btn-secondary" onClick={handleRefresh}>
-              <FiRefreshCw className="btn-icon" />
-              Refresh
+              <FiRefreshCw className="btn-icon" /> Refresh
             </button>
-            <button className="btn btn-secondary" onClick={handleExport}>
-              <FiDownload className="btn-icon" />
-              Export
+            <button className="btn btn-secondary" onClick={() => handleExport("csv")}>
+              <FiDownload className="btn-icon" /> Export CSV
+            </button>
+            <button className="btn btn-secondary" onClick={() => handleExport("pdf")}>
+              <FiDownload className="btn-icon" /> Export PDF
             </button>
           </div>
         </div>

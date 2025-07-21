@@ -2,26 +2,30 @@ import React, { useState } from "react";
 import { FiSearch, FiDownload, FiEye } from "react-icons/fi";
 import "../../styles/SuperAdmin.css";
 
+
+
 const PaymentTable = ({ payments, onViewDetails, statusFilter }) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [sortField, setSortField] = useState("date");
   const [sortDirection, setSortDirection] = useState("desc");
+  
 
   // Only filter by search term since status filtering is handled by parent
-  const filteredPayments = payments.filter((payment) => {
-    const matchesSearch =
-      payment.tenantName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      payment.invoiceId.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      payment.tenantEmail.toLowerCase().includes(searchTerm.toLowerCase());
+const filteredPayments = payments.filter((payment) => {
+  const matchesSearch =
+    (payment.tenant_name || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+    (payment.invoice_id || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+    (payment.tenant_email || '').toLowerCase().includes(searchTerm.toLowerCase());
 
-    return matchesSearch;
-  });
+  return matchesSearch;
+});
+
 
   const sortedPayments = [...filteredPayments].sort((a, b) => {
     let aVal = a[sortField];
     let bVal = b[sortField];
 
-    if (sortField === "date" || sortField === "dueDate") {
+    if (sortField === "date" || sortField === "due_date") {
       aVal = new Date(aVal);
       bVal = new Date(bVal);
     }
@@ -58,7 +62,7 @@ const PaymentTable = ({ payments, onViewDetails, statusFilter }) => {
   const formatCurrency = (amount) => {
     return new Intl.NumberFormat("en-US", {
       style: "currency",
-      currency: "USD",
+      currency: "KES",
     }).format(amount);
   };
 
@@ -115,17 +119,17 @@ const PaymentTable = ({ payments, onViewDetails, statusFilter }) => {
         <table className="data-table">
           <thead>
             <tr>
-              <th className="sortable" onClick={() => handleSort("invoiceId")}>
+              <th className="sortable" onClick={() => handleSort("invoice_id")}>
                 Invoice ID
-                {sortField === "invoiceId" && (
+                {sortField === "invoice_id" && (
                   <span className="sort-indicator">
                     {sortDirection === "asc" ? "↑" : "↓"}
                   </span>
                 )}
               </th>
-              <th className="sortable" onClick={() => handleSort("tenantName")}>
+              <th className="sortable" onClick={() => handleSort("tenant_name")}>
                 Tenant
-                {sortField === "tenantName" && (
+                {sortField === "tenant_name" && (
                   <span className="sort-indicator">
                     {sortDirection === "asc" ? "↑" : "↓"}
                   </span>
@@ -149,9 +153,9 @@ const PaymentTable = ({ payments, onViewDetails, statusFilter }) => {
                   </span>
                 )}
               </th>
-              <th className="sortable" onClick={() => handleSort("dueDate")}>
+              <th className="sortable" onClick={() => handleSort("due_date")}>
                 Due Date
-                {sortField === "dueDate" && (
+                {sortField === "due_date" && (
                   <span className="sort-indicator">
                     {sortDirection === "asc" ? "↑" : "↓"}
                   </span>
@@ -173,12 +177,13 @@ const PaymentTable = ({ payments, onViewDetails, statusFilter }) => {
               sortedPayments.map((payment) => (
                 <tr key={payment.id}>
                   <td>
-                    <code className="invoice-code">{payment.invoiceId}</code>
+                    <code className="invoice-code">{payment.invoice_id}</code>
                   </td>
                   <td>
                     <div className="tenant-cell">
-                      <div className="tenant-name">{payment.tenantName}</div>
-                      <div className="tenant-email">{payment.tenantEmail}</div>
+                      <div className="tenant-name">{payment.tenant_name}</div>
+                      <div className="tenant-email">{payment.tenant_email}</div>
+
                     </div>
                   </td>
                   <td>
@@ -190,10 +195,16 @@ const PaymentTable = ({ payments, onViewDetails, statusFilter }) => {
                   <td>
                     <div className="payment-method">
                       <span className="method-icon">
-                        {getPaymentMethodIcon(payment.paymentMethod)}
+                        {getPaymentMethodIcon(payment.payment_method)}
                       </span>
                       <span className="method-text">
-                        {payment.paymentMethod.replace("_", " ").toUpperCase()}
+                       <td>
+  {payment.payment_method
+    ? payment.payment_method.replace("_", " ").toUpperCase()
+    : 'N/A'}
+</td>
+
+
                       </span>
                     </div>
                   </td>
@@ -204,7 +215,7 @@ const PaymentTable = ({ payments, onViewDetails, statusFilter }) => {
                         payment.status === "overdue" ? "overdue-date" : ""
                       }
                     >
-                      {formatDate(payment.dueDate)}
+                      {formatDate(payment.due_date)}
                     </span>
                   </td>
                   <td>

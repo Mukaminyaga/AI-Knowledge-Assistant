@@ -24,3 +24,4 @@ class Tenant(Base):
 
     users = relationship("User", back_populates="tenant", cascade="all, delete")
     documents = relationship("Document", back_populates="tenant", cascade="all, delete")
+    payments = relationship("Payment", back_populates="tenant")
