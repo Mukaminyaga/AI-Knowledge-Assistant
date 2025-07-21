@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import SuperAdminLayout from "../../components/SuperAdmin/SuperAdminLayout";
 import PaymentTable from "../../components/SuperAdmin/PaymentTable";
+import PaymentHistoryModal from "../../components/SuperAdmin/PaymentHistoryModal";
 import {
   FiDownload,
   FiRefreshCw,
@@ -14,26 +15,29 @@ import axios from "axios";
 
 const API_URL = process.env.REACT_APP_API_URL;
 
-
 const Payments = () => {
   const [payments, setPayments] = useState([]);
   const [selectedPayment, setSelectedPayment] = useState(null);
   const [dateFilter, setDateFilter] = useState("all");
   const [statusFilter, setStatusFilter] = useState("all");
   const [loading, setLoading] = useState(false);
-const fetchPayments = async () => {
-  try {
-    setLoading(true);
-    const res = await axios.get(`${API_URL}/payments`);
-      // const response = await axios.get(`${API_URL}/tenants/tenants`);
-    setPayments(res.data);
-  } catch (err) {
-    console.error("Error fetching payments:", err);
-  } finally {
-    setLoading(false);
-  }
-};
+  const [paymentHistoryModal, setPaymentHistoryModal] = useState({
+    isOpen: false,
+    tenantName: "",
+    tenantEmail: ""
+  });
 
+  const fetchPayments = async () => {
+    try {
+      setLoading(true);
+      const res = await axios.get(`${API_URL}/payments`);
+      setPayments(res.data);
+    } catch (err) {
+      console.error("Error fetching payments:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
     fetchPayments();
@@ -43,23 +47,38 @@ const fetchPayments = async () => {
     setSelectedPayment(payment);
   };
 
- const handleExport = async (format = "csv") => {
-  try {
-    const res = await axios.get(`${API_URL}/payments/export/${format}`, {
-      responseType: "blob",
+  const handleViewPaymentHistory = (tenantName, tenantEmail) => {
+    setPaymentHistoryModal({
+      isOpen: true,
+      tenantName: tenantName,
+      tenantEmail: tenantEmail
     });
-    const url = window.URL.createObjectURL(new Blob([res.data]));
-    const link = document.createElement("a");
-    link.href = url;
-    link.setAttribute("download", `payments_export.${format}`);
-    document.body.appendChild(link);
-    link.click();
-    link.remove();
-  } catch (err) {
-    console.error("Export error:", err);
-  }
-};
+  };
 
+  const handleClosePaymentHistory = () => {
+    setPaymentHistoryModal({
+      isOpen: false,
+      tenantName: "",
+      tenantEmail: ""
+    });
+  };
+
+  const handleExport = async (format = "csv") => {
+    try {
+      const res = await axios.get(`${API_URL}/payments/export/${format}`, {
+        responseType: "blob",
+      });
+      const url = window.URL.createObjectURL(new Blob([res.data]));
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", `payments_export.${format}`);
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+    } catch (err) {
+      console.error("Export error:", err);
+    }
+  };
 
   const handleRefresh = () => {
     fetchPayments();
@@ -73,7 +92,7 @@ const fetchPayments = async () => {
     if (dateFilter !== "all") {
       const paymentDate = payment.date
         ? new Date(payment.date)
-        : new Date(payment.dueDate);
+        : new Date(payment.due_date);
       const now = new Date();
 
       switch (dateFilter) {
@@ -108,17 +127,18 @@ const fetchPayments = async () => {
   });
 
   const totalPayments = filteredPayments.length;
-  const totalRevenue = filteredPayments
-    .filter((p) => p.status === "paid")
-    .reduce((sum, p) => sum + p.amount, 0);
-
   const paidPayments = filteredPayments.filter((p) => p.status === "paid").length;
   const pendingPayments = filteredPayments.filter((p) => p.status === "pending").length;
   const overduePayments = filteredPayments.filter((p) => p.status === "overdue").length;
   const failedPayments = filteredPayments.filter((p) => p.status === "failed").length;
 
+  const totalRevenue = filteredPayments
+    .filter((p) => p.status === "paid")
+    .reduce((sum, p) => sum + p.amount, 0);
+
   const currentMonth = new Date().getMonth();
   const currentYear = new Date().getFullYear();
+
   const thisMonthRevenue = filteredPayments
     .filter((p) => {
       if (!p.date || p.status !== "paid") return false;
@@ -156,19 +176,16 @@ const fetchPayments = async () => {
     };
   });
 
-
   return (
     <SuperAdminLayout activePage="payments">
       <div className="payments-page">
-        {/* Page Header */}
+        {/* Header */}
         <div className="page-header">
           <div className="page-header-content">
             <h1 className="page-title">Payment Management</h1>
-            <p className="page-subtitle">
-              Track and manage all tenant payments and billing history
-            </p>
+            <p className="page-subtitle">Track and manage all tenant payments and billing history</p>
           </div>
-           <div className="page-header-actions">
+          <div className="page-header-actions">
             <button className="btn btn-secondary" onClick={handleRefresh}>
               <FiRefreshCw className="btn-icon" /> Refresh
             </button>
@@ -181,7 +198,7 @@ const fetchPayments = async () => {
           </div>
         </div>
 
-        {/* Date Filters */}
+        {/* Filters */}
         <div className="filter-buttons">
           {[
             ["all", "All Time"],
@@ -199,46 +216,31 @@ const fetchPayments = async () => {
           ))}
         </div>
 
-        {/* Payment Stats */}
+        {/* Metrics */}
         <div className="metrics-grid">
           <div className="metric-card">
-            <div className="metric-icon">
-              <FiDollarSign />
-            </div>
+            <div className="metric-icon"><FiDollarSign /></div>
             <div className="metric-content">
-              <div className="metric-value">
-                KES {totalRevenue.toLocaleString()}
-              </div>
+              <div className="metric-value">KES {totalRevenue.toLocaleString()}</div>
               <div className="metric-label">Total Revenue</div>
             </div>
           </div>
-
           <div className="metric-card">
-            <div className="metric-icon">
-              <FiTrendingUp />
-            </div>
+            <div className="metric-icon"><FiTrendingUp /></div>
             <div className="metric-content">
-              <div className="metric-value">
-                KES {thisMonthRevenue.toLocaleString()}
-              </div>
+              <div className="metric-value">KES {thisMonthRevenue.toLocaleString()}</div>
               <div className="metric-label">This Month Revenue</div>
             </div>
           </div>
-
           <div className="metric-card error">
-            <div className="metric-icon">
-              <FiAlertTriangle />
-            </div>
+            <div className="metric-icon"><FiAlertTriangle /></div>
             <div className="metric-content">
               <div className="metric-value">{overduePayments}</div>
               <div className="metric-label">Overdue Payments</div>
             </div>
           </div>
-
           <div className="metric-card">
-            <div className="metric-icon">
-              <FiCreditCard />
-            </div>
+            <div className="metric-icon"><FiCreditCard /></div>
             <div className="metric-content">
               <div className="metric-value">{paidPayments}</div>
               <div className="metric-label">Successful Payments</div>
@@ -248,13 +250,12 @@ const fetchPayments = async () => {
 
         {/* Charts */}
         <div className="charts-section">
+          {/* Revenue Trend */}
           <div className="chart-card">
-            <div className="chart-header">
-              <h3 className="chart-title">Revenue Trend (Last 6 Months)</h3>
-            </div>
+            <h3 className="chart-title">Revenue Trend (Last 6 Months)</h3>
             <div className="chart-content revenue-trend-chart">
-              {monthlyTrend.map((month, index) => (
-                <div key={index} className="trend-bar-container">
+              {monthlyTrend.map((month, i) => (
+                <div key={i} className="trend-bar-container">
                   <div className="trend-bar-label">{month.month}</div>
                   <div className="trend-bar-wrapper">
                     <div
@@ -265,27 +266,24 @@ const fetchPayments = async () => {
                             (month.revenue /
                               Math.max(...monthlyTrend.map((m) => m.revenue || 1))) *
                               100,
-                            5,
+                            5
                           )
                         }%`,
                       }}
                     />
                   </div>
-                  <div className="trend-bar-value">
-                    KES {month.revenue.toLocaleString()}
-                  </div>
+                  <div className="trend-bar-value">KES {month.revenue.toLocaleString()}</div>
                 </div>
               ))}
             </div>
           </div>
 
+          {/* Status Distribution */}
           <div className="chart-card">
-            <div className="chart-header">
-              <h3 className="chart-title">Payment Status Distribution</h3>
-            </div>
+            <h3 className="chart-title">Payment Status Distribution</h3>
             <div className="chart-content status-chart">
-              {statusDistribution.map((item, index) => (
-                <div key={index} className="status-item">
+              {statusDistribution.map((item, i) => (
+                <div key={i} className="status-item">
                   <div className="status-info">
                     <div
                       className="status-color"
@@ -295,10 +293,7 @@ const fetchPayments = async () => {
                   </div>
                   <div className="status-count">{item.count}</div>
                   <div className="status-percentage">
-                    {totalPayments > 0
-                      ? Math.round((item.count / totalPayments) * 100)
-                      : 0}
-                    %
+                    {totalPayments > 0 ? Math.round((item.count / totalPayments) * 100) : 0}%
                   </div>
                 </div>
               ))}
@@ -322,108 +317,88 @@ const fetchPayments = async () => {
               <option value="failed">Failed</option>
             </select>
           </div>
-
           <div className="filter-results">
             Showing {filteredPayments.length} of {payments.length} payments
           </div>
         </div>
 
-        {/* Payment Table */}
+        {/* Table */}
         <div className="payments-table-section">
           <PaymentTable
             payments={filteredPayments}
             onViewDetails={handleViewPaymentDetails}
-            statusFilter={statusFilter} 
+            onViewHistory={handleViewPaymentHistory}
+            statusFilter={statusFilter}
           />
         </div>
 
-        {/* Modal */}
+        {/* Payment Details Modal */}
         {selectedPayment && (
-          <div
-            className="modal-overlay"
-            onClick={() => setSelectedPayment(null)}
-          >
+          <div className="modal-overlay" onClick={() => setSelectedPayment(null)}>
             <div
               className="modal-container payment-details-modal"
               onClick={(e) => e.stopPropagation()}
             >
               <div className="modal-header">
                 <h2 className="modal-title">Payment Details</h2>
-                <button
-                  className="modal-close"
-                  onClick={() => setSelectedPayment(null)}
-                >
+                <button className="modal-close" onClick={() => setSelectedPayment(null)}>
                   ×
                 </button>
               </div>
-
               <div className="payment-details">
                 <div className="detail-grid">
                   <div className="detail-item">
                     <label>Invoice ID</label>
-                    <span>{selectedPayment.invoiceId}</span>
+                    <span>{selectedPayment.invoice_id}</span>
                   </div>
-
                   <div className="detail-item">
                     <label>Tenant</label>
-                    <span>{selectedPayment.tenantName}</span>
+                    <span>{selectedPayment.tenantName || selectedPayment.tenant?.full_name}</span>
                   </div>
-
                   <div className="detail-item">
                     <label>Amount</label>
-                    <span>${selectedPayment.amount}</span>
+                    <span>KES {selectedPayment.amount.toLocaleString()}</span>
                   </div>
-
                   <div className="detail-item">
                     <label>Status</label>
-                    <span
-                      className={`status-badge status-${
-                        selectedPayment.status === "paid"
-                          ? "success"
-                          : selectedPayment.status === "pending"
-                          ? "warning"
-                          : "danger"
-                      }`}
-                    >
-                      {selectedPayment.status.charAt(0).toUpperCase() +
-                        selectedPayment.status.slice(1)}
+                    <span className={`status-badge status-${selectedPayment.status}`}>
+                      {selectedPayment.status}
                     </span>
                   </div>
-
                   <div className="detail-item">
                     <label>Payment Method</label>
-                    <span>
-                      {selectedPayment.paymentMethod
-                        .replace("_", " ")
-                        .toUpperCase()}
-                    </span>
+                    <span>{selectedPayment.payment_method?.replace("_", " ").toUpperCase()}</span>
                   </div>
-
                   <div className="detail-item">
                     <label>Due Date</label>
-                    <span>
-                      {new Date(selectedPayment.dueDate).toLocaleDateString()}
-                    </span>
+                    <span>{new Date(selectedPayment.due_date).toLocaleDateString()}</span>
                   </div>
-
                   <div className="detail-item">
                     <label>Payment Date</label>
                     <span>
                       {selectedPayment.date
                         ? new Date(selectedPayment.date).toLocaleDateString()
-                        : "Not paid"}
+                        : "Not Paid"}
                     </span>
                   </div>
-
                   <div className="detail-item detail-full">
                     <label>Description</label>
-                    <span>{selectedPayment.description}</span>
+                    <span>{selectedPayment.description || "—"}</span>
                   </div>
                 </div>
               </div>
             </div>
           </div>
         )}
+
+        {/* Payment History Modal */}
+        <PaymentHistoryModal
+          isOpen={paymentHistoryModal.isOpen}
+          onClose={handleClosePaymentHistory}
+          tenantName={paymentHistoryModal.tenantName}
+          tenantEmail={paymentHistoryModal.tenantEmail}
+          allPayments={payments}
+        />
       </div>
     </SuperAdminLayout>
   );

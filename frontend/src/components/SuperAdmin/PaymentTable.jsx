@@ -1,14 +1,14 @@
 import React, { useState } from "react";
-import { FiSearch, FiDownload, FiEye } from "react-icons/fi";
+import { FiSearch, FiDownload, FiEye, FiClock } from "react-icons/fi";
 import "../../styles/SuperAdmin.css";
 
 
 
-const PaymentTable = ({ payments, onViewDetails, statusFilter }) => {
+const PaymentTable = ({ payments, onViewDetails, onViewHistory, statusFilter }) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [sortField, setSortField] = useState("date");
   const [sortDirection, setSortDirection] = useState("desc");
-  
+
 
   // Only filter by search term since status filtering is handled by parent
 const filteredPayments = payments.filter((payment) => {
@@ -220,13 +220,21 @@ const filteredPayments = payments.filter((payment) => {
                   </td>
                   <td>
                     <div className="action-buttons">
-                      <button
-                        className="action-btn view-btn"
-                        onClick={() => onViewDetails && onViewDetails(payment)}
-                        title="View details"
-                      >
-                        <FiEye />
-                      </button>
+                     <button
+  className="action-btn view-btn"
+  onClick={() => onViewDetails && onViewDetails(payment)}
+  title="View details"
+>
+  <FiEye />
+</button>
+                     <button
+  className="action-btn history-btn"
+  onClick={() => onViewHistory && onViewHistory(payment.tenant_name, payment.tenant_email)}
+  title="View payment history"
+>
+  <FiClock />
+</button>
+
                     </div>
                   </td>
                 </tr>
@@ -248,6 +256,7 @@ const filteredPayments = payments.filter((payment) => {
               sortedPayments.reduce((sum, payment) => sum + payment.amount, 0),
             )}
           </span>
+
         </div>
       </div>
     </div>

@@ -1559,6 +1559,11 @@
   border-color: rgb(220, 38, 38);
 }
 
+.history-btn:hover {
+  color: rgb(168, 85, 247);
+  border-color: rgb(168, 85, 247);
+}
+
 /* Status Badge Extensions */
 .status-success {
   background: rgb(220, 252, 231);

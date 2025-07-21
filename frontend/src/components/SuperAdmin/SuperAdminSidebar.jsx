@@ -1,5 +1,5 @@
 import React from "react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import {
   FiHome,
   FiUsers,
@@ -7,7 +7,6 @@ import {
   FiLogOut,
   FiCreditCard,
   FiBarChart2,
-  FiSettings,
   FiActivity,
 } from "react-icons/fi";
 import "../../styles/SuperAdminSidebar.css";
@@ -41,7 +40,7 @@ const SuperAdminSidebar = ({ activePage }) => {
     },
   ];
   const navigate = useNavigate();
-   const location = useLocation();
+
    const handleLogout = () => {
       logout();
       navigate("/login");

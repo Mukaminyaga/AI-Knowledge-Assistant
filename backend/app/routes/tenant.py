@@ -4,10 +4,12 @@ from typing import List
 from app.database import get_db
 from app.models.tenant import Tenant
 from app.models.users import User
+from app.models.payment import Payment
 from app.schemas.tenant import TenantCreate, TenantUpdate, TenantOut
 from app.schemas.users import UserOut
 from datetime import datetime
 from fastapi.responses import JSONResponse
+from sqlalchemy import extract, func
 
 router = APIRouter(prefix="/tenants", tags=["Tenants"])
 
@@ -170,17 +172,39 @@ def delete_tenant(tenant_id: int, db: Session = Depends(get_db)):
 
 @router.get("/dashboard/overview")
 def get_tenant_dashboard_data(db: Session = Depends(get_db)):
+    # Tenants
     tenants = db.query(Tenant).all()
-
     total_tenants = len(tenants)
     active_tenants = [t for t in tenants if t.status == "active"]
+    
+    # Monthly Recurring Revenue (based on ACTIVE tenants’ monthly fees)
     mrr = sum(t.monthly_fee for t in active_tenants)
 
+    # Recent tenants
     recent_tenants = sorted(tenants, key=lambda t: t.created_at or datetime.min, reverse=True)[:5]
+
+    # Today's date details
+    now = datetime.now()
+    current_year = now.year
+    current_month = now.month
+
+    # This Month's Successful Payments (actual revenue this month)
+    this_month_payments = db.query(func.sum(Payment.amount)).filter(
+        extract('year', Payment.date) == current_year,
+        extract('month', Payment.date) == current_month,
+        Payment.status == "paid"
+    ).scalar() or 0
+
+    # Overdue Payments Count
+    overdue_payments = db.query(Payment).filter(
+        Payment.status == "overdue"
+    ).count()
 
     return {
         "total_tenants": total_tenants,
         "monthly_recurring_revenue": mrr,
+        "this_months_payments_total": this_month_payments,
+        "overdue_payments": overdue_payments,
         "recent_tenants": [
             {
                 "id": t.id,

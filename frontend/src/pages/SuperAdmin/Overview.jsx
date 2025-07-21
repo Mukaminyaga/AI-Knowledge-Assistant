@@ -9,11 +9,15 @@ import "../../styles/SuperAdmin.css";
 const API_URL = process.env.REACT_APP_API_URL;
 
 const Overview = () => {
-  const [dashboardData, setDashboardData] = useState({
-    total_tenants: 0,
-    monthly_recurring_revenue: 0,
-    recent_tenants: [],
-  });
+ const [dashboardData, setDashboardData] = useState({
+  total_tenants: 0,
+  monthly_recurring_revenue: 0,
+  total_documents: 0, // <-- Already added via mergedData
+  this_months_payments_total: 0,
+  overdue_payments: 0,
+  recent_tenants: [],
+});
+
 
 
 useEffect(() => {
@@ -103,7 +107,7 @@ useEffect(() => {
           <div className="metric-card error">
             <div className="metric-icon"><FiAlertTriangle /></div>
             <div className="metric-content">
-              <div className="metric-value">—</div>
+              <div className="metric-value">{dashboardData.overdue_payments}</div>
               <div className="metric-label">Overdue Payments</div>
             </div>
           </div>
@@ -111,7 +115,10 @@ useEffect(() => {
           <div className="metric-card">
             <div className="metric-icon"><FiTrendingUp /></div>
             <div className="metric-content">
-              <div className="metric-value">—</div>
+           <div className="metric-value">
+  KES {(dashboardData.this_months_payments_total || 0).toLocaleString()}
+</div>
+
               <div className="metric-label">This Month's Payments</div>
             </div>
           </div>
