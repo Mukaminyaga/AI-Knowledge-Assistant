@@ -46,7 +46,7 @@ const TenantDetails = () => {
         axios.get(`${API_URL}/tenants/tenants/${tenantId}`),
         axios.get(`${API_URL}/tenants/tenants/${tenantId}/users`),
         axios.get(`${API_URL}/documents/tenants/${tenantId}/documents`),
-        axios.get(`${API_URL}/tenants/tenants/${tenantId}/payments`)
+        // axios.get(`${API_URL}/tenants/tenants/${tenantId}/payments`)
 
       ]);
 
@@ -200,7 +200,7 @@ const TenantDetails = () => {
             <FiFileText className="tab-icon" />
             Documents ({documents.length})
           </button>
-         <button
+         {/* <button
   className={`tab-button ${activeTab === "payments" ? "active" : ""}`}
   onClick={() => {
     setActiveTab("payments");
@@ -209,7 +209,7 @@ const TenantDetails = () => {
 >
   <FiClock className="tab-icon" />
   Payments ({payments.length})
-</button>
+</button> */}
 
         </div>
 
