@@ -1,90 +1,46 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
 import SuperAdminLayout from "../../components/SuperAdmin/SuperAdminLayout";
-// import StatCard from "../../components/SuperAdmin/StatCard";
 import {
   FiTrendingUp,
   FiTrendingDown,
   FiUsers,
   FiDollarSign,
-  // FiCalendar,
-  // FiBarChart,
-  // FiPieChart,
-  // FiActivity,
 } from "react-icons/fi";
 import "../../styles/SuperAdmin.css";
+
+const API_URL = "http://localhost:8000"; // Replace with your actual backend URL
 
 const Analytics = () => {
   const [timeRange, setTimeRange] = useState("30d");
   const [activeMetric, setActiveMetric] = useState("revenue");
+  const [analyticsData, setAnalyticsData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  // Mock analytics data - in a real app, this would come from an API
-  const analyticsData = {
-    overview: {
-      totalRevenue: 1247800,
-      revenueGrowth: 15.3,
-      newTenants: 24,
-      tenantGrowth: 8.7,
-      churnRate: 2.1,
-      avgRevenuePerTenant: 156.23,
-    },
-    monthlyRevenue: [
-      { month: "Jan", revenue: 89400 },
-      { month: "Feb", revenue: 94200 },
-      { month: "Mar", revenue: 98700 },
-      { month: "Apr", revenue: 102300 },
-      { month: "May", revenue: 108900 },
-      { month: "Jun", revenue: 115600 },
-      { month: "Jul", revenue: 121200 },
-      { month: "Aug", revenue: 127800 },
-      { month: "Sep", revenue: 134500 },
-      { month: "Oct", revenue: 141200 },
-      { month: "Nov", revenue: 148900 },
-      { month: "Dec", revenue: 156700 },
-    ],
-    tenantsByPlan: [
-      { plan: "Starter", count: 45, percentage: 45, revenue: 1305 },
-      { plan: "Professional", count: 32, percentage: 32, revenue: 3168 },
-      { plan: "Enterprise", count: 23, percentage: 23, revenue: 6877 },
-    ],
-    paymentMethods: [
-      { method: "Credit Card", percentage: 65 },
-      { method: "Bank Transfer", percentage: 20 },
-      { method: "PayPal", percentage: 10 },
-      { method: "Wire Transfer", percentage: 5 },
-    ],
-    topTenants: [
-      {
-        name: "Acme Corporation",
-        plan: "Enterprise",
-        revenue: 3588,
-        growth: 12.3,
-      },
-      {
-        name: "TechStart Solutions",
-        plan: "Professional",
-        revenue: 1188,
-        growth: 8.9,
-      },
-      {
-        name: "SecureVault Systems",
-        plan: "Enterprise",
-        revenue: 3588,
-        growth: 15.2,
-      },
-      { name: "Innovate Labs", plan: "Enterprise", revenue: 2691, growth: 6.7 },
-      {
-        name: "CloudFlow Inc",
-        plan: "Professional",
-        revenue: 891,
-        growth: -2.1,
-      },
-    ],
+  const fetchAnalytics = async () => {
+    try {
+      setLoading(true);
+      const response = await axios.get(`${API_URL}/superadmin/analytics/overview`, {
+        params: { time_range: timeRange },
+      });
+      setAnalyticsData(response.data);
+    } catch (err) {
+      console.error("Error fetching analytics:", err);
+      setError("Failed to load analytics data.");
+    } finally {
+      setLoading(false);
+    }
   };
+
+  useEffect(() => {
+    fetchAnalytics();
+  }, [timeRange]);
 
   const formatCurrency = (amount) => {
     return new Intl.NumberFormat("en-US", {
       style: "currency",
-      currency: "USD",
+      currency: "KES",
       minimumFractionDigits: 0,
       maximumFractionDigits: 0,
     }).format(amount);
@@ -93,6 +49,24 @@ const Analytics = () => {
   const formatPercentage = (value) => {
     return `${value > 0 ? "+" : ""}${value.toFixed(1)}%`;
   };
+
+  if (loading) {
+    return (
+      <SuperAdminLayout activePage="analytics">
+        <div className="analytics-page">Loading analytics...</div>
+      </SuperAdminLayout>
+    );
+  }
+
+  if (error) {
+    return (
+      <SuperAdminLayout activePage="analytics">
+        <div className="analytics-page">{error}</div>
+      </SuperAdminLayout>
+    );
+  }
+
+  const overview = analyticsData.overview;
 
   return (
     <SuperAdminLayout activePage="analytics">
@@ -121,30 +95,15 @@ const Analytics = () => {
 
         {/* Filter Buttons */}
         <div className="filter-buttons">
-          <button
-            className={`filter-btn ${activeMetric === "revenue" ? "active" : ""}`}
-            onClick={() => setActiveMetric("revenue")}
-          >
-            Revenue
-          </button>
-          <button
-            className={`filter-btn ${activeMetric === "tenants" ? "active" : ""}`}
-            onClick={() => setActiveMetric("tenants")}
-          >
-            Tenants
-          </button>
-          <button
-            className={`filter-btn ${activeMetric === "payments" ? "active" : ""}`}
-            onClick={() => setActiveMetric("payments")}
-          >
-            Payments
-          </button>
-          <button
-            className={`filter-btn ${activeMetric === "growth" ? "active" : ""}`}
-            onClick={() => setActiveMetric("growth")}
-          >
-            Growth
-          </button>
+          {["revenue", "tenants", "payments", "growth"].map((metric) => (
+            <button
+              key={metric}
+              className={`filter-btn ${activeMetric === metric ? "active" : ""}`}
+              onClick={() => setActiveMetric(metric)}
+            >
+              {metric.charAt(0).toUpperCase() + metric.slice(1)}
+            </button>
+          ))}
         </div>
 
         {/* Key Metrics */}
@@ -155,11 +114,11 @@ const Analytics = () => {
             </div>
             <div className="metric-content">
               <div className="metric-value">
-                KES {analyticsData.overview.totalRevenue.toLocaleString()}
+                {formatCurrency(overview.totalRevenue)}
               </div>
               <div className="metric-label">Total Revenue</div>
               <div className="metric-trend positive">
-                ↗ {formatPercentage(analyticsData.overview.revenueGrowth)}
+                ↗ {formatPercentage(overview.revenueGrowth)}
               </div>
             </div>
           </div>
@@ -169,12 +128,10 @@ const Analytics = () => {
               <FiUsers />
             </div>
             <div className="metric-content">
-              <div className="metric-value">
-                {analyticsData.overview.newTenants}
-              </div>
+              <div className="metric-value">{overview.newTenants}</div>
               <div className="metric-label">New Tenants</div>
               <div className="metric-trend positive">
-                ↗ {formatPercentage(analyticsData.overview.tenantGrowth)}
+                ↗ {formatPercentage(overview.tenantGrowth)}
               </div>
             </div>
           </div>
@@ -184,9 +141,7 @@ const Analytics = () => {
               <FiTrendingDown />
             </div>
             <div className="metric-content">
-              <div className="metric-value">
-                {analyticsData.overview.churnRate}%
-              </div>
+              <div className="metric-value">{overview.churnRate}%</div>
               <div className="metric-label">Churn Rate</div>
               <div className="metric-trend negative">↘ -0.3%</div>
             </div>
@@ -198,8 +153,7 @@ const Analytics = () => {
             </div>
             <div className="metric-content">
               <div className="metric-value">
-                KES{" "}
-                {analyticsData.overview.avgRevenuePerTenant.toLocaleString()}
+                {formatCurrency(overview.avgRevenuePerTenant)}
               </div>
               <div className="metric-label">Avg Revenue per Tenant</div>
               <div className="metric-trend positive">↗ +4.2%</div>
@@ -209,20 +163,14 @@ const Analytics = () => {
 
         {/* Interactive Charts */}
         <div className="analytics-charts-grid">
-          {/* Main Revenue Chart */}
+          {/* Monthly Revenue Chart */}
           <div className="main-chart-card">
             <div className="chart-header">
               <h3 className="chart-title">Monthly Revenue Trend</h3>
-              <div className="chart-controls">
-                <button className="chart-btn active">Revenue</button>
-                <button className="chart-btn">Tenants</button>
-                <button className="chart-btn">Growth</button>
-              </div>
             </div>
             <div className="chart-content">
               <div className="interactive-chart">
                 <div className="chart-grid">
-                  {/* Y-axis labels */}
                   <div className="y-axis">
                     <div className="y-label">200K</div>
                     <div className="y-label">150K</div>
@@ -230,10 +178,8 @@ const Analytics = () => {
                     <div className="y-label">50K</div>
                     <div className="y-label">0</div>
                   </div>
-
-                  {/* Chart bars */}
                   <div className="chart-bars">
-                    {analyticsData.monthlyRevenue.map((item, index) => (
+                    {analyticsData.monthlyRevenue.map((item) => (
                       <div key={item.month} className="bar-container">
                         <div
                           className="chart-bar interactive"
@@ -251,7 +197,7 @@ const Analytics = () => {
             </div>
           </div>
 
-          {/* Plan Distribution Donut Chart */}
+          {/* Tenant Plan Distribution */}
           <div className="chart-card">
             <div className="chart-header">
               <h3 className="chart-title">Tenant Plan Distribution</h3>
@@ -261,17 +207,13 @@ const Analytics = () => {
                 <div className="donut-chart">
                   <div className="donut-center">
                     <div className="donut-total">
-                      {analyticsData.tenantsByPlan.reduce(
-                        (sum, p) => sum + p.count,
-                        0,
-                      )}
+                      {analyticsData.tenantsByPlan.reduce((sum, p) => sum + p.count, 0)}
                     </div>
                     <div className="donut-label">Total Tenants</div>
                   </div>
-                  {/* CSS-based donut segments would go here in a real implementation */}
                 </div>
                 <div className="donut-legend">
-                  {analyticsData.tenantsByPlan.map((plan, index) => (
+                  {analyticsData.tenantsByPlan.map((plan) => (
                     <div key={plan.plan} className="legend-item">
                       <div
                         className={`legend-color plan-${plan.plan.toLowerCase()}`}
@@ -289,7 +231,7 @@ const Analytics = () => {
             </div>
           </div>
 
-          {/* Payment Methods Chart */}
+          {/* Payment Methods */}
           <div className="chart-card">
             <div className="chart-header">
               <h3 className="chart-title">Payment Methods</h3>
@@ -317,7 +259,7 @@ const Analytics = () => {
             </div>
           </div>
 
-          {/* Top Performers */}
+          {/* Top Performing Tenants */}
           <div className="chart-card">
             <div className="chart-header">
               <h3 className="chart-title">Top Performing Tenants</h3>
@@ -333,10 +275,12 @@ const Analytics = () => {
                     </div>
                     <div className="performer-metrics">
                       <div className="performer-revenue">
-                        KES {tenant.revenue.toLocaleString()}
+                        {formatCurrency(tenant.revenue)}
                       </div>
                       <div
-                        className={`performer-growth ${tenant.growth > 0 ? "positive" : "negative"}`}
+                        className={`performer-growth ${
+                          tenant.growth > 0 ? "positive" : "negative"
+                        }`}
                       >
                         {tenant.growth > 0 ? "↗" : "↘"}{" "}
                         {Math.abs(tenant.growth)}%

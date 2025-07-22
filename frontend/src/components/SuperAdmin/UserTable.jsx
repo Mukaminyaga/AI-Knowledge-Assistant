@@ -1,12 +1,12 @@
 import React, { useState } from "react";
-import { FiSearch, FiMail, FiUser, FiClock, FiCalendar } from "react-icons/fi";
+import { FiSearch, FiMail } from "react-icons/fi";
 import "../../styles/SuperAdmin.css";
 
 const UserTable = ({ users, tenantId }) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [sortField, setSortField] = useState("createdAt");
   const [sortDirection, setSortDirection] = useState("desc");
-  const [statusFilter, setStatusFilter] = useState("all");
+  // const [statusFilter, setStatusFilter] = useState("all");
 
  const filteredUsers = users.filter((user) => {
   const matchesSearch =
@@ -14,10 +14,10 @@ const UserTable = ({ users, tenantId }) => {
     (user.email?.toLowerCase() || "").includes(searchTerm.toLowerCase()) ||
     (user.role?.toLowerCase() || "").includes(searchTerm.toLowerCase());
 
-    const matchesStatus =
-      statusFilter === "all" || user.status === statusFilter;
+    // const matchesStatus =
+    //   statusFilter === "all" || user.status === statusFilter;
 
-    return matchesSearch && matchesStatus;
+    return matchesSearch ;
   });
 
   const sortedUsers = [...filteredUsers].sort((a, b) => {
@@ -45,39 +45,39 @@ const UserTable = ({ users, tenantId }) => {
     }
   };
 
-  const formatDate = (dateString) => {
-    return new Date(dateString).toLocaleDateString("en-US", {
-      month: "short",
-      day: "numeric",
-      year: "numeric",
-    });
-  };
+  // const formatDate = (dateString) => {
+  //   return new Date(dateString).toLocaleDateString("en-US", {
+  //     month: "short",
+  //     day: "numeric",
+  //     year: "numeric",
+  //   });
+  // };
 
-  const formatDateTime = (dateString) => {
-    return new Date(dateString).toLocaleString("en-US", {
-      month: "short",
-      day: "numeric",
-      year: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-    });
-  };
+  // const formatDateTime = (dateString) => {
+  //   return new Date(dateString).toLocaleString("en-US", {
+  //     month: "short",
+  //     day: "numeric",
+  //     year: "numeric",
+  //     hour: "2-digit",
+  //     minute: "2-digit",
+  //   });
+  // };
 
-  const getStatusBadge = (status) => {
-    const statusColors = {
-      active: "success",
-      inactive: "warning",
-      suspended: "danger",
-    };
+  // const getStatusBadge = (status) => {
+  //   const statusColors = {
+  //     active: "success",
+  //     inactive: "warning",
+  //     suspended: "danger",
+  //   };
 
-    return (
-      <span
-        className={`status-badge status-${statusColors[status] || "default"}`}
-      >
-        {status?.charAt(0).toUpperCase() + status?.slice(1)}
-      </span>
-    );
-  };
+  //   return (
+  //     <span
+  //       className={`status-badge status-${statusColors[status] || "default"}`}
+  //     >
+  //       {status?.charAt(0).toUpperCase() + status?.slice(1)}
+  //     </span>
+  //   );
+  // };
 
   const getRoleBadge = (role) => {
     const roleColors = {
@@ -202,11 +202,11 @@ const UserTable = ({ users, tenantId }) => {
           <tbody>
             {sortedUsers.length === 0 ? (
               <tr>
-                <td colSpan={6} className="no-data">
+                {/* <td colSpan={6} className="no-data">
                   {searchTerm || statusFilter !== "all"
                     ? "No users found matching your criteria."
                     : "No users available for this tenant."}
-                </td>
+                </td> */}
               </tr>
             ) : (
               sortedUsers.map((user) => (

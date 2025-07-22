@@ -3,6 +3,7 @@ from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 from ..database import Base
 from app.models.users import User 
+from datetime import datetime
 
 # models/tenant.py
 class Tenant(Base):
@@ -21,6 +22,7 @@ class Tenant(Base):
     plan = Column(String, default="basic")  # <-- new field
     country = Column(String, nullable=True)  # <-- new field
     created_at = Column(DateTime(timezone=True), server_default=func.now())
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
     users = relationship("User", back_populates="tenant", cascade="all, delete")
     documents = relationship("Document", back_populates="tenant", cascade="all, delete")
