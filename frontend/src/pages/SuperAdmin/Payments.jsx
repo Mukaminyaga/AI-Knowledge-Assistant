@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import SuperAdminLayout from "../../components/SuperAdmin/SuperAdminLayout";
 import PaymentTable from "../../components/SuperAdmin/PaymentTable";
 import PaymentHistoryModal from "../../components/SuperAdmin/PaymentHistoryModal";
+import OverdueTenantsModal from "../../components/SuperAdmin/OverdueTenantsModal";
 import {
   FiDownload,
   FiRefreshCw,
@@ -26,6 +27,7 @@ const Payments = () => {
     tenantName: "",
     tenantEmail: ""
   });
+  const [overdueTenantsModal, setOverdueTenantsModal] = useState(false);
 
   const fetchPayments = async () => {
     try {
@@ -232,7 +234,11 @@ const Payments = () => {
               <div className="metric-label">This Month Revenue</div>
             </div>
           </div>
-          <div className="metric-card error">
+          <div
+            className="metric-card error clickable"
+            onClick={() => setOverdueTenantsModal(true)}
+            style={{ cursor: 'pointer' }}
+          >
             <div className="metric-icon"><FiAlertTriangle /></div>
             <div className="metric-content">
               <div className="metric-value">{overduePayments}</div>
@@ -397,6 +403,13 @@ const Payments = () => {
           onClose={handleClosePaymentHistory}
           tenantName={paymentHistoryModal.tenantName}
           tenantEmail={paymentHistoryModal.tenantEmail}
+          allPayments={payments}
+        />
+
+        {/* Overdue Tenants Modal */}
+        <OverdueTenantsModal
+          isOpen={overdueTenantsModal}
+          onClose={() => setOverdueTenantsModal(false)}
           allPayments={payments}
         />
       </div>

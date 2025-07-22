@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import SuperAdminLayout from "../../components/SuperAdmin/SuperAdminLayout";
+import OverdueTenantsModal from "../../components/SuperAdmin/OverdueTenantsModal";
 import { FiUsers, FiDollarSign, FiAlertTriangle, FiTrendingUp, FiPlus, FiFileText } from "react-icons/fi";
 import { Link } from "react-router-dom";
 import "../../styles/SuperAdmin.css";
@@ -17,6 +18,8 @@ const Overview = () => {
   overdue_payments: 0,
   recent_tenants: [],
 });
+const [overdueTenantsModal, setOverdueTenantsModal] = useState(false);
+const [allPayments, setAllPayments] = useState([]);
 
 
 
@@ -29,9 +32,10 @@ useEffect(() => {
         Authorization: `Bearer ${token}`
       };
 
-      const [overviewRes, documentsRes] = await Promise.all([
+      const [overviewRes, documentsRes, paymentsRes] = await Promise.all([
         axios.get(`${API_URL}/tenants/tenants/dashboard/overview`, { headers }),
-        axios.get(`${API_URL}/documents/superadmin/stats/total-documents`, { headers })
+        axios.get(`${API_URL}/documents/superadmin/stats/total-documents`, { headers }),
+        axios.get(`${API_URL}/payments`, { headers })
       ]);
 
       const mergedData = {
@@ -41,6 +45,7 @@ useEffect(() => {
 
       console.log("Dashboard data:", mergedData);
       setDashboardData(mergedData);
+      setAllPayments(paymentsRes.data);
     } catch (err) {
       console.error("Failed to fetch dashboard data:", err);
     }
@@ -83,7 +88,7 @@ useEffect(() => {
             </div>
           </div>
 
-          
+
   <div className="metric-card">
     <div className="metric-icon"><FiFileText /></div>
     <div className="metric-content">
@@ -104,7 +109,11 @@ useEffect(() => {
           </div>
 
           {/* Optional hardcoded or future dynamic metrics */}
-          <div className="metric-card error">
+          <div
+            className="metric-card error clickable"
+            onClick={() => setOverdueTenantsModal(true)}
+            style={{ cursor: 'pointer' }}
+          >
             <div className="metric-icon"><FiAlertTriangle /></div>
             <div className="metric-content">
               <div className="metric-value">{dashboardData.overdue_payments}</div>
@@ -159,6 +168,13 @@ useEffect(() => {
             </div>
           )}
         </div>
+
+        {/* Overdue Tenants Modal */}
+        <OverdueTenantsModal
+          isOpen={overdueTenantsModal}
+          onClose={() => setOverdueTenantsModal(false)}
+          allPayments={allPayments}
+        />
       </div>
     </SuperAdminLayout>
   );

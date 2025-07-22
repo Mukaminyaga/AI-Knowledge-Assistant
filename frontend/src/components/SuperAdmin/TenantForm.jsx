@@ -139,53 +139,61 @@ const TenantForm = ({ isOpen, onClose, onSubmit, initialData = null }) => {
       payload.serial_code = formData.serial_code;
     }
 
-    try {
-      setSubmitting(true);
-      let response;
-      if (initialData?.id) {
-        response = await axios.put(
-          `${process.env.REACT_APP_API_URL}/tenants/tenants/${initialData.id}`,
-          payload,
-        );
-        toast.success("Tenant updated successfully!", {
-          position: "top-right",
-          autoClose: 2000,
-        });
-      } else {
-        response = await axios.post(
-          `${process.env.REACT_APP_API_URL}/tenants/tenants/`,
-          payload,
-        );
-        toast.success("Tenant created successfully!", {
-          position: "top-right",
-          autoClose: 2000,
-        });
-      }
+   try {
+  setSubmitting(true);
+  let response;
+  if (initialData?.id) {
+    response = await axios.put(
+      `${process.env.REACT_APP_API_URL}/tenants/tenants/${initialData.id}`,
+      payload,
+    );
+    toast.success("Tenant updated successfully!", {
+      position: "top-right",
+      autoClose: 2000,
+    });
+  } else {
+    response = await axios.post(
+      `${process.env.REACT_APP_API_URL}/tenants/tenants/`,
+      payload,
+    );
+    toast.success("Tenant created successfully!", {
+      position: "top-right",
+      autoClose: 2000,
+    });
+  }
 
-      onSubmit(response.data);
+  onSubmit(response.data);
 
-      // Delay closing so user sees the message
-      setTimeout(() => {
-        setSuccessMessage("");
-        onClose();
-      }, 2000);
-    } catch (error) {
-      console.error("Error submitting tenant:", error);
-      if (error.response?.data?.detail) {
-        toast.error(error.response.data.detail, {
-          position: "top-right",
-          autoClose: 3000,
-        });
-      } else {
-        toast.error("An error occurred. Please try again.", {
-          position: "top-right",
-          autoClose: 3000,
-        });
-      }
-    } finally {
-      setSubmitting(false);
+  setTimeout(() => {
+    setSuccessMessage("");
+    onClose();
+  }, 2000);
+
+} catch (error) {
+  console.error("Error submitting tenant:", error);
+  const errorDetail = error.response?.data?.detail;
+
+  if (errorDetail === "Email already in use.") {
+    setErrors((prev) => ({ ...prev, contact_email: errorDetail }));
+  } else if (errorDetail === "Company already exists.") {
+    setErrors((prev) => ({ ...prev, company_name: errorDetail }));
+  } else if (errorDetail === "Tenant with this slug already exists.") {
+    setErrors((prev) => ({ ...prev, slug_url: errorDetail }));
+  } else if (errorDetail === "Serial code already in use.") {
+    setErrors((prev) => ({ ...prev, serial_code: errorDetail }));
+  }
+
+  toast.error(
+    errorDetail || "An error occurred. Please try again.",
+    {
+      position: "top-right",
+      autoClose: 3000,
     }
-  };
+  );
+} finally {
+  setSubmitting(false);
+}}
+
 
   if (!isOpen) return null;
 

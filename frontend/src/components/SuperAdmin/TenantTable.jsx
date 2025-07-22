@@ -5,6 +5,8 @@ import {
   FiEye,
   FiSearch,
   FiMoreVertical,
+  FiChevronLeft,
+  FiChevronRight,
 } from "react-icons/fi";
 import { MdPauseCircle, MdCancel } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
@@ -25,10 +27,12 @@ const TenantTable = ({
 }) => {
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
-  const [sortField, setSortField] = useState("createdAt");
-  const [sortDirection, setSortDirection] = useState("desc");
+  const [sortField, setSortField] = useState("status");
+  const [sortDirection, setSortDirection] = useState("asc");
   const [activeDropdown, setActiveDropdown] = useState(null);
   const [updatingStatus, setUpdatingStatus] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 8;
 
   const filteredTenants = tenants.filter((tenant) => {
     const companyName = tenant?.companyName || tenant?.company_name || "";
@@ -43,15 +47,35 @@ const TenantTable = ({
   });
 
   const sortedTenants = [...filteredTenants].sort((a, b) => {
+    // Priority sorting by status: active > inactive > suspended
+    if (sortField === "status") {
+      const statusOrder = { active: 1, inactive: 2, suspended: 3 };
+      const aStatus = statusOrder[a.status] || 4;
+      const bStatus = statusOrder[b.status] || 4;
+
+      const statusSort = sortDirection === "asc"
+        ? aStatus - bStatus
+        : bStatus - aStatus;
+
+      // If status is the same, sort by created_at (earliest first)
+      if (statusSort === 0) {
+        const aDate = new Date(a.created_at);
+        const bDate = new Date(b.created_at);
+        return aDate - bDate; // ascending order (earliest first)
+      }
+
+      return statusSort;
+    }
+
     let aVal = a[sortField];
     let bVal = b[sortField];
 
-    if (sortField === "createdAt") {
+    if (sortField === "createdAt" || sortField === "created_at") {
       aVal = new Date(aVal);
       bVal = new Date(bVal);
     }
 
-    if (sortField === "monthlyFee") {
+    if (sortField === "monthlyFee" || sortField === "monthly_fee") {
       aVal = parseFloat(aVal);
       bVal = parseFloat(bVal);
     }
@@ -65,15 +89,44 @@ const TenantTable = ({
         : -1;
   });
 
-  const displayTenants = limit ? sortedTenants.slice(0, limit) : sortedTenants;
+  // Pagination logic
+  const totalPages = Math.ceil(sortedTenants.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+
+  const displayTenants = limit
+    ? sortedTenants.slice(0, limit)
+    : sortedTenants.slice(startIndex, endIndex);
 
   const handleSort = (field) => {
     if (sortField === field) {
       setSortDirection(sortDirection === "asc" ? "desc" : "asc");
     } else {
       setSortField(field);
-      setSortDirection("asc");
+      setSortDirection(field === "status" ? "asc" : "desc");
     }
+    setCurrentPage(1); // Reset to first page when sorting
+  };
+
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+  };
+
+  const handlePreviousPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage(currentPage - 1);
+    }
+  };
+
+  const handleNextPage = () => {
+    if (currentPage < totalPages) {
+      setCurrentPage(currentPage + 1);
+    }
+  };
+
+  const handleSearchChange = (e) => {
+    setSearchTerm(e.target.value);
+    setCurrentPage(1); // Reset to first page when searching
   };
 
   const formatDate = (dateString) =>
@@ -163,7 +216,7 @@ const TenantTable = ({
               type="text"
               placeholder="Search tenants..."
               value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
+              onChange={handleSearchChange}
               className="search-input"
             />
           </div>
@@ -192,7 +245,7 @@ const TenantTable = ({
                 Contact Email{" "}
                 {sortField === "contactEmail" && (
                   <span className="sort-indicator">
-                    {sortDirection === "asc" ? "↑" : "↓"}
+                    {sortDirection === "asc" ? "��" : "↓"}
                   </span>
                 )}
               </th>
@@ -359,6 +412,63 @@ const TenantTable = ({
           </tbody>
         </table>
       </div>
+
+      {/* Pagination Controls */}
+      {!limit && totalPages > 1 && (
+        <div className="pagination-container">
+          <div className="pagination-info">
+            <span>
+              Showing {startIndex + 1}-{Math.min(endIndex, sortedTenants.length)} of {sortedTenants.length} tenants
+            </span>
+          </div>
+          <div className="pagination-controls">
+            <button
+              className="pagination-btn"
+              onClick={handlePreviousPage}
+              disabled={currentPage === 1}
+            >
+              <FiChevronLeft />
+              Previous
+            </button>
+
+            <div className="pagination-numbers">
+              {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => {
+                // Show first, last, current, and pages around current
+                if (
+                  page === 1 ||
+                  page === totalPages ||
+                  (page >= currentPage - 1 && page <= currentPage + 1)
+                ) {
+                  return (
+                    <button
+                      key={page}
+                      className={`pagination-number ${currentPage === page ? 'active' : ''}`}
+                      onClick={() => handlePageChange(page)}
+                    >
+                      {page}
+                    </button>
+                  );
+                } else if (
+                  page === currentPage - 2 ||
+                  page === currentPage + 2
+                ) {
+                  return <span key={page} className="pagination-ellipsis">...</span>;
+                }
+                return null;
+              })}
+            </div>
+
+            <button
+              className="pagination-btn"
+              onClick={handleNextPage}
+              disabled={currentPage === totalPages}
+            >
+              Next
+              <FiChevronRight />
+            </button>
+          </div>
+        </div>
+      )}
 
       {limit && sortedTenants.length > limit && (
         <div className="table-footer">
