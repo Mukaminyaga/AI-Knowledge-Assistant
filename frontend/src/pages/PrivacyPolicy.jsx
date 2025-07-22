@@ -27,19 +27,19 @@ const PrivacyPolicy = () => {
         </div>
 
         <div className="privacy-card">
-          <h1 className="privacy-title">Privacy Policy</h1>
+          <h1 className="privacy-title">Vala.ai Privacy Policy Statement</h1>
+           <p className="privacy-subtitle">Last updated: July 2025</p>
           <p className="privacy-subtitle">
-            This Privacy Policy explains how we collect, use, and protect your
-            information when using our AI Knowledge Assistant platform.
+            This Privacy Policy outlines how we collect, use, and protect your personal information when
+            you use Vala.ai, the AI Knowledge Assistant platform by Good Partners Limited.
           </p>
 
           <div className="privacy-summary">
             <h3 className="summary-title">At a Glance</h3>
             <p className="summary-text">
-              We are committed to protecting your privacy and ensuring
-              transparency about how we handle your data. We collect only the
-              information necessary to provide our services and never sell your
-              personal data to third parties.
+             At Good Partners, we are committed to protecting your privacy and being transparent about
+             how we handle your data. We only collect the information necessary to deliver and improve
+             our services, and we do not sell your personal information to third parties.
             </p>
           </div>
 
@@ -47,27 +47,23 @@ const PrivacyPolicy = () => {
             <section className="privacy-section">
               <h2 className="section-title">1. Information We Collect</h2>
               <div className="section-content">
-                We collect information to provide and improve our services:
+                We collect the following types of information to support your experience on Vala.ai:
                 <ul>
                   <li>
-                    <strong>Personal Information:</strong> First name, last
-                    name, email address, password (encrypted), job title, and
-                    company serial code for account creation and authentication.
+                    <strong>Personal Information:</strong> Name, email address, encrypted password, job title, and
+                    organization code—for account creation and secure access.
                   </li>
                   <li>
-                    <strong>Usage Data:</strong> IP address, browser type,
-                    device information, session duration, and activity logs to
-                    improve our services and ensure security.
+                    <strong>Usage Data:</strong> IP address, browser type, device information, session duration, and
+                   activity logs—for platform optimization and security.
                   </li>
                   <li>
-                    <strong>Document Data:</strong> Content you upload to our
-                    platform for processing by our AI assistant, stored securely
-                    and processed only for providing our services.
+                    <strong>Document Data:</strong> Content you upload to Vala.ai for processing—stored securely and
+used exclusively to deliver AI responses.
                   </li>
                   <li>
-                    <strong>Cookies and Tracking:</strong> We use essential
-                    cookies for authentication and optional analytics cookies to
-                    understand how you use our platform.
+                    <strong>Cookies and Tracking:</strong> Essential cookies are used for authentication; optional
+cookies help us understand how you interact with Vala.ai.
                   </li>
                 </ul>
               </div>
@@ -76,143 +72,146 @@ const PrivacyPolicy = () => {
             <section className="privacy-section">
               <h2 className="section-title">2. How We Use Your Information</h2>
               <div className="section-content">
-                Your information is used exclusively to provide and enhance our
-                services:
+                Your information is used to:
                 <ul>
                   <li>
-                    Deliver and maintain the AI Knowledge Assistant Service
+                    Deliver, operate, and improve Vala.ai
                   </li>
                   <li>
-                    Authenticate your account and ensure platform security
+                    Authenticate user accounts and maintain security
                   </li>
                   <li>
-                    Process and analyze documents you upload for AI responses
+                    Process uploaded content to generate intelligent AI responses
                   </li>
                   <li>
-                    Notify you of important updates, security alerts, or
-                    announcements
+                    Communicate important service notifications and platform updates
                   </li>
                   <li>
-                    Improve our features and AI models based on anonymized usage
-                    patterns
+                   Improve features and performance based on anonymized usage
                   </li>
                   <li>
-                    Prevent fraud, abuse, and ensure compliance with our terms
+                    Detect and prevent misuse, fraud, or policy violations
                   </li>
                   <li>
-                    Provide customer support and respond to your inquiries
+                    Provide customer support and technical assistance
                   </li>
                 </ul>
               </div>
             </section>
-
-            <section className="privacy-section">
+              <section className="privacy-section">
               <h2 className="section-title">
-                3. Information Sharing and Disclosure
+                3. AI Processing and Learning
               </h2>
               <div className="section-content">
-                <div className="highlight-box">
-                  We do not sell, rent, or trade your personal data to any third
-                  parties.
+                {/* <div className="highlight-box"> */}
+                  Vala.ai processes your content to generate intelligent responses using advanced AI models.
+Unless you have opted in, your data is not used to train or improve our underlying models.
+
+When feedback is used to enhance system performance, it is fully anonymized and aggregated.
+We may also integrate third-party AI services under strict confidentiality and data protection
+agreements.
                 </div>
-                Your data may be shared only in the following limited
-                circumstances:
+                {/* </div> */}
+                 </section>
+            <section className="privacy-section">
+              <h2 className="section-title">
+                4. Information Sharing and Disclosure
+              </h2>
+              <div className="section-content">
+                {/* <div className="highlight-box"> */}
+                 We do not rent, sell, or trade your personal information.
+                {/* </div> */}
+              We only share it under limited
+circumstances:
                 <ul>
                   <li>
-                    <strong>Service Providers:</strong> With vetted third-party
-                    service providers who assist in operating our platform, all
-                    under strict confidentiality agreements (NDAs)
+                    <strong>Service Providers:</strong> With trusted partners helping operate Vala.ai, all under strict
+NDAs
                   </li>
                   <li>
-                    <strong>Legal Requirements:</strong> When required to comply
-                    with applicable laws, legal processes, or government
-                    requests
+                    <strong>Legal Requirements:</strong> When required to comply with laws, legal proceedings, or law
+enforcement requests
                   </li>
                   <li>
-                    <strong>Security:</strong> To protect the rights, property,
-                    or safety of our users, our platform, or the public
+                    <strong>Platform Protection:</strong> To prevent misuse and protect Vala.ai, its users, and the public
                   </li>
                   <li>
-                    <strong>Business Transfers:</strong> In connection with any
-                    merger, acquisition, or asset sale, with advance notice to
-                    users
+                    <strong>Business Transfers:</strong> In case of a merger or acquisition, with advance notice to users
                   </li>
                 </ul>
               </div>
             </section>
 
             <section className="privacy-section">
-              <h2 className="section-title">4. Data Security and Protection</h2>
+              <h2 className="section-title">5. Data Security and Protection</h2>
               <div className="section-content">
-                We implement industry-standard security measures to protect your
-                data:
+               We use robust industry-standard security practices to keep your data on Vala.ai safe:
                 <ul>
                   <li>
-                    <strong>Encryption:</strong> All data is encrypted in
-                    transit using TLS and at rest using AES-256 encryption
+                    <strong>Encryption:</strong> All data is encrypted in transit (TLS) and at rest (AES-256)
                   </li>
                   <li>
-                    <strong>Access Controls:</strong> Strict access controls
-                    ensure only authorized personnel can access your data
+                    <strong>Access Controls:</strong> Only authorized personnel can access personal data
                   </li>
                   <li>
-                    <strong>Regular Audits:</strong> We conduct regular security
-                    audits and penetration testing
+                    <strong>Audits and Monitoring:</strong>Regular security audits and third-party penetration testing
                   </li>
                   {/* <li>
                     <strong>Data Centers:</strong> Our data is stored in SOC 2
                     Type II certified data centers
                   </li> */}
                   <li>
-                    <strong>Incident Response:</strong> We have comprehensive
-                    incident response procedures for any security events
+                    <strong>Incident Response:</strong> Clear procedures in place for managing security breaches
                   </li>
                 </ul>
               </div>
             </section>
 
             <section className="privacy-section">
-              <h2 className="section-title">5. Your Rights and Choices</h2>
+              <h2 className="section-title">6. Your Rights and Choices</h2>
               <div className="section-content">
-                You have several rights regarding your personal information:
+                You have the right to:
                 <ul>
                   <li>
-                    <strong>Access:</strong> Request a copy of the personal
-                    information we hold about you
+                    <strong>Access</strong> your personal data stored by Vala.ai
                   </li>
                   <li>
-                    <strong>Correction:</strong> Update or correct any
-                    inaccurate personal information
+                    <strong>Correct</strong> any inaccurate or outdated information
                   </li>
                   <li>
-                    <strong>Deletion:</strong> Request deletion of your personal
-                    data (subject to legal obligations)
+                    <strong>Request Deletion</strong> of your data, subject to legal obligations
                   </li>
                   <li>
-                    <strong>Portability:</strong> Request a copy of your data in
-                    a portable format
+                    <strong>Receive a Copy</strong> of your data in a structured, portable format
                   </li>
                   <li>
-                    <strong>Objection:</strong> Object to certain processing of
-                    your personal information
+                    <strong>Object</strong> to certain processing activities
                   </li>
                   <li>
-                    <strong>Marketing:</strong> Unsubscribe from marketing
-                    emails at any time
+                    <strong>Withdraw Consent</strong> at any time where consent is required
+                  </li>
+                  <li>
+                    <strong>Opt Out</strong> of optional communications
                   </li>
                 </ul>
-                To exercise these rights, please contact us at the email address
-                provided below.
+                To exercise your rights, please email us at:   <a
+  href="mailto:vala.ai@goodpartnerske.org"
+  className="contact-email text-blue-600 hover:underline"
+>
+  vala.ai@goodpartnerske.org
+</a> with the subject line
+<strong>"Data Access Request." </strong>We will acknowledge within <strong>7 business days</strong> and fulfill your request
+within <strong>30 days.</strong>
               </div>
             </section>
 
             <section className="privacy-section">
-              <h2 className="section-title">6. Data Retention</h2>
+              <h2 className="section-title">7. Consent Management</h2>
               <div className="section-content">
-                We retain your personal information only as long as necessary to
-                provide our services and comply with legal obligations.
-                Specifically:
-                <ul>
+               By using Vala.ai, you consent to the collection, use, and storage of your data as described in this
+policy. Where legally required, we will ask for your explicit consent before collecting certain
+types of data or using non-essential cookies.
+                {/* <ul>
                   <li>
                     Account information is retained while your account is active
                   </li>
@@ -225,56 +224,93 @@ const PrivacyPolicy = () => {
                     analytics
                   </li>
                   <li>Deleted data is permanently removed within 30 days</li>
+                </ul> */}
+              </div>
+            </section>
+
+            <section className="privacy-section">
+              <h2 className="section-title">8. Automated Decision-Making</h2>
+              <div className="section-content">
+                Some features of Vala.ai may involve automated decision-making to deliver personalized
+experiences. These do not have legal or significant personal effects. You may request human
+review of any decision that affects your rights.
+              </div>
+            </section>
+
+            <section className="privacy-section">
+              <h2 className="section-title">9. Data Retention</h2>
+              <div className="section-content">
+                We retain your data only as long as needed to deliver Vala.ai services and comply with legal
+obligations:
+ <ul>
+                  <li>
+                    Account information is kept while your account remains active
+                  </li>
+                  <li>
+                    Uploaded documents are retained per your organization’s preferences
+                  </li>
+                  <li>
+                    Usage logs are stored for up to 24 months
+                  </li>
+                  <li>Deleted data is permanently removed within 30 days</li>
                 </ul>
               </div>
             </section>
 
             <section className="privacy-section">
-              <h2 className="section-title">7. Children's Privacy</h2>
+              <h2 className="section-title">10. Data Breach Notification</h2>
               <div className="section-content">
-                Our services are not designed for or directed at individuals
-                under the age of 18. We do not knowingly collect personal
-                information from children under 18. If we become aware that we
-                have collected such information, we will take steps to delete it
-                promptly.
-              </div>
-            </section>
-
-            <section className="privacy-section">
-              <h2 className="section-title">8. International Data Transfers</h2>
-              <div className="section-content">
-                Your information may be transferred to and processed in
-                countries other than your own. We ensure that any international
-                transfers comply with applicable data protection laws and
-                implement appropriate safeguards to protect your information.
-              </div>
-            </section>
-
-            <section className="privacy-section">
-              <h2 className="section-title">9. Changes to This Policy</h2>
-              <div className="section-content">
-                We may occasionally update this Privacy Policy to reflect
-                changes in our practices or legal requirements. When we make
-                material changes, we will:
-                <ul>
+                In the unlikely event of a data breach affecting your personal data, Vala.ai will notify affected
+users and relevant authorities promptly, in line with applicable data protection laws.
+                {/* <ul>
                   <li>
                     Update the "Last updated" date at the top of this policy
                   </li>
                   <li>Notify users via email for significant changes</li>
                   <li>Provide prominent notice on our platform</li>
                   <li>Allow time for review before changes take effect</li>
+                </ul> */}
+              </div>
+            </section>
+            <section className="privacy-section">
+              <h2 className="section-title">11. International Data Transfers</h2>
+              <div className="section-content">
+                Your data may be processed in jurisdictions outside your country of residence. Vala.ai ensures
+that such transfers comply with applicable laws and include safeguards to protect your
+information.
+              </div>
+            </section>
+             <section className="privacy-section">
+              <h2 className="section-title">12. Children’s Privacy</h2>
+              <div className="section-content">
+             Vala.ai is not intended for individuals under the age of 18. We do not knowingly collect personal
+information from minors. If we discover that we have collected such data, it will be deleted
+promptly.
+              </div>
+            </section>
+            <section className="privacy-section">
+              <h2 className="section-title">13. Changes to This Privacy Policy</h2>
+              <div className="section-content">
+               We may update this policy from time to time. When we do:
+                <ul>
+                  <li>
+                    The “Last updated” date will be revised
+                  </li>
+                  <li>Significant changes will be communicated via email and platform notifications</li>
+                  <li>We’ll allow a grace period for review before changes take effect</li>
                 </ul>
               </div>
             </section>
 
+
             <section className="privacy-section">
-              <h2 className="section-title">10. Contact Us</h2>
+              <h2 className="section-title">14. Contact Us</h2>
               <div className="section-content">
                 <div className="contact-info">
-                  If you have any questions about this Privacy Policy or our
-                  data practices, please don't hesitate to contact us:
+                  If you have any questions or concerns about this Privacy Policy or how your data is handled on
+Vala.ai, contact us at:
                   <br />
-                  <br />
+                  {/* <br /> */}
                   <strong>Email:</strong>{" "}
    <a
   href="mailto:vala.ai@goodpartnerske.org"
@@ -282,24 +318,24 @@ const PrivacyPolicy = () => {
 >
   vala.ai@goodpartnerske.org
 </a>
-                  <br />
-                  <strong>General Support:</strong>{" "}
+                  {/* <br /> */}
+                  {/* <strong>General Support:</strong>{" "}
                                                 <a
   href="mailto:info@goodpartnerske.org"
   className="contact-email text-blue-600 hover:underline"
 >
  info@goodpartnerske.org
 </a>
-                  <br />
-                  <br />
-                  We will respond to your inquiry within 48 hours.
+                  <br /> */}
+                  {/* <br /> */}
+                  We aim to respond within 48 hours.
                 </div>
               </div>
             </section>
           </div>
 
           <div className="privacy-footer">
-            <p className="last-updated">Last updated: July 2025</p>
+           
             <div className="footer-actions">
               <Link to="/signup" className="footer-link">
                 Return to Sign Up
