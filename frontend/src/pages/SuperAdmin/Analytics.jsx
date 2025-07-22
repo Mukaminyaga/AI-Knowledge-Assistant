@@ -9,7 +9,7 @@ import {
 } from "react-icons/fi";
 import "../../styles/SuperAdmin.css";
 
-const API_URL = "http://localhost:8000"; // Replace with your actual backend URL
+const API_URL = process.env.REACT_APP_API_URL;
 
 const Analytics = () => {
   const [timeRange, setTimeRange] = useState("30d");
