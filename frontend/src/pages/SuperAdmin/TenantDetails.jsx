@@ -4,6 +4,8 @@ import axios from "axios";
 import SuperAdminLayout from "../../components/SuperAdmin/SuperAdminLayout";
 import UserTable from "../../components/SuperAdmin/UserTable";
 import DocumentTable from "../../components/SuperAdmin/DocumentTable";
+import PaymentHistoryModal from "../../components/SuperAdmin/PaymentHistoryModal";
+
 import {
   FiArrowLeft,
   FiUsers,
@@ -12,6 +14,7 @@ import {
   FiPhone,
   FiGlobe,
   FiDollarSign,
+  FiClock,
   FiCalendar,
 } from "react-icons/fi";
 import "../../styles/SuperAdmin.css";
@@ -28,6 +31,9 @@ const TenantDetails = () => {
   const [activeTab, setActiveTab] = useState("users");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [payments, setPayments] = useState([]);
+  const [showPaymentModal, setShowPaymentModal] = useState(false);
+
 
   useEffect(() => {
     if (tenantId) fetchTenantData();
@@ -39,13 +45,15 @@ const TenantDetails = () => {
       const [tenantRes, usersRes, docsRes] = await Promise.all([
         axios.get(`${API_URL}/tenants/tenants/${tenantId}`),
         axios.get(`${API_URL}/tenants/tenants/${tenantId}/users`),
-        axios.get(`${API_URL}/documents/tenants/${tenantId}/documents`)
+        axios.get(`${API_URL}/documents/tenants/${tenantId}/documents`),
+        axios.get(`${API_URL}/tenants/tenants/${tenantId}/payments`)
 
       ]);
 
       setTenant(tenantRes.data);
       setUsers(usersRes.data);
       setDocuments(docsRes.data);
+      
     } catch (err) {
       console.error("Error fetching tenant data:", err);
       setError("Failed to fetch tenant data.");
@@ -192,6 +200,17 @@ const TenantDetails = () => {
             <FiFileText className="tab-icon" />
             Documents ({documents.length})
           </button>
+         <button
+  className={`tab-button ${activeTab === "payments" ? "active" : ""}`}
+  onClick={() => {
+    setActiveTab("payments");
+    setShowPaymentModal(true); // auto open modal
+  }}
+>
+  <FiClock className="tab-icon" />
+  Payments ({payments.length})
+</button>
+
         </div>
 
         {/* Tab Content */}

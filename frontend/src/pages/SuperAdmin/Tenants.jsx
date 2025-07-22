@@ -82,35 +82,23 @@ const Tenants = () => {
     if (!exportData.length) return;
 
     const tableColumn = [
-      "First Name",
-      "Last Name",
-      "Company",
-      "Email",
-      "Slug",
-      "Phone",
-      "Billing Address",
+      "Serial Number",
+      "Company Name",
+      "Country",
+      "Plan",
       "Monthly Fee",
       "Max Users",
       "Status",
-      "Serial Code",
-      "Created At",
-      // "Updated At",
     ];
 
     const tableRows = exportData.map((tenant) => [
-      tenant.first_name || "",
-      tenant.last_name || "",
+      tenant.serial_code || "",
       tenant.company_name,
-      tenant.contact_email,
-      tenant.slug_url,
-      tenant.contact_phone,
-      tenant.billing_address,
+      tenant.country || "",
+      tenant.plan || "",
       tenant.monthly_fee,
       tenant.max_users,
       tenant.status,
-      tenant.serial_code,
-      new Date(tenant.created_at).toLocaleDateString(),
-      // new Date(tenant.updated_at).toLocaleDateString(),
     ]);
 
     if (type === "pdf") {
@@ -185,7 +173,7 @@ const Tenants = () => {
 
         // Report metadata section
         let yPosition = 55;
-        const leftMargin = 20;
+        const leftMargin = 25;
         const rightMargin = 105;
 
         // Left column
@@ -210,7 +198,7 @@ const Tenants = () => {
         doc.setFont("helvetica", "bold");
         doc.text("Report Generated On:", leftMargin, yPosition);
         doc.setFont("helvetica", "normal");
-        doc.text(formatDateTime(reportDate), leftMargin + 35, yPosition);
+        doc.text(formatDateTime(reportDate), leftMargin + 35.3, yPosition);
 
         // Right column
         doc.setFont("helvetica", "bold");
@@ -272,22 +260,22 @@ const Tenants = () => {
           alternateRowStyles: {
             fillColor: [248, 249, 250], // Light gray alternate rows
           },
-          columnStyles: {
-            0: { cellWidth: 14 }, // First Name
-            1: { cellWidth: 14 }, // Last Name
-            2: { cellWidth: 18 }, // Company
-            3: { cellWidth: 22 }, // Email
-            4: { cellWidth: 20 }, // Slug
-            5: { cellWidth: 18 }, // Phone
-            6: { cellWidth: 20 }, // Billing Address
-            7: { cellWidth: 12, halign: "right" }, // Monthly Fee
-            8: { cellWidth: 9, halign: "center" }, // Max Users
-            9: { cellWidth: 10, halign: "center" }, // Status
-            10: { cellWidth: 13 }, // Serial Code
-            11: { cellWidth: 18 }, // Created At
-            // 12: { cellWidth: 18 }, // Updated At
-          },
-          margin: { top: 10, right: 20, bottom: 20, left: 10 },
+         columnStyles: {
+  0: { cellWidth: 20 }, // First Name
+  1: { cellWidth: 20 }, // Last Name
+  2: { cellWidth: 25 }, // Company
+  3: { cellWidth: 30 }, // Email
+  4: { cellWidth: 25 }, // Slug
+  5: { cellWidth: 25 }, // Phone
+  6: { cellWidth: 30 }, // Billing Address
+  7: { cellWidth: 20, halign: "right" }, // Monthly Fee
+  8: { cellWidth: 15, halign: "center" }, // Max Users
+  9: { cellWidth: 15, halign: "center" }, // Status
+  10: { cellWidth: 20 }, // Serial Code
+  11: { cellWidth: 25 }, // Created At
+},
+
+          margin: { top: 10, right: 20, bottom: 20, left: 20 },
           didDrawPage: function (data) {
             // Add page footer
             doc.setFontSize(8);

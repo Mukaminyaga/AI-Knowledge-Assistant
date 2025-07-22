@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { FiSearch, FiDownload, FiEye, FiClock } from "react-icons/fi";
+import { FiSearch, FiDownload, FiEye, FiClock, FiChevronLeft, FiChevronRight } from "react-icons/fi";
 import "../../styles/SuperAdmin.css";
 
 
@@ -8,7 +8,8 @@ const PaymentTable = ({ payments, onViewDetails, onViewHistory, statusFilter }) 
   const [searchTerm, setSearchTerm] = useState("");
   const [sortField, setSortField] = useState("date");
   const [sortDirection, setSortDirection] = useState("desc");
-
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 8;
 
   // Only filter by search term since status filtering is handled by parent
 const filteredPayments = payments.filter((payment) => {
@@ -20,8 +21,24 @@ const filteredPayments = payments.filter((payment) => {
   return matchesSearch;
 });
 
+  // Priority sorting: paid -> pending -> overdue -> failed
+  const statusPriority = {
+    'paid': 1,
+    'pending': 2,
+    'overdue': 3,
+    'failed': 4
+  };
 
   const sortedPayments = [...filteredPayments].sort((a, b) => {
+    // First sort by status priority
+    const statusA = statusPriority[a.status] || 5;
+    const statusB = statusPriority[b.status] || 5;
+
+    if (statusA !== statusB) {
+      return statusA - statusB;
+    }
+
+    // Then sort by selected field
     let aVal = a[sortField];
     let bVal = b[sortField];
 
@@ -41,6 +58,24 @@ const filteredPayments = payments.filter((payment) => {
       return aVal < bVal ? 1 : -1;
     }
   });
+
+  // Pagination
+  const totalPages = Math.ceil(sortedPayments.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const paginatedPayments = sortedPayments.slice(startIndex, startIndex + itemsPerPage);
+
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+  };
+
+  const handlePreviousPage = () => {
+    setCurrentPage(Math.max(1, currentPage - 1));
+  };
+
+  const handleNextPage = () => {
+    setCurrentPage(Math.min(totalPages, currentPage + 1));
+  };
 
   const handleSort = (field) => {
     if (sortField === field) {
@@ -165,7 +200,7 @@ const filteredPayments = payments.filter((payment) => {
             </tr>
           </thead>
           <tbody>
-            {sortedPayments.length === 0 ? (
+            {paginatedPayments.length === 0 ? (
               <tr>
                 <td colSpan="8" className="no-data">
                   {searchTerm || statusFilter !== "all"
@@ -174,7 +209,7 @@ const filteredPayments = payments.filter((payment) => {
                 </td>
               </tr>
             ) : (
-              sortedPayments.map((payment) => (
+              paginatedPayments.map((payment) => (
                 <tr key={payment.id}>
                   <td>
                     <code className="invoice-code">{payment.invoice_id}</code>
@@ -243,6 +278,63 @@ const filteredPayments = payments.filter((payment) => {
           </tbody>
         </table>
       </div>
+
+      {/* Pagination Controls */}
+      {totalPages > 1 && (
+        <div className="pagination-container">
+          <div className="pagination-info">
+            <span>
+              Showing {startIndex + 1}-{Math.min(endIndex, sortedPayments.length)} of {sortedPayments.length} payments
+            </span>
+          </div>
+          <div className="pagination-controls">
+            <button
+              className="pagination-btn"
+              onClick={handlePreviousPage}
+              disabled={currentPage === 1}
+            >
+              <FiChevronLeft />
+              Previous
+            </button>
+
+            <div className="pagination-numbers">
+              {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => {
+                // Show first, last, current, and pages around current
+                if (
+                  page === 1 ||
+                  page === totalPages ||
+                  (page >= currentPage - 1 && page <= currentPage + 1)
+                ) {
+                  return (
+                    <button
+                      key={page}
+                      className={`pagination-number ${currentPage === page ? 'active' : ''}`}
+                      onClick={() => handlePageChange(page)}
+                    >
+                      {page}
+                    </button>
+                  );
+                } else if (
+                  page === currentPage - 2 ||
+                  page === currentPage + 2
+                ) {
+                  return <span key={page} className="pagination-ellipsis">...</span>;
+                }
+                return null;
+              })}
+            </div>
+
+            <button
+              className="pagination-btn"
+              onClick={handleNextPage}
+              disabled={currentPage === totalPages}
+            >
+              Next
+              <FiChevronRight />
+            </button>
+          </div>
+        </div>
+      )}
 
       <div className="table-summary">
         <div className="summary-item">

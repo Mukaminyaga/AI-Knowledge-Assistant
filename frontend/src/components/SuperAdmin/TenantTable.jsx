@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import {
   FiEdit,
-  FiTrash2,
   FiEye,
   FiSearch,
   FiMoreVertical,
@@ -57,36 +56,46 @@ const TenantTable = ({
         ? aStatus - bStatus
         : bStatus - aStatus;
 
-      // If status is the same, sort by created_at (earliest first)
+      // If status is the same, sort by created_at (latest first)
       if (statusSort === 0) {
         const aDate = new Date(a.created_at);
         const bDate = new Date(b.created_at);
-        return aDate - bDate; // ascending order (earliest first)
+        return bDate - aDate; // descending order (latest first)
       }
 
       return statusSort;
     }
 
-    let aVal = a[sortField];
-    let bVal = b[sortField];
+    // For non-status sorting, first sort by creation date (latest first), then by selected field
+    const aDate = new Date(a.created_at);
+    const bDate = new Date(b.created_at);
+    const dateSort = bDate - aDate; // latest first
 
-    if (sortField === "createdAt" || sortField === "created_at") {
-      aVal = new Date(aVal);
-      bVal = new Date(bVal);
+    // If creation dates are the same, then sort by the selected field
+    if (dateSort === 0) {
+      let aVal = a[sortField];
+      let bVal = b[sortField];
+
+      if (sortField === "createdAt" || sortField === "created_at") {
+        aVal = new Date(aVal);
+        bVal = new Date(bVal);
+      }
+
+      if (sortField === "monthlyFee" || sortField === "monthly_fee") {
+        aVal = parseFloat(aVal);
+        bVal = parseFloat(bVal);
+      }
+
+      return sortDirection === "asc"
+        ? aVal > bVal
+          ? 1
+          : -1
+        : aVal < bVal
+          ? 1
+          : -1;
     }
 
-    if (sortField === "monthlyFee" || sortField === "monthly_fee") {
-      aVal = parseFloat(aVal);
-      bVal = parseFloat(bVal);
-    }
-
-    return sortDirection === "asc"
-      ? aVal > bVal
-        ? 1
-        : -1
-      : aVal < bVal
-        ? 1
-        : -1;
+    return dateSort;
   });
 
   // Pagination logic

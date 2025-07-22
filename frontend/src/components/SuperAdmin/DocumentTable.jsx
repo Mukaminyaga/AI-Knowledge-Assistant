@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { FiHardDrive } from "react-icons/fi";
+// import { FiHardDrive } from "react-icons/fi";
 import "../../styles/SuperAdmin.css";
 
 const DocumentStats = ({ tenantId }) => {

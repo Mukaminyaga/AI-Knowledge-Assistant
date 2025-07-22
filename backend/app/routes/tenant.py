@@ -7,13 +7,15 @@ from app.models.users import User
 from app.models.payment import Payment
 from app.schemas.tenant import TenantCreate, TenantUpdate, TenantOut
 from app.schemas.users import UserOut
+from app.schemas.payment import PaymentOut
 from datetime import datetime
 from fastapi.responses import JSONResponse
 from sqlalchemy import extract, func
+from fastapi import APIRouter, Depends, HTTPException
+from sqlalchemy.orm import Session
+import random
 
 router = APIRouter(prefix="/tenants", tags=["Tenants"])
-
-import random
 
 def generate_unique_serial_code(db: Session):
     while True:
@@ -22,8 +24,6 @@ def generate_unique_serial_code(db: Session):
         if not exists:
             return code
 
-
-# Create a new tenant
 @router.post("/", response_model=TenantOut)
 def create_tenant(tenant: TenantCreate, db: Session = Depends(get_db)):
     # Check if company name already exists
@@ -38,16 +38,8 @@ def create_tenant(tenant: TenantCreate, db: Session = Depends(get_db)):
     if db.query(Tenant).filter(Tenant.slug_url == tenant.slug_url).first():
         raise HTTPException(status_code=400, detail="Tenant with this slug already exists.")
 
-    # Automatically generate serial code if not provided
-    serial_code = tenant.serial_code
-    if not serial_code:
-        serial_code = generate_unique_serial_code(db)
-    else:
-        # Validate manually entered one
-        if len(serial_code) != 6 or not serial_code.isdigit():
-            raise HTTPException(status_code=400, detail="Serial code must be a 6-digit number.")
-        if db.query(Tenant).filter(Tenant.serial_code == serial_code).first():
-            raise HTTPException(status_code=400, detail="Serial code already in use.")
+    # Always generate serial code automatically
+    serial_code = generate_unique_serial_code(db)
 
     db_tenant = Tenant(
         company_name=tenant.company_name,
@@ -68,7 +60,6 @@ def create_tenant(tenant: TenantCreate, db: Session = Depends(get_db)):
     db.refresh(db_tenant)
 
     return db_tenant
-
 
 
 # Get all tenants
@@ -114,6 +105,16 @@ def get_users_by_tenant(tenant_id: int, db: Session = Depends(get_db)):
 
     users = db.query(User).filter(User.tenant_id == tenant_id).all()
     return users
+
+
+@router.get("/tenants/{tenant_id}/payments", response_model=List[PaymentOut])
+def get_payments_by_tenant(tenant_id: int, db: Session = Depends(get_db)):
+    payments = db.query(Payment).filter(Payment.tenant_id == tenant_id).all()
+    
+    if not payments:
+        raise HTTPException(status_code=404, detail="No payments found for this tenant.")
+    
+    return payments
 
 @router.put("/{tenant_id}", response_model=TenantOut)
 def update_tenant(tenant_id: int, tenant: TenantUpdate, db: Session = Depends(get_db)):
