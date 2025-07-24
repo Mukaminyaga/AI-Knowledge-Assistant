@@ -3,6 +3,7 @@ from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 from app.database import Base
 from app.models.tenant import Tenant
+from app.models.department import Department
 
 class Document(Base):
     __tablename__ = "documents"
@@ -18,5 +19,7 @@ class Document(Base):
 
     tenant_id = Column(Integer, ForeignKey("tenants.id"), nullable=False)
     tenant = relationship("Tenant", back_populates="documents")  
-
+   
+    department_id = Column(Integer, ForeignKey("departments.id"))
+    department = relationship("Department", back_populates="documents")
 

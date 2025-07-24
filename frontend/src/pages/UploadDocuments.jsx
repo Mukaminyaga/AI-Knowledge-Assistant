@@ -1,6 +1,8 @@
 import React, { useState, useRef } from "react";
 import axios from "axios";
 import DashboardLayout from "../components/DashboardLayout";
+import { DepartmentProvider, useDepartments } from "../context/DepartmentContext";
+import DepartmentsSection from "../components/DepartmentsSection";
 import "../styles/UploadDocuments.css";
 import {
   FiFileText,
@@ -9,12 +11,14 @@ import {
   FiRefreshCcw,
 } from "react-icons/fi";
 
-function UploadDocuments() {
+function UploadDocumentsContent() {
   const [dragActive, setDragActive] = useState(false);
   const [uploadedFiles, setUploadedFiles] = useState([]);
-  const [uploadMessage, setUploadMessage] = useState(""); 
+  const [uploadMessage, setUploadMessage] = useState("");
+  const [selectedDepartment, setSelectedDepartment] = useState("");
   const fileInputRef = useRef(null);
   const [isUploading, setIsUploading] = useState(false);
+  const { departments, loading: departmentsLoading } = useDepartments();
 
   const handleDrag = (e) => {
     e.preventDefault();
@@ -68,6 +72,11 @@ function UploadDocuments() {
   const processDocs = async () => {
     if (!uploadedFiles.length) return;
 
+    if (!selectedDepartment) {
+      setUploadMessage("Please select a department before uploading documents.");
+      return;
+    }
+
     setIsUploading(true);
     setUploadMessage("");
 
@@ -75,6 +84,9 @@ function UploadDocuments() {
     uploadedFiles.forEach((fileObj) => {
       form.append("files", fileObj.file);
     });
+
+    // Add department ID to the form data
+    form.append("department_id", selectedDepartment);
 
     try {
       await axios.post(`${process.env.REACT_APP_API_URL}/documents/upload`, form, {
@@ -102,8 +114,8 @@ function UploadDocuments() {
         }))
       );
 
-      //  Success message
-      // setUploadMessage("Documents uploaded successfully and are now being processed...");
+      // Success message
+      setUploadMessage("Documents uploaded successfully and are now being processed...");
     } catch (err) {
       console.error(err);
       setUploadedFiles((prev) =>
@@ -125,9 +137,32 @@ function UploadDocuments() {
             <h1 className="upload-title">Upload Documents</h1>
           </div>
         </div>
+          <div className="department-selection">
+              <div className="department-form-group">
+                <label className="department-label">
+                  <FiFolder className="department-icon" />
+                  Select Department
+                </label>
+                <select
+                  value={selectedDepartment || ""}
+                  onChange={(e) => setSelectedDepartment(e.target.value || null)}
+                  className="department-select"
+                  disabled={departmentsLoading || isUploading}
+                >
+                  <option value="">Unassigned</option>
+                  {departments.map((dept) => (
+                    <option key={dept.id} value={dept.id}>
+                      {dept.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
 
-        <div className="upload-content">
+       <div className="upload-content">
           <div className="upload-section">
+          
+          
             <div
               className={`upload-dropzone ${dragActive ? "drag-active" : ""}`}
               onDragEnter={handleDrag}
@@ -222,6 +257,7 @@ function UploadDocuments() {
                   onClick={() => {
                     setUploadedFiles([]);
                     setUploadMessage("");
+                    setSelectedDepartment("");
                   }}
                   disabled={isUploading}
                 >
@@ -231,13 +267,20 @@ function UploadDocuments() {
 
               {/*  Show success message */}
               {uploadMessage && (
-                <p className="upload-success-message">{uploadMessage}</p>
+                <p className={uploadMessage.includes("Please select") ? "upload-error-message" : "upload-success-message"}>
+                  {uploadMessage}
+                </p>
               )}
             </div>
           )}
         </div>
 
-        <div className="upload-tips">
+        {/* Departments Section */}
+        <div className="departments-section">
+          <DepartmentsSection />
+        </div>
+
+        {/* <div className="upload-tips">
           <h3 className="tips-title">Tips for better results</h3>
           <div className="tips-grid">
             <div className="tip-item">
@@ -252,8 +295,8 @@ function UploadDocuments() {
             </div>
             <div className="tip-item">
               <div className="tip-icon"><FiFolder size={24} /></div>
-              <h4>Organize by topic</h4>
-              <p>Upload related documents together for better categorization</p>
+              <h4>Select department first</h4>
+              <p>Choose the appropriate department for better document categorization</p>
             </div>
             <div className="tip-item">
               <div className="tip-icon"><FiRefreshCcw size={24} /></div>
@@ -261,9 +304,17 @@ function UploadDocuments() {
               <p>Keep your knowledge base fresh by uploading updated versions</p>
             </div>
           </div>
-        </div>
+        </div> */}
       </div>
     </DashboardLayout>
+  );
+}
+
+function UploadDocuments() {
+  return (
+    <DepartmentProvider>
+      <UploadDocumentsContent />
+    </DepartmentProvider>
   );
 }
 

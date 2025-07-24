@@ -54,7 +54,7 @@ const Users = () => {
   // Fetch all users
   const fetchUsers = async () => {
     try {
-      const res = await axios.get(`${API_URL}/users`, {
+      const res = await axios.get(`${API_URL}/users/`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },

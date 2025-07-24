@@ -11,6 +11,7 @@ import {
   FiArrowLeft,
 } from "react-icons/fi";
 import DashboardLayout from "../components/DashboardLayout";
+
 import "../styles/Settings.css";
 
 function Settings() {
@@ -68,22 +69,22 @@ function Settings() {
 
   return (
     <DashboardLayout>
-      <div className="settings-container">
-        <div className="settings-header">
-          <div className="header-top">
-            <Link to="/dashboard" className="back-button">
-              <FiArrowLeft size={20} />
-              <span>Back to Dashboard</span>
-            </Link>
+        <div className="settings-container">
+          <div className="settings-header">
+            <div className="header-top">
+              <Link to="/dashboard" className="back-button">
+                <FiArrowLeft size={20} />
+                <span>Back to Dashboard</span>
+              </Link>
+            </div>
+            <h1 className="settings-title">Settings</h1>
+            <p className="settings-subtitle">
+              Manage your account and preferences
+            </p>
           </div>
-          <h1 className="settings-title">Settings</h1>
-          <p className="settings-subtitle">
-            Manage your account and preferences
-          </p>
-        </div>
 
-        <div className="settings-content">
-          <div className="settings-grid">
+          <div className="settings-content">
+            <div className="settings-grid">
             {/* Profile Information Card */}
             <div className="settings-card profile-card">
               <div className="card-header">
@@ -325,9 +326,10 @@ function Settings() {
                 </div>
               </div>
             </div>
+
           </div>
         </div>
-      </div>
+        </div>
     </DashboardLayout>
   );
 }

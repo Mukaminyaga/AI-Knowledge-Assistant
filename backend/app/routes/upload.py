@@ -1,5 +1,5 @@
 from typing import List
-from fastapi import UploadFile, File, APIRouter, HTTPException, Depends, BackgroundTasks
+from fastapi import UploadFile, File, APIRouter, HTTPException, Depends, BackgroundTasks, Form
 from fastapi import Path
 from sqlalchemy.orm import Session
 import os
@@ -18,8 +18,8 @@ from datetime import datetime
 from logging import getLogger
 from app.utils.permissions import ensure_permission
 from pathlib import Path
-
-
+from pydantic import BaseModel
+from typing import List, Optional
 
 
 router = APIRouter()
@@ -27,6 +27,11 @@ logger = getLogger("uvicorn.error")
 UPLOAD_DIR = "/var/www/GPKnowledgeManagementAI/uploads"
 
 os.makedirs(UPLOAD_DIR, exist_ok=True)
+
+
+class DepartmentAssignmentRequest(BaseModel):
+    document_ids: List[int]
+    department_id: Optional[int]
 
 # --- Helper ---
 def ensure_permission(user: User, allowed_roles: List[str]):
@@ -38,6 +43,7 @@ def ensure_permission(user: User, allowed_roles: List[str]):
 async def upload_documents(
     background_tasks: BackgroundTasks,
     files: List[UploadFile] = File(...),
+    department_id: Optional[int] = Form(None),
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
@@ -76,7 +82,8 @@ async def upload_documents(
             size=os.path.getsize(dest),
             tenant_id=current_user.tenant_id,
             num_chunks=0,
-            status=status
+            status=status,
+            department_id=department_id 
         )
         db.add(document)
         db.commit()
@@ -110,6 +117,26 @@ async def upload_documents(
     }
 
 
+
+@router.post("/documents/assign-department")
+def assign_documents_to_department(
+    payload: DepartmentAssignmentRequest,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    ensure_permission(current_user, ["admin", "editor"])
+
+    documents = db.query(Document).filter(Document.id.in_(payload.document_ids)).all()
+    if not documents:
+        raise HTTPException(status_code=404, detail="No documents found")
+
+    for doc in documents:
+        doc.department_id = payload.department_id
+    db.commit()
+
+    return {
+        "message": f"Assigned {len(documents)} document(s) to department {payload.department_id}"
+    }
 
 
 @router.put("/approve/{document_id}")
@@ -242,7 +269,8 @@ def get_all_documents(db: Session = Depends(get_db), current_user: User = Depend
             "num_chunks": doc.num_chunks,
             "uploaded_at": doc.upload_time,
             "tenant_id": doc.tenant_id,
-            "status": doc.status
+            "status": doc.status,
+            "department_id": doc.department_id 
         } for doc in documents
     ]
 
@@ -259,7 +287,8 @@ def get_documents_by_tenant_id(tenant_id: int, db: Session = Depends(get_db)):
             "indexed": doc.indexed,
             "uploaded_at": doc.upload_time,
             "tenant_id": doc.tenant_id,
-            "status": doc.status
+            "status": doc.status,
+            "department_id": doc.department_id 
         } for doc in documents
     ]
 
