@@ -6,16 +6,11 @@ import os
 from dotenv import load_dotenv
 from pathlib import Path
 
-
 router = APIRouter()
 
+# Load environment variables
 env_path = Path(__file__).resolve().parents[2] / ".env"
 load_dotenv(dotenv_path=env_path)
-
-print("Loaded .env from:", env_path)
-print("SENDER_EMAIL =", os.getenv("SENDER_EMAIL"))
-
-
 
 class ContactForm(BaseModel):
     name: str
@@ -23,19 +18,14 @@ class ContactForm(BaseModel):
     subject: str
     message: str
 
-    
-
-
 @router.post("/send-email")
 async def send_email(data: ContactForm):
-    
-    sender_email = os.getenv("SENDER_EMAIL")           # your account
-    sender_password = os.getenv("SENDER_PASSWORD")     # your app password
-    recipient_email = "vala.ai@goodpartnerske.org"
-    print("Sending from:", sender_email)
+    sender_email = os.getenv("SENDER_EMAIL")
+    sender_password = os.getenv("SENDER_PASSWORD")
+    smtp_server = os.getenv("SMTP_SERVER", "mail.vala.ke")
+    smtp_port = int(os.getenv("SMTP_PORT", 587))
+    recipient_email = "vala.ai@goodpartnerske.org"  # or use data.email if you want dynamic destination
 
-
-    #  Preprocess the message
     formatted_message = data.message.replace("\n", "<br/>")
 
     html_body = f"""
@@ -43,18 +33,9 @@ async def send_email(data: ContactForm):
     <body style="font-family: Arial, sans-serif;">
       <h3>New Contact Form Submission</h3>
       <table style="border-collapse: collapse;">
-        <tr>
-            <td style="font-weight: bold; padding: 5px;">Name:</td>
-            <td style="padding: 5px;">{data.name}</td>
-        </tr>
-        <tr>
-            <td style="font-weight: bold; padding: 5px;">Email:</td>
-            <td style="padding: 5px;"><a href="mailto:{data.email}">{data.email}</a></td>
-        </tr>
-        <tr>
-            <td style="font-weight: bold; padding: 5px;" valign="top">Message:</td>
-            <td style="padding: 5px;" valign="top">{formatted_message}</td>
-        </tr>
+        <tr><td style="font-weight: bold; padding: 5px;">Name:</td><td>{data.name}</td></tr>
+        <tr><td style="font-weight: bold; padding: 5px;">Email:</td><td><a href="mailto:{data.email}">{data.email}</a></td></tr>
+        <tr><td style="font-weight: bold; padding: 5px;" valign="top">Message:</td><td>{formatted_message}</td></tr>
       </table>
     </body>
     </html>
@@ -69,8 +50,8 @@ async def send_email(data: ContactForm):
     try:
         await aiosmtplib.send(
             msg,
-            hostname="smtp.gmail.com",
-            port=587,
+            hostname=smtp_server,
+            port=smtp_port,
             username=sender_email,
             password=sender_password,
             start_tls=True,
