@@ -92,7 +92,7 @@ if (payment.isVirtual) {
 
   const createData = {
     invoice_id: payment.invoice_id,
-    tenant_id: payment.tenant_id,// ✅ force number
+    tenant_id: payment.tenant_id,
     amount: parseFloat(formData.amount),
     status: "paid",
     payment_method: formData.payment_method,

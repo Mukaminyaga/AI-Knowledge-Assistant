@@ -136,18 +136,22 @@ const filteredPayments = payments.filter((payment) => {
     return methods[method] || "💳";
   };
 const handleMarkAsPaid = (payment) => {
+  console.log("Incoming payment object:", payment); // 👈 Does this include tenant_id?
+
   const updatedPayment = {
     ...payment,
-    tenant_id: payment.tenant_id ?? payment.tenant?.id ?? null,
+    tenant_id: payment.tenant_id ?? null,
   };
 
-  console.log("Sending to modal:", updatedPayment);
+  console.log("Sending to modal:", updatedPayment); // Confirm tenant_id exists here
 
   setMarkAsPaidModal({
     isOpen: true,
     payment: updatedPayment,
   });
 };
+
+
 
 
   const handleCloseMarkAsPaidModal = () => {
