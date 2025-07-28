@@ -1,18 +1,24 @@
 from pydantic import BaseModel
 from typing import Optional
-from datetime import datetime
+from datetime import datetime, date
 
 class PaymentBase(BaseModel):
     amount: float
     status: str
     payment_method: str
-    due_date: datetime
-    date: Optional[datetime]
-    # description: Optional[str]
+    due_date: date
+    payment_date: Optional[datetime] = None
 
-class PaymentCreate(PaymentBase):
-    invoice_id: str
+
+class PaymentCreate(BaseModel):
+    invoice_id: str  
     tenant_id: int
+    amount: float
+    status: str
+    payment_method: str
+    payment_date: datetime 
+    due_date: date
+
 
 class PaymentOut(PaymentBase):
     id: int
@@ -20,9 +26,12 @@ class PaymentOut(PaymentBase):
     tenant_id: int
     tenant_name: str
     tenant_email: str
-    amount: float
-    status: str
-    payment_method: str
 
     class Config:
         orm_mode = True
+
+
+class PaymentUpdate(BaseModel):
+    amount: float
+    payment_method: str
+    payment_date: datetime 

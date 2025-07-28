@@ -16,6 +16,7 @@ import {
   FiDollarSign,
   FiClock,
   FiCalendar,
+  FiDownload,
 } from "react-icons/fi";
 import "../../styles/SuperAdmin.css";
 import "../../styles/TenantDetails.css";
@@ -33,11 +34,18 @@ const TenantDetails = () => {
   const [error, setError] = useState(null);
   const [payments, setPayments] = useState([]);
   const [showPaymentModal, setShowPaymentModal] = useState(false);
+  const [loadingPayments, setLoadingPayments] = useState(false);
 
 
   useEffect(() => {
     if (tenantId) fetchTenantData();
   }, [tenantId]);
+
+  useEffect(() => {
+    if (activeTab === "payments" && tenant) {
+      fetchTenantPayments();
+    }
+  }, [activeTab, tenant]);
 
   const fetchTenantData = async () => {
     try {
@@ -46,19 +54,42 @@ const TenantDetails = () => {
         axios.get(`${API_URL}/tenants/tenants/${tenantId}`),
         axios.get(`${API_URL}/tenants/tenants/${tenantId}/users`),
         axios.get(`${API_URL}/documents/tenants/${tenantId}/documents`),
-        // axios.get(`${API_URL}/tenants/tenants/${tenantId}/payments`)
-
       ]);
 
       setTenant(tenantRes.data);
       setUsers(usersRes.data);
       setDocuments(docsRes.data);
-      
+
     } catch (err) {
       console.error("Error fetching tenant data:", err);
       setError("Failed to fetch tenant data.");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const fetchTenantPayments = async () => {
+    if (!tenant) return;
+
+    try {
+      setLoadingPayments(true);
+      const response = await axios.get(`${API_URL}/payments`);
+      const allPayments = response.data;
+
+      // Filter payments for this specific tenant
+      const tenantName = tenant.companyName || tenant.company_name;
+      const tenantEmail = tenant.contactEmail || tenant.contact_email;
+
+      const tenantPayments = allPayments.filter(payment =>
+        payment.tenant_name === tenantName ||
+        payment.tenant_email === tenantEmail
+      );
+
+      setPayments(tenantPayments);
+    } catch (err) {
+      console.error("Error fetching payments:", err);
+    } finally {
+      setLoadingPayments(false);
     }
   };
 
@@ -81,6 +112,63 @@ const TenantDetails = () => {
         {status?.charAt(0).toUpperCase() + status?.slice(1)}
       </span>
     );
+  };
+
+  const getPaymentStatusClass = (status) => {
+    const statusClasses = {
+      paid: "success",
+      pending: "warning",
+      overdue: "danger",
+      failed: "danger",
+      refunded: "info",
+    };
+    return statusClasses[status] || "default";
+  };
+
+  const handleExportPayments = (format) => {
+    if (payments.length === 0) return;
+
+    const tenantName = tenant.companyName || tenant.company_name || "Unknown";
+    const exportData = payments.map(payment => ({
+      invoice_id: payment.invoice_id,
+      amount: payment.amount,
+      status: payment.status,
+      payment_method: payment.payment_method || "N/A",
+      payment_date: payment.date || "",
+      due_date: payment.due_date || "",
+      description: payment.description || ""
+    }));
+
+    if (format === "csv") {
+      const headers = ["Invoice ID", "Amount", "Status", "Payment Method", "Payment Date", "Due Date", "Description"];
+      const csvContent = [
+        headers.join(","),
+        ...exportData.map(payment => [
+          payment.invoice_id,
+          payment.amount,
+          payment.status,
+          payment.payment_method,
+          payment.payment_date,
+          payment.due_date,
+          payment.description
+        ].join(","))
+      ].join("\n");
+
+      const blob = new Blob([csvContent], { type: "text/csv" });
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", `${tenantName}_payments.csv`);
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      window.URL.revokeObjectURL(url);
+    }
+
+    if (format === "pdf") {
+      // Simple alert for PDF - can be enhanced with jsPDF later
+      alert("PDF export functionality can be added with jsPDF library");
+    }
   };
 
   if (loading) {
@@ -200,16 +288,13 @@ const TenantDetails = () => {
             <FiFileText className="tab-icon" />
             Documents ({documents.length})
           </button>
-         {/* <button
-  className={`tab-button ${activeTab === "payments" ? "active" : ""}`}
-  onClick={() => {
-    setActiveTab("payments");
-    setShowPaymentModal(true); // auto open modal
-  }}
->
-  <FiClock className="tab-icon" />
-  Payments ({payments.length})
-</button> */}
+          <button
+            className={`tab-button ${activeTab === "payments" ? "active" : ""}`}
+            onClick={() => setActiveTab("payments")}
+          >
+            <FiDollarSign className="tab-icon" />
+            Payments ({payments.length})
+          </button>
 
         </div>
 
@@ -223,6 +308,110 @@ const TenantDetails = () => {
           {activeTab === "documents" && (
             <div className="documents-section">
               <DocumentTable documents={documents} tenantId={tenantId} />
+            </div>
+          )}
+          {activeTab === "payments" && (
+            <div className="payments-section">
+              <div className="payments-header">
+                <h3 className="section-title">Payment History</h3>
+                <div className="payments-actions">
+                  <button
+                    className="btn btn-secondary"
+                    onClick={() => handleExportPayments("csv")}
+                    disabled={payments.length === 0}
+                  >
+                    <FiDownload className="btn-icon" />
+                    Export CSV
+                  </button>
+                  <button
+                    className="btn btn-secondary"
+                    onClick={() => handleExportPayments("pdf")}
+                    disabled={payments.length === 0}
+                  >
+                    <FiDownload className="btn-icon" />
+                    Export PDF
+                  </button>
+                </div>
+              </div>
+
+              {loadingPayments ? (
+                <div className="loading-state">Loading payments...</div>
+              ) : payments.length === 0 ? (
+                <div className="no-data-state">
+                  <FiDollarSign className="no-data-icon" />
+                  <h4>No Payment History</h4>
+                  <p>This tenant has no payment records yet.</p>
+                </div>
+              ) : (
+                <div className="payments-table-wrapper">
+                  <table className="data-table">
+                    <thead>
+                      <tr>
+                        <th>Invoice ID</th>
+                        <th>Amount</th>
+                        <th>Status</th>
+                        <th>Payment Method</th>
+                        <th>Payment Date</th>
+                        <th>Due Date</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {payments.map((payment) => (
+                        <tr key={payment.id}>
+                          <td>
+                            <code className="invoice-code">{payment.invoice_id}</code>
+                          </td>
+                          <td>
+                            <span className="amount">KES {payment.amount.toLocaleString()}</span>
+                          </td>
+                          <td>
+                            <span className={`status-badge status-${getPaymentStatusClass(payment.status)}`}>
+                              {payment.status.charAt(0).toUpperCase() + payment.status.slice(1)}
+                            </span>
+                          </td>
+                          <td>
+                            {payment.payment_method
+                              ? payment.payment_method.replace("_", " ").toUpperCase()
+                              : "—"}
+                          </td>
+                          <td>{payment.date ? formatDate(payment.date) : "—"}</td>
+                          <td>
+                            <span className={payment.status === "overdue" ? "overdue-date" : ""}>
+                              {formatDate(payment.due_date)}
+                            </span>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+
+                  {/* Payment Summary */}
+                  <div className="payments-summary">
+                    <div className="summary-item">
+                      <span className="summary-label">Total Payments:</span>
+                      <span className="summary-value">{payments.length}</span>
+                    </div>
+                    <div className="summary-item">
+                      <span className="summary-label">Total Amount:</span>
+                      <span className="summary-value">
+                        KES {payments.reduce((sum, p) => sum + p.amount, 0).toLocaleString()}
+                      </span>
+                    </div>
+                    <div className="summary-item">
+                      <span className="summary-label">Paid Amount:</span>
+                      <span className="summary-value">
+                        KES {payments.filter(p => p.status === "paid").reduce((sum, p) => sum + p.amount, 0).toLocaleString()}
+                      </span>
+                    </div>
+                    <div className="summary-item">
+                      <span className="summary-label">Outstanding:</span>
+                      <span className="summary-value">
+                        KES {payments.filter(p => p.status !== "paid").reduce((sum, p) => sum + p.amount, 0).toLocaleString()}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
           )}
         </div>

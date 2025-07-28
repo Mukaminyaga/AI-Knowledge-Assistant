@@ -57,6 +57,18 @@ const Payments = () => {
     });
   };
 
+  const handlePaymentUpdated = (updatedPayment) => {
+    // Update the payment in the local state
+    setPayments(prevPayments =>
+      prevPayments.map(payment =>
+        payment.id === updatedPayment.id ? updatedPayment : payment
+      )
+    );
+
+    // Optionally fetch fresh data from server
+    // fetchPayments();
+  };
+
   const handleClosePaymentHistory = () => {
     setPaymentHistoryModal({
       isOpen: false,
@@ -92,8 +104,8 @@ const Payments = () => {
 
     let dateMatch = true;
     if (dateFilter !== "all") {
-      const paymentDate = payment.date
-        ? new Date(payment.date)
+      const paymentDate = payment.payment_date
+        ? new Date(payment.payment_date)
         : new Date(payment.due_date);
       const now = new Date();
 
@@ -143,8 +155,8 @@ const Payments = () => {
 
   const thisMonthRevenue = filteredPayments
     .filter((p) => {
-      if (!p.date || p.status !== "paid") return false;
-      const paymentDate = new Date(p.date);
+      if (!p.payment_date || p.status !== "paid") return false;
+      const paymentDate = new Date(p.payment_date);
       return (
         paymentDate.getMonth() === currentMonth &&
         paymentDate.getFullYear() === currentYear
@@ -163,8 +175,8 @@ const Payments = () => {
     const date = new Date();
     date.setMonth(date.getMonth() - (5 - i));
     const monthPayments = payments.filter((p) => {
-      if (!p.date || p.status !== "paid") return false;
-      const paymentDate = new Date(p.date);
+      if (!p.payment_date || p.status !== "paid") return false;
+      const paymentDate = new Date(p.payment_date);
       return (
         paymentDate.getMonth() === date.getMonth() &&
         paymentDate.getFullYear() === date.getFullYear()
@@ -334,6 +346,7 @@ const Payments = () => {
             payments={filteredPayments}
             onViewDetails={handleViewPaymentDetails}
             onViewHistory={handleViewPaymentHistory}
+            onPaymentUpdated={handlePaymentUpdated}
             statusFilter={statusFilter}
           />
         </div>
@@ -382,8 +395,8 @@ const Payments = () => {
                   <div className="detail-item">
                     <label>Payment Date</label>
                     <span>
-                      {selectedPayment.date
-                        ? new Date(selectedPayment.date).toLocaleDateString()
+                      {selectedPayment.payment_date
+                        ? new Date(selectedPayment.payment_date).toLocaleDateString()
                         : "Not Paid"}
                     </span>
                   </div>

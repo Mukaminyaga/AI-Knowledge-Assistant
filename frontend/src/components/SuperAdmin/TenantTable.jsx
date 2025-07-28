@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   FiEdit,
   FiEye,
@@ -6,11 +6,13 @@ import {
   FiMoreVertical,
   FiChevronLeft,
   FiChevronRight,
+  FiDollarSign,
 } from "react-icons/fi";
 import { MdPauseCircle, MdCancel } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-toastify";
+import MarkAsPaidModal from "./MarkAsPaidModal";
 import "../../styles/SuperAdmin.css";
 
 // ...imports remain unchanged
@@ -31,6 +33,12 @@ const TenantTable = ({
   const [activeDropdown, setActiveDropdown] = useState(null);
   const [updatingStatus, setUpdatingStatus] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
+  const [tenantPayments, setTenantPayments] = useState({});
+  const [markAsPaidModal, setMarkAsPaidModal] = useState({
+    isOpen: false,
+    payment: null,
+    tenant: null
+  });
   const itemsPerPage = 8;
 
   const filteredTenants = tenants.filter((tenant) => {
@@ -199,8 +207,107 @@ const TenantTable = ({
     }
   };
 
-  const toggleDropdown = (tenantId) => {
-    setActiveDropdown(activeDropdown === tenantId ? null : tenantId);
+  const toggleDropdown = (dropdownId) => {
+    setActiveDropdown(activeDropdown === dropdownId ? null : dropdownId);
+  };
+
+  // Fetch payments for each tenant
+  useEffect(() => {
+    if (tenants.length > 0) {
+      fetchTenantsPayments();
+    }
+  }, [tenants]);
+
+  const fetchTenantsPayments = async () => {
+    try {
+      const response = await axios.get(`${process.env.REACT_APP_API_URL}/payments`);
+      const allPayments = response.data;
+
+      // Group payments by tenant
+      const paymentsByTenant = {};
+      allPayments.forEach(payment => {
+        const tenantKey = payment.tenant_name || payment.tenant_email;
+        if (tenantKey) {
+          if (!paymentsByTenant[tenantKey]) {
+            paymentsByTenant[tenantKey] = [];
+          }
+          paymentsByTenant[tenantKey].push(payment);
+        }
+      });
+
+      setTenantPayments(paymentsByTenant);
+    } catch (error) {
+      console.error("Error fetching payments:", error);
+    }
+  };
+
+  const getTenantOutstandingPayments = (tenant) => {
+    const tenantKey = tenant.companyName || tenant.company_name || tenant.contactEmail || tenant.contact_email;
+    const existingPayments = tenantPayments[tenantKey] || [];
+    const outstandingPayments = existingPayments.filter(payment => payment.status === "pending" || payment.status === "overdue");
+
+    // If tenant has a monthly fee, always consider it as an outstanding payment that can be marked as paid
+    const monthlyFee = tenant.monthlyFee || tenant.monthly_fee;
+    if (monthlyFee && monthlyFee > 0) {
+      // Check if there's already a recent payment record for this month
+      const currentMonth = new Date().getMonth();
+      const currentYear = new Date().getFullYear();
+
+      const hasCurrentMonthPayment = existingPayments.some(payment => {
+        const paymentDate = new Date(payment.date || payment.due_date);
+        return payment.status === "paid" &&
+               paymentDate.getMonth() === currentMonth &&
+               paymentDate.getFullYear() === currentYear;
+      });
+
+      // If no payment this month, create a virtual outstanding payment for the monthly fee
+      if (!hasCurrentMonthPayment) {
+        const virtualPayment = {
+          id: `virtual-${tenant.id}-${currentMonth}-${currentYear}`,
+          invoice_id: `INV-${(tenant.serial_code || 'TENANT').toUpperCase()}-${new Date().getFullYear()}${(new Date().getMonth() + 1).toString().padStart(2, '0')}`,
+          amount: parseFloat(monthlyFee),
+          status: "pending",
+          payment_method: null,
+          tenant_name: tenant.companyName || tenant.company_name,
+          tenant_email: tenant.contactEmail || tenant.contact_email,
+          due_date: new Date().toISOString().split('T')[0], // Today
+          date: null,
+          description: `Monthly subscription fee for ${new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}`,
+          isVirtual: true // Flag to indicate this is a virtual payment
+        };
+        outstandingPayments.unshift(virtualPayment); // Add to beginning
+      }
+    }
+
+    return outstandingPayments;
+  };
+
+  const handleMarkAsPaid = (tenant, payment) => {
+    setMarkAsPaidModal({
+      isOpen: true,
+      payment: payment,
+      tenant: tenant
+    });
+  };
+
+  const handleCloseMarkAsPaidModal = () => {
+    setMarkAsPaidModal({
+      isOpen: false,
+      payment: null,
+      tenant: null
+    });
+  };
+
+  const handlePaymentUpdated = (updatedPayment) => {
+    // Update the payment in the local tenantPayments state
+    const updatedTenantPayments = { ...tenantPayments };
+    Object.keys(updatedTenantPayments).forEach(tenantKey => {
+      updatedTenantPayments[tenantKey] = updatedTenantPayments[tenantKey].map(payment =>
+        payment.id === updatedPayment.id ? updatedPayment : payment
+      );
+    });
+    setTenantPayments(updatedTenantPayments);
+    handleCloseMarkAsPaidModal();
   };
 
   // Close dropdown when clicking outside
@@ -358,6 +465,57 @@ const TenantTable = ({
                         >
                           <FiEdit />
                         </button>
+                        {/* Mark as Paid button - show only if tenant has outstanding payments */}
+                        {(() => {
+                          const outstandingPayments = getTenantOutstandingPayments(tenant);
+                          return outstandingPayments.length > 0 && (
+                            <div className="payment-actions-dropdown">
+                              <button
+                                className="action-btn paid-btn"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  // If only one outstanding payment, open modal directly
+                                  if (outstandingPayments.length === 1) {
+                                    handleMarkAsPaid(tenant, outstandingPayments[0]);
+                                  } else {
+                                    // Show dropdown for multiple payments
+                                    toggleDropdown(`payment-${tenant.id}`);
+                                  }
+                                }}
+                                title={`Mark payment as paid (${outstandingPayments.length} outstanding)`}
+                              >
+                                <FiDollarSign />
+                                {outstandingPayments.length > 1 && (
+                                  <span className="payment-count">{outstandingPayments.length}</span>
+                                )}
+                              </button>
+                              {/* Dropdown for multiple payments */}
+                              {outstandingPayments.length > 1 && activeDropdown === `payment-${tenant.id}` && (
+                                <div className="payment-dropdown-menu">
+                                  <div className="payment-dropdown-header">Outstanding Payments</div>
+                                  {outstandingPayments.map((payment) => (
+                                    <button
+                                      key={payment.id}
+                                      className="payment-dropdown-item"
+                                      onClick={() => {
+                                        handleMarkAsPaid(tenant, payment);
+                                        setActiveDropdown(null);
+                                      }}
+                                    >
+                                      <div className="payment-item-details">
+                                        <div className="payment-invoice">{payment.invoice_id}</div>
+                                        <div className="payment-amount">KES {payment.amount.toLocaleString()}</div>
+                                        <div className={`payment-status status-${payment.status}`}>
+                                          {payment.status}
+                                        </div>
+                                      </div>
+                                    </button>
+                                  ))}
+                                </div>
+                              )}
+                            </div>
+                          );
+                        })()}
                         <div className="status-action-dropdown">
                           <button
                             className="action-btn status-btn"
@@ -383,7 +541,7 @@ const TenantTable = ({
                                     handleStatusChange(tenant, "active")
                                   }
                                 >
-                                  <span className="status-icon active">●</span>
+                                  <span className="status-icon active">��</span>
                                   Activate
                                 </button>
                               )}
@@ -486,6 +644,14 @@ const TenantTable = ({
           </p>
         </div>
       )}
+
+      {/* Mark as Paid Modal */}
+      <MarkAsPaidModal
+        isOpen={markAsPaidModal.isOpen}
+        onClose={handleCloseMarkAsPaidModal}
+        payment={markAsPaidModal.payment}
+        onPaymentUpdated={handlePaymentUpdated}
+      />
     </div>
   );
 };

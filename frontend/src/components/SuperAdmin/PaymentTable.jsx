@@ -1,14 +1,19 @@
 import React, { useState } from "react";
-import { FiSearch, FiDownload, FiEye, FiClock, FiChevronLeft, FiChevronRight } from "react-icons/fi";
+import { FiSearch, FiDownload, FiEye, FiClock, FiChevronLeft, FiChevronRight, FiDollarSign } from "react-icons/fi";
+import MarkAsPaidModal from "./MarkAsPaidModal";
 import "../../styles/SuperAdmin.css";
 
 
 
-const PaymentTable = ({ payments, onViewDetails, onViewHistory, statusFilter }) => {
+const PaymentTable = ({ payments, onViewDetails, onViewHistory, onPaymentUpdated, statusFilter }) => {
   const [searchTerm, setSearchTerm] = useState("");
-  const [sortField, setSortField] = useState("date");
+  const [sortField, setSortField] = useState("payment_date");
   const [sortDirection, setSortDirection] = useState("desc");
   const [currentPage, setCurrentPage] = useState(1);
+  const [markAsPaidModal, setMarkAsPaidModal] = useState({
+    isOpen: false,
+    payment: null
+  });
   const itemsPerPage = 8;
 
   // Only filter by search term since status filtering is handled by parent
@@ -42,7 +47,7 @@ const filteredPayments = payments.filter((payment) => {
     let aVal = a[sortField];
     let bVal = b[sortField];
 
-    if (sortField === "date" || sortField === "due_date") {
+    if (sortField === "payment_date" || sortField === "due_date") {
       aVal = new Date(aVal);
       bVal = new Date(bVal);
     }
@@ -130,6 +135,38 @@ const filteredPayments = payments.filter((payment) => {
 
     return methods[method] || "💳";
   };
+const handleMarkAsPaid = (payment) => {
+  const updatedPayment = {
+    ...payment,
+    tenant_id: payment.tenant_id ?? payment.tenant?.id ?? null,
+  };
+
+  console.log("Sending to modal:", updatedPayment);
+
+  setMarkAsPaidModal({
+    isOpen: true,
+    payment: updatedPayment,
+  });
+};
+
+
+  const handleCloseMarkAsPaidModal = () => {
+    setMarkAsPaidModal({
+      isOpen: false,
+      payment: null
+    });
+  };
+
+  const handlePaymentUpdated = (updatedPayment) => {
+    if (onPaymentUpdated) {
+      onPaymentUpdated(updatedPayment);
+    }
+    handleCloseMarkAsPaidModal();
+  };
+
+  const canMarkAsPaid = (payment) => {
+    return payment.status === "pending" || payment.status === "overdue";
+  };
 
   return (
     <div className="payment-table-container">
@@ -180,7 +217,7 @@ const filteredPayments = payments.filter((payment) => {
               </th>
               <th>Status</th>
               <th>Payment Method</th>
-              <th className="sortable" onClick={() => handleSort("date")}>
+              <th className="sortable" onClick={() => handleSort("payment_date")}>
                 Payment Date
                 {sortField === "date" && (
                   <span className="sort-indicator">
@@ -243,7 +280,8 @@ const filteredPayments = payments.filter((payment) => {
                       </span>
                     </div>
                   </td>
-                  <td>{payment.date ? formatDate(payment.date) : "-"}</td>
+                  <td>{payment.payment_date ? formatDate(payment.payment_date) : "-"}</td>
+
                   <td>
                     <span
                       className={
@@ -269,7 +307,15 @@ const filteredPayments = payments.filter((payment) => {
 >
   <FiClock />
 </button>
-
+                      {canMarkAsPaid(payment) && (
+                        <button
+                          className="action-btn paid-btn"
+                          onClick={() => handleMarkAsPaid(payment)}
+                          title="Mark as paid"
+                        >
+                          <FiDollarSign />
+                        </button>
+                      )}
                     </div>
                   </td>
                 </tr>
@@ -351,6 +397,14 @@ const filteredPayments = payments.filter((payment) => {
 
         </div>
       </div>
+
+      {/* Mark as Paid Modal */}
+      <MarkAsPaidModal
+        isOpen={markAsPaidModal.isOpen}
+        onClose={handleCloseMarkAsPaidModal}
+        payment={markAsPaidModal.payment}
+        onPaymentUpdated={handlePaymentUpdated}
+      />
     </div>
   );
 };

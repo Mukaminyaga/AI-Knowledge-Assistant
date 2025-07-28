@@ -13,7 +13,7 @@ class Payment(Base):
     status = Column(String, nullable=False)  # paid, pending, overdue, failed
     payment_method = Column(String, nullable=False)
     due_date = Column(DateTime, nullable=False)
-    date = Column(DateTime, nullable=True)  # Date of payment
+    payment_date = Column(DateTime, nullable=True)  # Date of payment
     # description = Column(String, nullable=True)
     
     tenant = relationship("Tenant", back_populates="payments")

@@ -4,7 +4,7 @@ import "../../styles/PaymentHistoryModal.css";
 
 const PaymentHistoryModal = ({ isOpen, onClose, tenantName, tenantEmail, allPayments }) => {
   const [filteredPayments, setFilteredPayments] = useState([]);
-  const [sortField, setSortField] = useState("date");
+  const [sortField, setSortField] = useState("payment_date");
   const [sortDirection, setSortDirection] = useState("desc");
   const [statusFilter, setStatusFilter] = useState("all");
 
@@ -27,7 +27,7 @@ const PaymentHistoryModal = ({ isOpen, onClose, tenantName, tenantEmail, allPaym
         let aVal = a[sortField];
         let bVal = b[sortField];
 
-        if (sortField === "date" || sortField === "due_date") {
+        if (sortField === "payment_date" || sortField === "due_date") {
           aVal = new Date(aVal || a.due_date);
           bVal = new Date(bVal || b.due_date);
         }
@@ -98,7 +98,7 @@ const PaymentHistoryModal = ({ isOpen, onClose, tenantName, tenantEmail, allPaym
         payment.amount,
         payment.status,
         payment.payment_method?.replace("_", " ") || "N/A",
-        payment.date || "",
+        payment.payment_date || "",
         payment.due_date || ""
       ].join(","))
     ].join("\n");
@@ -234,9 +234,9 @@ const PaymentHistoryModal = ({ isOpen, onClose, tenantName, tenantEmail, allPaym
                   </th>
                   <th>Status</th>
                   <th>Payment Method</th>
-                  <th className="sortable" onClick={() => handleSort("date")}>
+                  <th className="sortable" onClick={() => handleSort("payment_date")}>
                     Payment Date
-                    {sortField === "date" && (
+                    {sortField === "payment_date" && (
                       <span className="sort-indicator">
                         {sortDirection === "asc" ? "↑" : "↓"}
                       </span>
@@ -274,7 +274,7 @@ const PaymentHistoryModal = ({ isOpen, onClose, tenantName, tenantEmail, allPaym
                           ? payment.payment_method.replace("_", " ").toUpperCase()
                           : "N/A"}
                       </td>
-                      <td>{formatDate(payment.date)}</td>
+                      <td>{formatDate(payment.payment_date)}</td>
                       <td>
                         <span
                           className={payment.status === "overdue" ? "overdue-date" : ""}

@@ -200,8 +200,8 @@ def get_tenant_dashboard_data(db: Session = Depends(get_db)):
 
     # This Month's Successful Payments (actual revenue this month)
     this_month_payments = db.query(func.sum(Payment.amount)).filter(
-        extract('year', Payment.date) == current_year,
-        extract('month', Payment.date) == current_month,
+        extract('year', Payment.payment_date) == current_year,
+        extract('month', Payment.payment_date) == current_month,
         Payment.status == "paid"
     ).scalar() or 0
 

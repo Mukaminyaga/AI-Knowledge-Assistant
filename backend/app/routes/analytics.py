@@ -21,10 +21,10 @@ def get_analytics(
     # Overview
     total_revenue = db.query(func.coalesce(func.sum(Payment.amount), 0)).scalar()
     this_period = db.query(func.coalesce(func.sum(Payment.amount), 0))\
-        .filter(Payment.date >= since).scalar()
+        .filter(Payment.payment_date >= since).scalar()
     prev_period_start = since - (now - since)
     prev_period = db.query(func.coalesce(func.sum(Payment.amount), 0))\
-        .filter(Payment.date >= prev_period_start, Payment.date < since).scalar()
+        .filter(Payment.payment_date >= prev_period_start, Payment.payment_date < since).scalar()
 
     revenue_growth = ((this_period - prev_period) / prev_period * 100) if prev_period else 0.0
 
@@ -44,7 +44,7 @@ def get_analytics(
         sm = (start_month + timedelta(days=30 * m))
         em = (sm + timedelta(days=30))
         rev = db.query(func.coalesce(func.sum(Payment.amount), 0))\
-            .filter(Payment.date >= sm, Payment.date < em).scalar()
+            .filter(Payment.payment_date >= sm, Payment.payment_date < em).scalar()
         monthly_revenue.append({"month": sm.strftime("%b"), "revenue": rev})
 
     # Tenants By Plan

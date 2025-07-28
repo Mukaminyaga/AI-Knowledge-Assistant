@@ -2412,3 +2412,470 @@
   font-size: 14px;
   font-weight: 500;
 }
+
+/* Mark as Paid Modal Styles */
+.mark-as-paid-modal {
+  width: 100%;
+  max-width: 600px;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.modal-title-icon {
+  margin-right: 8px;
+  color: rgb(34, 197, 94); /* green-500 */
+}
+
+.mark-paid-form {
+  width: 100%;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  margin-bottom: 24px;
+}
+
+.form-grid .full-width {
+  grid-column: 1 / -1;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.form-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  color: rgb(17, 24, 39);
+}
+
+.form-label-icon {
+  color: rgb(75, 85, 99);
+  font-size: 16px;
+}
+
+.form-input,
+.form-select,
+.form-textarea {
+  padding: 12px 16px;
+  border: 1px solid rgb(209, 213, 219);
+  border-radius: 8px;
+  font-size: 14px;
+  transition: all 0.2s ease;
+  background: rgb(255, 255, 255);
+  color: rgb(17, 24, 39);
+}
+
+.form-input:focus,
+.form-select:focus,
+.form-textarea:focus {
+  outline: none;
+  border-color: rgb(59, 130, 246);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.form-input:disabled,
+.form-select:disabled,
+.form-textarea:disabled {
+  background: rgb(249, 250, 251);
+  color: rgb(107, 114, 128);
+  cursor: not-allowed;
+}
+
+.input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.input-prefix {
+  position: absolute;
+  left: 16px;
+  font-size: 14px;
+  font-weight: 600;
+  color: rgb(75, 85, 99);
+  z-index: 2;
+  pointer-events: none;
+  background: transparent;
+}
+
+.amount-input {
+  padding-left: 60px;
+  position: relative;
+  z-index: 1;
+}
+
+.form-textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
+.modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  padding-top: 20px;
+  border-top: 1px solid rgb(229, 231, 235);
+  margin-top: 20px;
+}
+
+/* Mark as Paid Action Button */
+.action-btn.paid-btn {
+  background: rgba(34, 197, 94, 0.1);
+  color: rgb(34, 197, 94);
+  border: 1px solid rgba(34, 197, 94, 0.2);
+}
+
+.action-btn.paid-btn:hover {
+  background: rgba(34, 197, 94, 0.2);
+  border-color: rgb(34, 197, 94);
+  color: rgb(21, 128, 61);
+}
+
+/* Loading Spinner */
+.loading-spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid transparent;
+  border-top: 2px solid currentColor;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Responsive adjustments for Mark as Paid modal */
+@media (max-width: 768px) {
+  .mark-as-paid-modal {
+    max-width: 95%;
+    margin: 10px;
+  }
+
+  .form-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .modal-footer {
+    flex-direction: column-reverse;
+    gap: 12px;
+  }
+
+  .modal-footer .btn {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+/* Payment Actions Dropdown in Tenant Table */
+.payment-actions-dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.action-btn.paid-btn {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.payment-count {
+  background: rgb(239, 68, 68);
+  color: white;
+  border-radius: 50%;
+  font-size: 10px;
+  font-weight: 600;
+  width: 16px;
+  height: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  top: -4px;
+  right: -4px;
+}
+
+.payment-dropdown-menu {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background: white;
+  border: 1px solid rgb(229, 231, 235);
+  border-radius: 8px;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+  min-width: 280px;
+  max-height: 300px;
+  overflow-y: auto;
+  margin-top: 4px;
+}
+
+.status-action-dropdown,
+.payment-actions-dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.status-dropdown-menu {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background: white;
+  border: 1px solid rgb(229, 231, 235);
+  border-radius: 8px;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+  min-width: 160px;
+  margin-top: 4px;
+}
+
+.payment-dropdown-header {
+  padding: 12px 16px;
+  border-bottom: 1px solid rgb(229, 231, 235);
+  font-weight: 600;
+  font-size: 14px;
+  color: rgb(17, 24, 39);
+  background: rgb(249, 250, 251);
+}
+
+.payment-dropdown-item {
+  width: 100%;
+  padding: 12px 16px;
+  border: none;
+  background: white;
+  text-align: left;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  border-bottom: 1px solid rgb(243, 244, 246);
+}
+
+.payment-dropdown-item:hover {
+  background: rgb(249, 250, 251);
+}
+
+.payment-dropdown-item:last-child {
+  border-bottom: none;
+}
+
+.payment-item-details {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.payment-invoice {
+  font-family: monospace;
+  font-size: 12px;
+  color: rgb(75, 85, 99);
+  font-weight: 600;
+}
+
+.payment-amount {
+  font-size: 14px;
+  font-weight: 600;
+  color: rgb(17, 24, 39);
+}
+
+.payment-status {
+  font-size: 12px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.payment-status.status-pending {
+  color: rgb(217, 119, 6);
+}
+
+.payment-status.status-overdue {
+  color: rgb(239, 68, 68);
+}
+
+/* Action buttons layout adjustment */
+.action-buttons {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  justify-content: flex-start;
+  flex-wrap: nowrap;
+  min-width: 120px;
+  padding: 4px 0;
+}
+
+.action-btn {
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgb(229, 231, 235);
+  background: white;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 14px;
+  flex-shrink: 0;
+}
+
+.action-btn:hover {
+  border-color: rgb(156, 163, 175);
+  background: rgb(249, 250, 251);
+}
+
+/* Responsive adjustments for payment actions */
+@media (max-width: 768px) {
+  .payment-dropdown-menu {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    right: auto;
+    min-width: 300px;
+    max-height: 70vh;
+  }
+
+  .action-buttons {
+    flex-direction: column;
+    gap: 4px;
+    align-items: stretch;
+  }
+
+  .action-btn {
+    width: 100%;
+    justify-content: center;
+    min-width: 36px;
+  }
+}
+
+/* Tenant Details Payments Section */
+.payments-section {
+  margin-top: 24px;
+}
+
+.payments-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid rgb(229, 231, 235);
+}
+
+.section-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: rgb(17, 24, 39);
+  margin: 0;
+}
+
+.payments-actions {
+  display: flex;
+  gap: 12px;
+}
+
+.payments-table-wrapper {
+  background: white;
+  border-radius: 8px;
+  border: 1px solid rgb(229, 231, 235);
+  overflow: hidden;
+}
+
+.payments-summary {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+  padding: 20px;
+  background: rgb(249, 250, 251);
+  border-top: 1px solid rgb(229, 231, 235);
+}
+
+.summary-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.summary-label {
+  font-size: 14px;
+  color: rgb(75, 85, 99);
+  font-weight: 500;
+}
+
+.summary-value {
+  font-size: 14px;
+  color: rgb(17, 24, 39);
+  font-weight: 600;
+}
+
+.no-data-state {
+  text-align: center;
+  padding: 60px 20px;
+  color: rgb(107, 114, 128);
+}
+
+.no-data-icon {
+  font-size: 48px;
+  color: rgb(156, 163, 175);
+  margin-bottom: 16px;
+}
+
+.no-data-state h4 {
+  font-size: 18px;
+  font-weight: 600;
+  color: rgb(75, 85, 99);
+  margin: 0 0 8px 0;
+}
+
+.no-data-state p {
+  font-size: 14px;
+  color: rgb(107, 114, 128);
+  margin: 0;
+}
+
+.invoice-code {
+  font-family: monospace;
+  font-size: 12px;
+  background: rgb(243, 244, 246);
+  padding: 4px 8px;
+  border-radius: 4px;
+  color: rgb(55, 65, 81);
+}
+
+.amount {
+  font-weight: 600;
+  color: rgb(17, 24, 39);
+}
+
+.overdue-date {
+  color: rgb(239, 68, 68);
+  font-weight: 600;
+}
+
+@media (max-width: 768px) {
+  .payments-header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 16px;
+  }
+
+  .payments-actions {
+    justify-content: center;
+  }
+
+  .payments-summary {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+}
