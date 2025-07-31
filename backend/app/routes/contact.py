@@ -1,17 +1,18 @@
 from fastapi import APIRouter
 from pydantic import BaseModel
-import aiosmtplib
-from email.mime.text import MIMEText
+from sendgrid import SendGridAPIClient
+from sendgrid.helpers.mail import Mail
 import os
 from dotenv import load_dotenv
 from pathlib import Path
 
 router = APIRouter()
 
-# Load environment variables
+# Load environment variables from .env
 env_path = Path(__file__).resolve().parents[2] / ".env"
 load_dotenv(dotenv_path=env_path)
 
+# Pydantic model for incoming contact form data
 class ContactForm(BaseModel):
     name: str
     email: str
@@ -21,42 +22,44 @@ class ContactForm(BaseModel):
 @router.post("/send-email")
 async def send_email(data: ContactForm):
     sender_email = os.getenv("SENDER_EMAIL")
-    sender_password = os.getenv("SENDER_PASSWORD")
-    smtp_server = os.getenv("SMTP_SERVER", "mail.vala.ke")
-    smtp_port = int(os.getenv("SMTP_PORT", 587))
-    recipient_email = "vala.ai@goodpartnerske.org" 
-     # or use data.email if you want dynamic destination
+    api_key = os.getenv("SENDGRID_API_KEY")
 
+    if not sender_email or not api_key:
+        return {"success": False, "error": "Missing email configuration in environment variables."}
+
+    # Pre-format message to avoid backslash errors in f-strings
     formatted_message = data.message.replace("\n", "<br/>")
 
-    html_body = f"""
+    # Build the HTML email content
+    html_content = f"""
     <html>
     <body style="font-family: Arial, sans-serif;">
-      <h3>New Contact Form Submission</h3>
-      <table style="border-collapse: collapse;">
-        <tr><td style="font-weight: bold; padding: 5px;">Name:</td><td>{data.name}</td></tr>
-        <tr><td style="font-weight: bold; padding: 5px;">Email:</td><td><a href="mailto:{data.email}">{data.email}</a></td></tr>
-        <tr><td style="font-weight: bold; padding: 5px;" valign="top">Message:</td><td>{formatted_message}</td></tr>
-      </table>
+        <h3>New Contact Form Submission</h3>
+        <p><strong>Name:</strong> {data.name}</p>
+        <p><strong>Email:</strong> <a href="mailto:{data.email}">{data.email}</a></p>
+        <p><strong>Subject:</strong> {data.subject}</p>
+        <p><strong>Message:</strong><br/>{formatted_message}</p>
     </body>
     </html>
     """
 
-    msg = MIMEText(html_body, "html")
-    msg["Subject"] = f"Contact Form: {data.subject}"
-    msg["From"] = f"Vala AI Support <{sender_email}>"
-    msg["To"] = recipient_email
-    msg["Reply-To"] = data.email
+    # Create the email message object
+    message = Mail(
+        from_email=sender_email,
+        to_emails="vala.ai@goodpartnerske.org",  # Or change to data.email if dynamic
+        subject=f"Contact Form: {data.subject}",
+        html_content=html_content
+    )
+    message.reply_to = data.email
 
+    # Send the email via SendGrid API
     try:
-        await aiosmtplib.send(
-            msg,
-            hostname=smtp_server,
-            port=smtp_port,
-            username=sender_email,
-            password=sender_password,
-            start_tls=True,
-        )
-        return {"success": True, "message": "Email sent successfully"}
+        sg = SendGridAPIClient(api_key)
+        response = sg.send(message)
+        return {
+            "success": True,
+            "message": "Email sent successfully",
+            "status_code": response.status_code
+        }
     except Exception as e:
         return {"success": False, "error": str(e)}
