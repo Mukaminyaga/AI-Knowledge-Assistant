@@ -190,11 +190,11 @@ function Contact() {
         </div>
 
         {/* Google Maps Section */}
-        <div className="maps-section">
+        {/* <div className="maps-section">
           <div className="maps-placeholder">
             <span className="maps-text">Google Maps Embed Would Go Here</span>
           </div>
-        </div>
+        </div> */}
       </div>
 
       <LandingFooter />

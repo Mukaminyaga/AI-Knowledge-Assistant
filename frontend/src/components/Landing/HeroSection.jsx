@@ -8,9 +8,9 @@ function HeroSection() {
       <div className="hero-background"></div>
       <div className="hero-wave">
         <svg viewBox="0 0 1441 1006" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path 
-            d="M31 26.0001C31 26.0001 248.134 291.478 472 319C755.381 353.84 1041.6 140.863 1370.5 581.5C1699.4 1022.14 659.5 1010.5 580 902" 
-            stroke="url(#paint0_linear_246_5159)" 
+          <path
+            d="M31 26.0001C31 26.0001 248.134 291.478 472 319C755.381 353.84 1041.6 140.863 1370.5 581.5C1699.4 1022.14 659.5 1010.5 580 902"
+            stroke="url(#paint0_linear_246_5159)"
             strokeWidth="80"
           />
           <defs>
@@ -27,23 +27,26 @@ function HeroSection() {
         <div className="hero-content">
           <div className="hero-text">
             <h1 className="hero-title">
-              Unlock your 
+              Unlock your
               <span className="hero-title-gradient"> Organization's
               Knowledge </span>
               Instantly.
             </h1>
-            
+
             <p className="hero-description">
-              Empower your teams with fast, secure, and 
+              Empower your teams with fast, secure, and
               AI-powered access to critical organization knowledge when and where they need it.
             </p>
 
             <div className="hero-buttons">
-              <Link to="/contact" className="hero-btn-primary">
+              <Link to="/signup" className="hero-btn-primary">
+                Get Started
+              </Link>
+              <Link to="/contact" className="hero-btn-secondary">
                 Request a Demo
               </Link>
-              <Link to="/login" className="hero-btn-secondary">
-                Login Now
+              <Link to="/login" className="hero-btn-tertiary">
+                Login
               </Link>
             </div>
           </div>

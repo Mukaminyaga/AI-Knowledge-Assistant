@@ -31,17 +31,19 @@
 .contact-form-card {
   width: 100%;
   min-height: 50rem;
-  background: #FAF2FE;
+  background: #f5f2fe;
   border-radius: 1.25rem;
   box-shadow: 0 0.625rem 0.625rem 0 rgba(50, 19, 127, 0.10);
   padding: clamp(1.5rem, 4vw, 2.5rem);
+  margin-bottom: 2.5rem;
   display: flex;
   flex-direction: column;
+  
 }
 
 .contact-form-title {
   font-family: Inter, -apple-system, Roboto, Helvetica, sans-serif;
-  font-size: clamp(1.75rem, 4vw, 2.5rem);
+  font-size: 1.6rem;
   font-weight: 700;
   color: #2E2E2D;
   margin: 0 0 clamp(2rem, 5vw, 4rem) 0;
@@ -98,7 +100,7 @@
 .select-input::placeholder {
   color: #585857;
   font-family: Inter, -apple-system, Roboto, Helvetica, sans-serif;
-  font-size: clamp(0.875rem, 1.5vw, 1.25rem);
+  font-size: 1.0rem;
   font-weight: 400;
 }
 
@@ -137,7 +139,7 @@
   border: none;
   color: #fff;
   font-family: Inter, -apple-system, Roboto, Helvetica, sans-serif;
-  font-size: clamp(0.875rem, 1.5vw, 1.25rem);
+  font-size: 1rem;
   font-weight: 400;
   cursor: pointer;
   transition: all 0.3s ease;
@@ -191,7 +193,7 @@
 
 .contact-info-description {
   font-family: Inter, -apple-system, Roboto, Helvetica, sans-serif;
-  font-size: 1.2rem;
+  font-size: 1.1rem;
   font-weight: 400;
   color: #2E2E2D;
   margin: 0;
@@ -226,7 +228,7 @@
 
 .contact-detail-text {
   font-family: Inter, -apple-system, Roboto, Helvetica, sans-serif;
-  font-size: 1.2rem;
+  font-size: 1.1rem;
   font-weight: 400;
   color: #2E2E2D;
   line-height: 1.4;
@@ -247,7 +249,7 @@
 
 .office-hours-text {
   font-family: Inter, -apple-system, Roboto, Helvetica, sans-serif;
-  font-size: 1.2rem;
+  font-size: 1.1rem;
   font-weight: 400;
   color: #2E2E2D;
   margin: 0;

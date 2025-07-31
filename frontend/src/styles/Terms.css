@@ -79,10 +79,10 @@
 }
 
 .terms-section {
-  padding: 24px;
-  background: rgba(243, 248, 251, 0.3);
+  padding: 22px;
+  /* background: rgba(243, 248, 251, 0.3); */
   border-radius: 16px;
-  border-left: 4px solid rgba(66, 133, 244, 1);
+  /* border-left: 4px solid rgba(66, 133, 244, 1); */
 }
 
 .section-title {

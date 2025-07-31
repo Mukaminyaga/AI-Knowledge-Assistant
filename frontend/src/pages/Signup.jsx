@@ -252,12 +252,12 @@ const handleSubmit = async (e) => {
       <div className="auth-container">
         <div className="auth-content">
           <div className="auth-header">
-            <Link to="/" className="brand-link">
+            {/* <Link to="/" className="brand-link">
               <div className="brand-title">
                 AI Knowledge <br />
                 Assistant
               </div>
-            </Link>
+            </Link> */}
           </div>
 
           <div className="auth-main">
@@ -595,7 +595,7 @@ const handleSubmit = async (e) => {
                 </div>
                 <Link to="/contact" className="demo-link">
                   <div className="demo-button">
-                    <span className="demo-icon">🚀</span>
+                    {/* <span className="demo-icon">🚀</span> */}
                     Try a Demo First
                   </div>
                 </Link>
