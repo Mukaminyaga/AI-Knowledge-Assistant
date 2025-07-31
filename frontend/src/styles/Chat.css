@@ -328,3 +328,51 @@
 .chat-delete-icon:hover {
   color: red;
 }
+.tab-header {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 10px;
+  padding: 0 10px;
+}
+
+.tab-header button {
+  background: #f0f0f0;
+  border: none;
+  padding: 8px 12px;
+  cursor: pointer;
+  border-radius: 6px;
+  font-weight: 500;
+}
+
+.tab-header button:hover {
+  background-color: #e0e0e0;
+}
+
+.chat-bookmark-icon {
+  margin-left: auto;
+  cursor: pointer;
+  color: #888;
+}
+
+.chat-bookmark-icon.bookmarked {
+  color: #f5b400;
+}
+
+.recent-files ul {
+  list-style: none;
+  padding: 0 10px;
+  font-size: 14px;
+}
+
+.recent-files li {
+  padding: 4px 0;
+  border-bottom: 1px solid #eee;
+}
+.chat-bookmark-icon {
+  margin-left: 8px;
+  font-size: 16px;
+  transition: color 0.2s ease;
+}
+.chat-bookmark-icon:hover {
+  color: #f5b301;
+}

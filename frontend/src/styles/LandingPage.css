@@ -1,0 +1,167 @@
+/* Landing Page Global Styles */
+.landing-page {
+  min-height: 100vh;
+  background-color: #FCFCFC;
+  overflow-x: hidden;
+}
+
+.landing-main {
+  width: 100%;
+}
+
+/* Global Typography */
+.landing-page h1,
+.landing-page h2,
+.landing-page h3,
+.landing-page h4 {
+  margin: 0;
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+.landing-page p {
+  margin: 0;
+  line-height: 1.5;
+}
+
+/* Common Button Styles */
+.landing-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem 2rem;
+  border-radius: 0.625rem;
+  font-family: Inter, -apple-system, Roboto, Helvetica, sans-serif;
+  font-size: 1.125rem;
+  font-weight: 500;
+  text-decoration: none;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.landing-btn-primary {
+  background-color: #32137F;
+  color: #FCFCFC;
+}
+
+.landing-btn-primary:hover {
+  background-color: #2a0f6b;
+  color: #FCFCFC;
+}
+
+.landing-btn-secondary {
+  background-color: #FCFCFC;
+  color: #080808;
+  border: 1px solid #e0e0e0;
+}
+
+.landing-btn-secondary:hover {
+  background-color: #f5f5f5;
+  color: #080808;
+}
+
+/* Section Spacing */
+.landing-section {
+  padding: 4rem 0;
+}
+
+/* Container */
+.landing-container {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 2rem;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .landing-container {
+    padding: 0 1rem;
+  }
+
+  .landing-section {
+    padding: 2rem 0;
+  }
+
+  .landing-btn {
+    padding: 0.875rem 1.5rem;
+    font-size: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .landing-container {
+    padding: 0 0.75rem;
+  }
+
+  .landing-section {
+    padding: 1.5rem 0;
+  }
+}
+
+/* Features Page Specific Styles */
+.features-page {
+  min-height: 100vh;
+  background-color: #FCFCFC;
+  overflow-x: hidden;
+}
+
+.features-main {
+  width: 100%;
+}
+
+.features-page-header {
+  background: rgba(249, 236, 255, 0.65);
+  padding: 4rem 0;
+  text-align: center;
+}
+
+.features-page-title {
+  font-family: Inter, -apple-system, Roboto, Helvetica, sans-serif;
+  font-size: 3rem;
+  font-weight: 700;
+  color: #32137F;
+  line-height: 1.2;
+  margin: 0 0 1.5rem 0;
+}
+
+.features-page-description {
+  font-family: Inter, -apple-system, Roboto, Helvetica, sans-serif;
+  font-size: 1.25rem;
+  font-weight: 400;
+  color: #4a5568;
+  line-height: 1.6;
+  margin: 0;
+  max-width: 800px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Responsive Design for Features Page */
+@media (max-width: 768px) {
+  .features-page-header {
+    padding: 3rem 0;
+  }
+
+  .features-page-title {
+    font-size: 2.5rem;
+  }
+
+  .features-page-description {
+    font-size: 1.125rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .features-page-header {
+    padding: 2rem 0;
+  }
+
+  .features-page-title {
+    font-size: 2rem;
+  }
+
+  .features-page-description {
+    font-size: 1rem;
+  }
+}

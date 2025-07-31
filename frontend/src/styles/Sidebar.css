@@ -61,7 +61,7 @@
   font-size: 18px;
   font-family: var(--font-work-sans);
   font-weight: 700;
-  color: var(--text-dark);
+  /* color: var(--text-dark); */
   margin: 0 0 2px 0;
   line-height: 1.2;
 }
@@ -72,9 +72,10 @@
 }
 
 .brand-subtitle {
-  font-size: 12px;
+  font-size: 13px;
   font-family: var(--font-inter);
-  color: var(--text-light-gray);
+
+  /* color: var(--text-light-gray); */
   margin: 0;
   line-height: 1;
 }
@@ -218,7 +219,7 @@
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  background-color: var(--primary-color);
+  background-color: var(--primary-color) !important;
   display: flex;
   align-items: center;
   justify-content: center;

@@ -24,7 +24,8 @@ async def send_email(data: ContactForm):
     sender_password = os.getenv("SENDER_PASSWORD")
     smtp_server = os.getenv("SMTP_SERVER", "mail.vala.ke")
     smtp_port = int(os.getenv("SMTP_PORT", 587))
-    recipient_email = "vala.ai@goodpartnerske.org"  # or use data.email if you want dynamic destination
+    recipient_email = "vala.ai@goodpartnerske.org" 
+     # or use data.email if you want dynamic destination
 
     formatted_message = data.message.replace("\n", "<br/>")
 

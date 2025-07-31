@@ -1,0 +1,191 @@
+/* Why Choose Section Styles */
+.why-choose-section {
+  background: rgba(252, 252, 252, 0.65);
+  padding: 5rem 0;
+}
+
+.why-choose-container {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 2rem;
+}
+
+.why-choose-title {
+  font-family: Inter, -apple-system, Roboto, Helvetica, sans-serif;
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #080808;
+  text-align: center;
+  margin: 0 0 3rem 0;
+}
+
+/* Benefits List */
+.benefits-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  margin-bottom: 3rem;
+  max-width: 800px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.benefit-item {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.check-icon {
+  flex-shrink: 0;
+}
+
+.benefit-text {
+  font-family: Inter, -apple-system, Roboto, Helvetica, sans-serif;
+  font-size: 1.125rem;
+  font-weight: 500;
+  color: #080808;
+  line-height: 1.4;
+}
+
+/* Stats Cards */
+.stats-cards {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2rem;
+}
+
+.stat-card {
+  padding: 2rem;
+  border-radius: 1rem;
+  filter: drop-shadow(0 8px 25px rgba(0, 0, 0, 0.10));
+  text-align: center;
+  min-height: 180px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 1rem;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.stat-card:hover {
+  transform: translateY(-5px);
+  filter: drop-shadow(0 15px 35px rgba(0, 0, 0, 0.15));
+}
+
+.stat-number {
+  font-family: Inter, -apple-system, Roboto, Helvetica, sans-serif;
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #32137F;
+  line-height: 1;
+  margin: 0;
+}
+
+.stat-label {
+  font-family: Inter, -apple-system, Roboto, Helvetica, sans-serif;
+  font-size: 1rem;
+  font-weight: 500;
+  color: #4B5563;
+  line-height: 1;
+  margin: 0;
+}
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+  .why-choose-container {
+    padding: 0 2rem;
+  }
+
+  .why-choose-title {
+    font-size: 3rem;
+  }
+
+  .benefit-text {
+    font-size: 2.5rem;
+  }
+
+  .stat-number {
+    font-size: 3rem;
+  }
+
+  .stat-label {
+    font-size: 2rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .why-choose-section {
+    padding: 3rem 0;
+  }
+
+  .why-choose-title {
+    font-size: 2.5rem;
+  }
+
+  .benefits-list {
+    margin-bottom: 3rem;
+  }
+
+  .benefit-text {
+    font-size: 1.5rem;
+  }
+
+  .stats-cards {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+
+  .stat-card {
+    padding: 2rem;
+    min-height: auto;
+  }
+
+  .stat-number {
+    font-size: 2.5rem;
+  }
+
+  .stat-label {
+    font-size: 1.5rem;
+  }
+
+  .check-icon {
+    width: 2rem;
+    height: 2rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .why-choose-container {
+    padding: 0 1rem;
+  }
+
+  .why-choose-title {
+    font-size: 2rem;
+  }
+
+  .benefit-item {
+    gap: 1rem;
+  }
+
+  .benefit-text {
+    font-size: 1.25rem;
+  }
+
+  .stat-card {
+    padding: 1.5rem;
+  }
+
+  .stat-number {
+    font-size: 2rem;
+  }
+
+  .stat-label {
+    font-size: 1.25rem;
+  }
+
+  .check-icon {
+    width: 1.5rem;
+    height: 1.5rem;
+  }
+}

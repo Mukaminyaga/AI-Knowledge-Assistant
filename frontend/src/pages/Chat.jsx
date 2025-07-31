@@ -63,10 +63,19 @@ function Chat() {
 
   const handleSend = async (userQuery) => {
     if (!userQuery.trim()) return;
-
+       const normalizedQuery = userQuery.trim().toLowerCase();
     const newChat = [...chatHistory, { role: "user", text: userQuery }];
     setChatHistory(newChat);
     setInputValue("");
+
+  const greetings = ["hello", "hi", "h", "goodmorning", "good morning", "hey"];
+  if (greetings.includes(normalizedQuery)) {
+    const assistantMessage = {
+      role: "assistant",
+      text: "Hello! I'm your Knowledge Assistant AI. How can I help you today?",
+      results: [],
+    };}
+
 try {
   setLoading(true);
   

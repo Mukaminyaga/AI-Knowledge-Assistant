@@ -1,0 +1,173 @@
+/* How It Works Styles */
+.how-it-works {
+  background: rgba(252, 252, 252, 0.65);
+  padding: 5rem 0;
+}
+
+.how-it-works-container {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 2rem;
+}
+
+.how-it-works-title {
+  font-family: Inter, -apple-system, Roboto, Helvetica, sans-serif;
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #080808;
+  text-align: center;
+  margin: 0 0 3rem 0;
+}
+
+/* Visual Section */
+.how-it-works-visual {
+  position: relative;
+  margin-bottom: 4rem;
+}
+
+.how-it-works-graphic {
+  width: 100%;
+  max-width: 98.4375rem;
+  height: auto;
+  margin: 0 auto;
+  display: block;
+}
+
+.step-icons {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  justify-content: space-between;
+  width: 90%;
+  max-width: 80rem;
+}
+
+.step-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.step-icon svg {
+  width: 9.25rem;
+  height: 9.25rem;
+}
+
+/* Steps Content */
+.steps-content {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 4rem;
+}
+
+.step-content {
+  text-align: center;
+}
+
+.step-title {
+  font-family: Inter, -apple-system, Roboto, Helvetica, sans-serif;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #080808;
+  margin: 0 0 1rem 0;
+}
+
+.step-description {
+  font-family: Inter, -apple-system, Roboto, Helvetica, sans-serif;
+  font-size: 1rem;
+  font-weight: 400;
+  color: #4a5568;
+  line-height: 1.6;
+  margin: 0;
+}
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+  .how-it-works-container {
+    padding: 0 2rem;
+  }
+
+  .how-it-works-title {
+    font-size: 3rem;
+  }
+
+  .step-title {
+    font-size: 2rem;
+  }
+
+  .step-description {
+    font-size: 1.5rem;
+  }
+
+  .step-icon svg {
+    width: 7rem;
+    height: 7rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .how-it-works {
+    padding: 3rem 0;
+  }
+
+  .how-it-works-title {
+    font-size: 2.5rem;
+    margin-bottom: 2rem;
+  }
+
+  .how-it-works-visual {
+    margin-bottom: 2rem;
+  }
+
+  .step-icons {
+    position: static;
+    transform: none;
+    width: 100%;
+    margin-top: 2rem;
+    flex-direction: column;
+    gap: 2rem;
+  }
+
+  .steps-content {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+
+  .step-title {
+    font-size: 1.75rem;
+  }
+
+  .step-description {
+    font-size: 1.25rem;
+  }
+
+  .step-icon svg {
+    width: 5rem;
+    height: 5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .how-it-works-container {
+    padding: 0 1rem;
+  }
+
+  .how-it-works-title {
+    font-size: 2rem;
+  }
+
+  .step-title {
+    font-size: 1.5rem;
+  }
+
+  .step-description {
+    font-size: 1.125rem;
+  }
+
+  .step-icon svg {
+    width: 4rem;
+    height: 4rem;
+  }
+}

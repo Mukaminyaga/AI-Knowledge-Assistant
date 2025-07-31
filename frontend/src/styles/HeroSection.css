@@ -1,0 +1,243 @@
+/* Hero Section Styles */
+.hero-section {
+  position: relative;
+  background: rgba(249, 236, 255, 0.65);
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+}
+
+.hero-background {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(249, 236, 255, 0.65);
+  z-index: 1;
+}
+
+.hero-wave {
+  position: absolute;
+  top: 1.875rem;
+  left: 31.875rem;
+  width: 87.75rem;
+  height: 58.6875rem;
+  z-index: 2;
+}
+
+.hero-wave svg {
+  width: 100%;
+  height: 100%;
+}
+
+.hero-container {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 2rem;
+  position: relative;
+  z-index: 3;
+  width: 100%;
+}
+
+.hero-content {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 3rem;
+  align-items: center;
+  min-height: 70vh;
+}
+
+/* Hero Text */
+.hero-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.hero-title {
+  font-family: Inter, -apple-system, Roboto, Helvetica, sans-serif;
+  font-size: 3rem;
+  font-weight: 700;
+  color: #32137F;
+  line-height: 1.1;
+  margin: 0;
+}
+
+.hero-title-gradient {
+  background: linear-gradient(90deg, #FC9546 0%, #FC5196 26.92%, #C730DA 52.88%, #3E62E9 75.48%, #42C6B3 100%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-weight: 700;
+}
+
+.hero-description {
+  font-family: Poppins, -apple-system, Roboto, Helvetica, sans-serif;
+  font-size: 1.125rem;
+  font-weight: 400;
+  color: #4a5568;
+  line-height: 1.6;
+  margin: 0;
+}
+
+.hero-buttons {
+  display: flex;
+  gap: 1.25rem;
+  margin-top: 1rem;
+}
+
+.hero-btn-primary {
+  padding: 0.75rem 2rem;
+  border-radius: 0.5rem;
+  background: #32137F;
+  color: #FCFCFC;
+  font-family: Inter, -apple-system, Roboto, Helvetica, sans-serif;
+  font-size: 1rem;
+  font-weight: 600;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 14px 0 rgba(50, 19, 127, 0.3);
+}
+
+.hero-btn-primary:hover {
+  background: #2a0f6b;
+  color: #FCFCFC;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px 0 rgba(50, 19, 127, 0.4);
+}
+
+.hero-btn-secondary {
+  padding: 0.75rem 2rem;
+  border-radius: 0.5rem;
+  background: #FCFCFC;
+  color: #32137F;
+  font-family: Inter, -apple-system, Roboto, Helvetica, sans-serif;
+  font-size: 1rem;
+  font-weight: 600;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  border: 2px solid #32137F;
+}
+
+.hero-btn-secondary:hover {
+  background: #f5f5f5;
+  color: #080808;
+}
+
+/* Hero Image */
+.hero-image {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.hero-main-image {
+  width: 100%;
+  max-width: 600px;
+  height: auto;
+  aspect-ratio: 813/744;
+  border-radius: 1rem;
+  object-fit: cover;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+}
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+  .hero-container {
+    padding: 0 2rem;
+  }
+
+  .hero-title {
+    font-size: 4rem;
+  }
+
+  .hero-description {
+    font-size: 1.875rem;
+  }
+
+  .hero-wave {
+    left: 20rem;
+    width: 70rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .hero-section {
+    min-height: auto;
+    padding: 3rem 0;
+  }
+
+  .hero-content {
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    align-items: center;
+  }
+
+  .hero-text {
+    order: 1;
+  }
+
+  .hero-image {
+    order: 2;
+  }
+
+  .hero-title {
+    font-size: 2.5rem;
+  }
+
+  .hero-description {
+    font-size: 1.125rem;
+  }
+
+  .hero-buttons {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  .hero-btn-primary,
+  .hero-btn-secondary {
+    width: 100%;
+    max-width: 15rem;
+    height: 3rem;
+    font-size: 1rem;
+  }
+
+  .hero-wave {
+    display: none;
+  }
+}
+
+@media (max-width: 480px) {
+  .hero-container {
+    padding: 0 1rem;
+  }
+
+  .hero-content {
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+  }
+
+  .hero-title {
+    font-size: 1.75rem;
+  }
+
+  .hero-description {
+    font-size: 1rem;
+  }
+
+  .hero-btn-primary,
+  .hero-btn-secondary {
+    height: 2.5rem;
+    font-size: 0.875rem;
+    max-width: 12rem;
+  }
+}

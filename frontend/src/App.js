@@ -1,5 +1,6 @@
 import React from "react";
 import { Routes, Route } from "react-router-dom";
+import LandingPage from "./pages/LandingPage";
 import Home from "./pages/Home";
 import LoggedInHome from "./pages/LoggedInHome";
 import Dashboard from "./pages/Dashboard";
@@ -40,7 +41,8 @@ function App() {
     <div className="App">
       <Routes>
         {/* Public Routes */}
-        <Route path="/" element={<Home />} />
+        <Route path="/" element={<LandingPage />} />
+        <Route path="/home-old" element={<Home />} />
         <Route path="/features" element={<Features />} />
         <Route path="/about" element={<About />} />
         <Route path="/contact" element={<Contact />} />

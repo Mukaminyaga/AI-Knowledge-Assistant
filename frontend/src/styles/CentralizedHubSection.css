@@ -1,0 +1,166 @@
+/* Centralized Hub Section Styles */
+.centralized-hub-section {
+  background: rgba(252, 252, 252, 0.65);
+  padding: 5rem 0;
+}
+
+.centralized-hub-container {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 2rem;
+}
+
+.centralized-hub-content {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4rem;
+  align-items: center;
+}
+
+/* Centralized Hub Text */
+.centralized-hub-text {
+  background: #E3FCFC;
+  padding: 2rem;
+  border-radius: 1rem;
+  height: auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 400px;
+}
+
+.centralized-hub-title {
+  font-family: Inter, -apple-system, Roboto, Helvetica, sans-serif;
+  font-size: 2rem;
+  font-weight: 700;
+  color: #080808;
+  margin: 0 0 1rem 0;
+}
+
+.centralized-hub-description {
+  font-family: Inter, -apple-system, Roboto, Helvetica, sans-serif;
+  font-size: 1rem;
+  font-weight: 400;
+  color: #4a5568;
+  line-height: 1.6;
+  margin-bottom: 2rem;
+  flex-grow: 1;
+}
+
+.centralized-hub-btn {
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.5rem;
+  background: #55C9C9;
+  color: #FCFCFC;
+  font-family: Inter, -apple-system, Roboto, Helvetica, sans-serif;
+  font-size: 1rem;
+  font-weight: 600;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  align-self: flex-start;
+  box-shadow: 0 4px 14px 0 rgba(85, 201, 201, 0.3);
+}
+
+.centralized-hub-btn:hover {
+  background: #45b8b8;
+  color: #FCFCFC;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px 0 rgba(85, 201, 201, 0.4);
+}
+
+/* Centralized Hub Image */
+.centralized-hub-image {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.centralized-hub-img {
+  width: 100%;
+  max-width: 600px;
+  height: auto;
+  border-radius: 1rem;
+  aspect-ratio: 838/700;
+  object-fit: cover;
+}
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+  .centralized-hub-container {
+    padding: 0 2rem;
+  }
+  
+  .centralized-hub-title {
+    font-size: 1.75rem;
+  }
+  
+  .centralized-hub-description {
+    font-size: 0.875rem;
+  }
+  
+  .centralized-hub-btn {
+    font-size: 0.875rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .centralized-hub-section {
+    padding: 3rem 0;
+  }
+  
+  .centralized-hub-content {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+  
+  .centralized-hub-text {
+    height: auto;
+    padding: 2rem;
+    order: 2;
+  }
+  
+  .centralized-hub-image {
+    order: 1;
+  }
+  
+  .centralized-hub-title {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+  }
+  
+  .centralized-hub-description {
+    font-size: 1rem;
+    margin-bottom: 1.5rem;
+  }
+  
+  .centralized-hub-btn {
+    width: 100%;
+    max-width: 15rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .centralized-hub-container {
+    padding: 0 1rem;
+  }
+  
+  .centralized-hub-text {
+    padding: 1.5rem;
+  }
+  
+  .centralized-hub-title {
+    font-size: 1.25rem;
+  }
+  
+  .centralized-hub-description {
+    font-size: 0.875rem;
+  }
+  
+  .centralized-hub-btn {
+    font-size: 0.875rem;
+    height: 3rem;
+  }
+}

@@ -1,0 +1,168 @@
+/* User Roles Section Styles */
+.user-roles-section {
+  background: rgba(232, 249, 255, 0.50);
+  padding: 5rem 0;
+}
+
+.user-roles-container {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 2rem;
+}
+
+.user-roles-title {
+  font-family: Inter, -apple-system, Roboto, Helvetica, sans-serif;
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #080808;
+  text-align: center;
+  margin: 0 0 3rem 0;
+}
+
+/* User Roles Grid */
+.user-roles-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 3rem;
+}
+
+.user-role-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.user-role-circle {
+  width: 6rem;
+  height: 6rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1.5rem;
+}
+
+.user-role-icon svg {
+  width: 3rem;
+  height: 3rem;
+}
+
+.user-role-content {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.user-role-title {
+  font-family: Inter, -apple-system, Roboto, Helvetica, sans-serif;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #080808;
+  margin: 0;
+}
+
+.user-role-description {
+  font-family: Inter, -apple-system, Roboto, Helvetica, sans-serif;
+  font-size: 0.875rem;
+  font-weight: 400;
+  color: #4a5568;
+  line-height: 1.5;
+  margin: 0;
+}
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+  .user-roles-container {
+    padding: 0 2rem;
+  }
+
+  .user-roles-title {
+    font-size: 3rem;
+  }
+
+  .user-roles-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2rem;
+  }
+
+  .user-role-circle {
+    width: 10rem;
+    height: 10rem;
+  }
+
+  .user-role-icon svg {
+    width: 5rem;
+    height: 5rem;
+  }
+
+  .user-role-title {
+    font-size: 2rem;
+  }
+
+  .user-role-description {
+    font-size: 1.5rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .user-roles-section {
+    padding: 3rem 0;
+  }
+
+  .user-roles-grid {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+
+  .user-roles-title {
+    font-size: 2.5rem;
+  }
+
+  .user-role-circle {
+    width: 8rem;
+    height: 8rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .user-role-icon svg {
+    width: 4rem;
+    height: 4rem;
+  }
+
+  .user-role-title {
+    font-size: 1.75rem;
+  }
+
+  .user-role-description {
+    font-size: 1.25rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .user-roles-container {
+    padding: 0 1rem;
+  }
+
+  .user-roles-title {
+    font-size: 2rem;
+  }
+
+  .user-role-circle {
+    width: 7rem;
+    height: 7rem;
+  }
+
+  .user-role-icon svg {
+    width: 3.5rem;
+    height: 3.5rem;
+  }
+
+  .user-role-title {
+    font-size: 1.5rem;
+  }
+
+  .user-role-description {
+    font-size: 1.125rem;
+  }
+}

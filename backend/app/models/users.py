@@ -2,6 +2,9 @@
 from sqlalchemy import Column, Integer, String, Boolean, ForeignKey
 from sqlalchemy.orm import relationship
 from ..database import Base
+from app.models.chat import ChatSession
+
+
 
 class User(Base):
     __tablename__ = "users"
@@ -15,3 +18,6 @@ class User(Base):
     is_approved = Column(Boolean, nullable=False, default=False)
     tenant_id = Column(Integer, ForeignKey("tenants.id"), nullable=False)
     tenant = relationship("Tenant", back_populates="users")
+    chats = relationship("ChatSession", back_populates="user", cascade="all, delete-orphan")
+
+

@@ -5,6 +5,7 @@ from app.routes import user as user_routes
 from app.routes import upload
 from app.routes import department
 from app.routes import search
+from app.routes import chat
 from app.routes import reset
 from app.routes import contact
 from app.routes import user_profile
@@ -97,6 +98,7 @@ app.include_router(user_profile.router)
 app.include_router(payment.router)
 app.include_router(analytics.router)
 app.include_router(department.router)
+app.include_router(chat.router)
 # app.mount("/uploads", StaticFiles(directory=UPLOADS_PATH), name="uploads")
 app.include_router(tenant.router, prefix="/tenants", tags=["Tenants"])
 
