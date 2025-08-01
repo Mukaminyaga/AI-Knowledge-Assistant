@@ -1050,14 +1050,14 @@
 
 .trend-bar {
   width: 24px;
-  background: linear-gradient(135deg, rgb(32, 148, 243), rgb(29, 133, 218));
+  background: linear-gradient(135deg, rgb(1, 5, 8), rgb(1, 5, 8));
   border-radius: 4px 4px 0 0;
   transition: all 0.3s ease;
   cursor: pointer;
 }
 
 .trend-bar:hover {
-  background: linear-gradient(135deg, rgb(29, 133, 218), rgb(26, 118, 193));
+  background: linear-gradient(135deg, rgb(1, 6, 10), rgb(1, 4, 7));
 }
 
 .trend-bar-value {
@@ -1176,9 +1176,9 @@
 }
 
 .chart-btn.active {
-  background: rgb(32, 148, 243);
+  background: rgb(1, 6, 10);
   color: rgb(255, 255, 255);
-  border-color: rgb(32, 148, 243);
+  border-color: rgb(0, 1, 2);
 }
 
 /* Interactive Chart */
@@ -1228,7 +1228,7 @@
 .chart-bar {
   width: 100%;
   max-width: 32px;
-  background: linear-gradient(135deg, rgb(32, 148, 243), rgb(29, 133, 218));
+  background: linear-gradient(135deg, rgb(0, 0, 0), rgb(0, 3, 5));
   border-radius: 4px 4px 0 0;
   transition: all 0.3s ease;
   cursor: pointer;
@@ -1237,7 +1237,7 @@
 
 .chart-bar:hover,
 .chart-bar.interactive:hover {
-  background: linear-gradient(135deg, rgb(29, 133, 218), rgb(26, 118, 193));
+  background: linear-gradient(135deg, rgb(0, 2, 3), rgb(0, 0, 0));
   transform: translateY(-2px);
 }
 
