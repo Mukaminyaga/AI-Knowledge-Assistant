@@ -329,7 +329,7 @@ def recent_activity(db: Session = Depends(get_db), current_user: User = Depends(
     # if current_user.role.lower() != "admin":
     #     query = query.filter(Document.user_id == current_user.id)  # if user_id exists
 
-    docs = query.order_by(Document.upload_time.desc()).limit(5).all()
+    docs = query.order_by(Document.upload_time.desc()).limit(3).all()
 
     return [
         {

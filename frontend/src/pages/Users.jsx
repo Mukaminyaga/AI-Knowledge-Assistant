@@ -401,6 +401,9 @@ const Users = () => {
                   <p>
                     <strong>Email:</strong> {selectedUser?.email}
                   </p>
+                  <p>
+                    <strong>Role:</strong> {selectedUser?.role}
+                  </p>
                 </div>
 
                 <div className="role-permissions-section">

@@ -167,7 +167,7 @@
   align-items: center;
   gap: 16px;
   transition: all 0.3s ease;
-  border: 1px solid rgba(240, 242, 245, 0.8);
+  /* border: 1px solid rgba(240, 242, 245, 0.8); */
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
   position: relative;
   overflow: hidden 1;
@@ -183,11 +183,11 @@
   transition: all 0.3s ease;
 }
 
-.user-stat-card.primary::before {
+/* .user-stat-card.primary::before {
   background: var(--primary-color);
-}
+} */
 
-.user-stat-card.success::before {
+/* .user-stat-card.success::before {
   background: #22c55e;
 }
 
@@ -197,7 +197,7 @@
 
 .user-stat-card.info::before {
   background: #3b82f6;
-}
+} */
 
 .user-stat-card:hover {
   transform: translateY(-4px);
@@ -217,13 +217,13 @@
   border-radius: 12px;
   flex-shrink: 0;
 }
-
+/* 
 .user-stat-card.primary .stat-icon {
   background: rgba(11, 58, 96, 0.1);
   color: var(--primary-color);
-}
+} */
 
-.user-stat-card.success .stat-icon {
+/* .user-stat-card.success .stat-icon {
   background: rgba(34, 197, 94, 0.1);
   color: #22c55e;
 }
@@ -236,7 +236,7 @@
 .user-stat-card.info .stat-icon {
   background: rgba(59, 130, 246, 0.1);
   color: #3b82f6;
-}
+} */
 
 .user-stat-card .stat-content {
   flex: 1;
@@ -245,7 +245,7 @@
 .user-stat-card .stat-number {
   font-size: 24px;
   font-weight: 700;
-  color: var(--black);
+  color: var(--black) !important;
   margin: 0 0 4px 0;
   font-family: var(--font-work-sans);
 }
@@ -834,13 +834,14 @@
 .user-info-section {
   margin-bottom: 24px;
   padding: 16px;
-  background: linear-gradient(
+  /* background: linear-gradient(
     135deg,
     rgba(59, 130, 246, 0.05) 0%,
     rgba(59, 130, 246, 0.02) 100%
-  );
+  ); */
   border-radius: 12px;
   border: 1px solid rgba(59, 130, 246, 0.1);
+  
 }
 
 .user-info-section h4 {
@@ -859,6 +860,7 @@
 }
 
 .role-permissions-section {
+
   margin-bottom: 24px;
 }
 
@@ -884,18 +886,18 @@
 }
 
 .permission-item.admin {
-  border-color: rgba(34, 197, 94, 0.3);
   background: var(--white);
+  border: 2px solid rgba(240, 242, 245, 1);
 }
 
 .permission-item.editor {
-  border-color: rgba(59, 130, 246, 0.3);
-  background: var(--white);
+ border: 2px solid rgba(240, 242, 245, 1);
+   background: var(--white);
 }
 
 .permission-item.viewer {
-  border-color: rgba(245, 158, 11, 0.3);
-  background: var(--white);
+ border: 2px solid rgba(240, 242, 245, 1);
+   background: var(--white);
 }
 
 .permission-item h5 {
@@ -906,15 +908,15 @@
 }
 
 .permission-item.admin h5 {
-  color: #16a34a;
+  color: #000;
 }
 
 .permission-item.editor h5 {
-  color: #2563eb;
+  color: #000;
 }
 
 .permission-item.viewer h5 {
-  color: #d97706;
+  color: #000;
 }
 
 .permission-item ul {
@@ -965,13 +967,13 @@
 }
 
 .role-option:hover {
-  border-color: #3b82f6;
-  background-color: rgba(59, 130, 246, 0.05);
+  border-color: #020407;
+  /* background-color: rgba(59, 130, 246, 0.05); */
 }
 
 .role-option input[type="radio"] {
   margin: 0;
-  accent-color: #3b82f6;
+  accent-color: #010407;
   outline: none;
   border: none;
 }
@@ -983,13 +985,13 @@
 }
 
 .role-option input[type="radio"]:checked + .role-label {
-  color: #3b82f6;
+  color: #020408;
   font-weight: 600;
 }
 
 .role-option:has(input:checked) {
-  border-color: #3b82f6;
-  background-color: rgba(59, 130, 246, 0.1);
+  border-color: #02050a;
+  /* background-color: rgba(59, 130, 246, 0.1); */
 }
 
 .role-label {
@@ -1039,12 +1041,12 @@
 }
 
 .save-btn {
-  background-color: #3b82f6;
+  background-color: #03060c;
   color: var(--white);
 }
 
 .save-btn:hover {
-  background-color: #2563eb;
+  background-color: #040b1a;
 }
 
 @keyframes fadeIn {
