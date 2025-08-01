@@ -1,9 +1,9 @@
 /* Common styles and CSS variables */
 :root {
-   --primary-color: rgba(0, 0, 0, 1);             
-  --primary-dark: rgba(18, 20, 23, 1);  
-  /* --primary-color: rgba(33, 33, 36, 1);       
---primary-dark: rgba(18, 20, 23, 1);         */
+   /* --primary-color: rgba(0, 0, 0, 1);             
+  --primary-dark: rgba(18, 20, 23, 1);   */
+  --primary-color: rgba(33, 33, 36, 1);       
+--primary-dark: rgba(18, 20, 23, 1);        
 
   --white: rgba(255, 255, 255, 1);
   --black: rgba(0, 0, 0, 1);

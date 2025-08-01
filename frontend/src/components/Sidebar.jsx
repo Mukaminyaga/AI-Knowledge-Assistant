@@ -11,6 +11,8 @@ import {
   FiSettings,
   FiLogOut,
   FiActivity,
+  FiChevronDown,
+  FiChevronUp,
 } from "react-icons/fi";
 import { logout } from "../utils/auth";
 
@@ -18,6 +20,7 @@ function Sidebar({ isOpen = false, onClose, isMobile = false }) {
   const location = useLocation();
   const navigate = useNavigate();
   const [isCollapsed, setIsCollapsed] = useState(false);
+  const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
 
   const toggleSidebar = () => {
     if (isMobile && onClose) {
@@ -26,15 +29,22 @@ function Sidebar({ isOpen = false, onClose, isMobile = false }) {
       setIsCollapsed(!isCollapsed);
     }
   };
+  
   const handleLinkClick = () => {
     if (isMobile && onClose) {
       onClose();
     }
   };
+  
   const handleLogout = () => {
     logout();
     navigate("/login");
   };
+  
+  const toggleProfileDropdown = () => {
+    setProfileDropdownOpen(!profileDropdownOpen);
+  };
+  
   // Get the user data from localStorage
   const user = JSON.parse(localStorage.getItem("user"));
 
@@ -60,14 +70,62 @@ function Sidebar({ isOpen = false, onClose, isMobile = false }) {
     <div
       className={`sidebar-container ${isCollapsed && !isMobile ? "collapsed" : ""} ${isMobile && isOpen ? "mobile-open" : ""}`}
     >
+      {/* Profile Dropdown at Top */}
+      {/* <div className="sidebar-top-profile">
+        <div 
+          className={`profile-dropdown-trigger ${profileDropdownOpen ? 'active' : ''}`}
+          onClick={toggleProfileDropdown}
+        >
+          <div className="profile-avatar-sidebar">
+            <FiUser size={16} />
+          </div>
+          {!isCollapsed && (
+            <>
+              <div className="profile-info">
+                <span className="profile-name">
+                  {user?.first_name
+                    ? `${user.first_name} ${user.last_name?.charAt(0) || ''}.`
+                    : "John D."}
+                </span>
+                <span className="profile-role">Member</span>
+              </div>
+              <div className="dropdown-arrow">
+                {profileDropdownOpen ? <FiChevronUp size={16} /> : <FiChevronDown size={16} />}
+              </div>
+            </>
+          )}
+        </div>
+        
+        {profileDropdownOpen && !isCollapsed && (
+          <div className="profile-dropdown-menu">
+            <div className="dropdown-item">
+              <div className="user-details">
+                <strong>{user?.first_name || 'User'} {user?.last_name || ''}</strong>
+                <span>{user?.email || 'user@example.com'}</span>
+              </div>
+            </div>
+            <div className="dropdown-divider"></div>
+            <div className="dropdown-item clickable">
+              <FiUser size={14} />
+              <span>View Profile</span>
+            </div>
+            <div className="dropdown-item clickable">
+              <FiSettings size={14} />
+              <span>Account Settings</span>
+            </div>
+          </div>
+        )}
+      </div> */}
+
       <div className="sidebar-header">
         <div className="brand-section">
           {!isCollapsed ? (
             <div className="brand-text">
-              <h3 className="brand-title">AI Assistant</h3>
-              <div className="brand-subtitle-container">
-                <p className="brand-subtitle">Knowledge Hub</p>
-                <button
+              <div className="brand-subtitle-container ">
+ <img src="/icons/vala ai logo black.png" alt="Vala AI Logo" className="brand-logo" />
+              <h3 className="brand-title">Vala AI</h3>  
+              </div>
+                {/* <button
                   className="toggle-button"
                   onClick={toggleSidebar}
                   aria-label={
@@ -79,9 +137,9 @@ function Sidebar({ isOpen = false, onClose, isMobile = false }) {
                   }
                 >
                   {isMobile ? "✕" : "←"}
-                </button>
+                </button> */}
               </div>
-            </div>
+          
           ) : (
             <button
               className="toggle-button collapsed-only"
@@ -114,32 +172,20 @@ function Sidebar({ isOpen = false, onClose, isMobile = false }) {
         </ul>
       </nav>
 
+      {/* Logout Button at Bottom */}
       <div className="sidebar-footer">
-        <div className="user-profile">
-          <div className="user-avatar1">
-            <FiUser size={20} />
-          </div>
+        <button
+          className="logout-button-bottom"
+          onClick={handleLogout}
+          title={isCollapsed && !isMobile ? "Logout" : ""}
+        >
+          <span className="nav-icon">
+            <FiLogOut size={20} />
+          </span>
           {!isCollapsed && (
-            <div className="user-info">
-              <p className="user-name">
-                {user?.first_name
-                  ? `${user.first_name}.${user.last_name?.charAt(0).toUpperCase() || ""}`
-                  : "John.D"}
-              </p>
-
-              <p className="user-email">{user?.email || "john@example.com"}</p>
-            </div>
+            <span className="nav-label">Logout</span>
           )}
-          {!isCollapsed && (
-            <div className="profile-actions">
-              <FiLogOut
-                className="logout-icon"
-                title="Logout"
-                onClick={handleLogout}
-              />
-            </div>
-          )}
-        </div>
+        </button>
 
         {!isCollapsed && (
           <div className="help-section">

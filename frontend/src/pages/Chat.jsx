@@ -1,19 +1,47 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { FiSend, FiPlus, FiTrash2 } from "react-icons/fi";
+import {
+  FiSend,
+  FiPlus,
+  FiTrash2,
+  FiChevronDown,
+  FiChevronUp,
+  FiSearch,
+  FiSun,
+  FiUser,
+  FiPaperclip,
+  FiArrowUp,
+  FiTrendingUp,
+  FiSettings,
+  FiClock,
+  FiCopy,
+  FiThumbsUp,
+  FiThumbsDown,
+  FiBookmark
+} from "react-icons/fi";
 import DashboardLayout from "../components/DashboardLayout";
+import ChatHistory from "../components/ChatHistory";
 import "../styles/Chat.css";
+import { Link } from "react-router-dom";
+
+
+
+
 
 
 function Chat() {
   const user = JSON.parse(localStorage.getItem("user"));
   const userId = user?.email || "guest";
-
+  const [isCollapsed, setIsCollapsed] = useState(false);
+  const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
   const [inputValue, setInputValue] = useState("");
   const [chatHistory, setChatHistory] = useState([]);
   const [loading, setLoading] = useState(false);
   const [chatSessions, setChatSessions] = useState([]);
   const [currentSessionId, setCurrentSessionId] = useState(null);
+  const [isHistoryOpen, setIsHistoryOpen] = useState(false);
+  const [messageActions, setMessageActions] = useState({});
+
 
   useEffect(() => {
     const savedSessions = JSON.parse(localStorage.getItem(`chat_sessions_${userId}`)) || [];
@@ -49,48 +77,45 @@ function Chat() {
 
   const startNewChat = () => {
     const newId = `chat_${Date.now()}`;
-    const welcomeMessage = [
-      {
-        role: "assistant",
-        text: "Hello! I'm your Knowledge Assistant AI. How can I help you today?",
-        results: [],
-      },
-    ];
-    setChatHistory(welcomeMessage);
+    setChatHistory([]);
     setCurrentSessionId(newId);
     setInputValue("");
   };
 
   const handleSend = async (userQuery) => {
     if (!userQuery.trim()) return;
-       const normalizedQuery = userQuery.trim().toLowerCase();
+    const normalizedQuery = userQuery.trim().toLowerCase();
     const newChat = [...chatHistory, { role: "user", text: userQuery }];
     setChatHistory(newChat);
     setInputValue("");
 
-  const greetings = ["hello", "hi", "h", "goodmorning", "good morning", "hey"];
-  if (greetings.includes(normalizedQuery)) {
-    const assistantMessage = {
-      role: "assistant",
-      text: "Hello! I'm your Knowledge Assistant AI. How can I help you today?",
-      results: [],
-    };}
-
-try {
-  setLoading(true);
-  
-  const response = await axios.post(
-    `${process.env.REACT_APP_API_URL}/search/search`,
-    {
-      query: userQuery,
-      top_k: 3,
-    },
-    {
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem("token")}`,
-      },
+    const greetings = ["hello", "hi", "h", "goodmorning", "good morning", "hey"];
+    if (greetings.includes(normalizedQuery)) {
+      const assistantMessage = {
+        role: "assistant",
+        text: "Hello! I'm your Knowledge Assistant AI. How can I help you today?",
+        results: [],
+      };
+      const updatedChat = [...newChat, assistantMessage];
+      setChatHistory(updatedChat);
+      return;
     }
-  );
+
+    try {
+      setLoading(true);
+
+      const response = await axios.post(
+        `${process.env.REACT_APP_API_URL}/search/search`,
+        {
+          query: userQuery,
+          top_k: 3,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
 
       const assistantMessage = {
         role: "assistant",
@@ -160,96 +185,236 @@ try {
       startNewChat();
     }
   };
+   const toggleProfileDropdown = () => {
+    setProfileDropdownOpen(!profileDropdownOpen);
+  };
+
+  const openHistory = () => {
+    setIsHistoryOpen(true);
+  };
+
+  const closeHistory = () => {
+    setIsHistoryOpen(false);
+  };
+
+  const handleMessageAction = (messageIndex, action) => {
+    setMessageActions(prev => ({
+      ...prev,
+      [messageIndex]: {
+        ...prev[messageIndex],
+        [action]: !prev[messageIndex]?.[action]
+      }
+    }));
+  };
+
+  const copyToClipboard = async (text) => {
+    try {
+      await navigator.clipboard.writeText(text);
+      // You could add a toast notification here
+    } catch (err) {
+      console.error('Failed to copy text: ', err);
+    }
+  };
 
   return (
     <DashboardLayout>
-      <div className="chat-page1">
-        <div className="chat-sidebar">
-          <div className="sidebar-header">
-            <button className="new-chat-button" onClick={startNewChat}>
-              <FiPlus size={18} /> New Chat
-            </button>
+      <div className="new-chat-container">
+        {/* Compact Header */}
+        <div className="chat-compact-header">
+          <div className="search-wrapper">
+            <FiSearch className="search-icon" />
+            <input
+              type="text"
+              placeholder="Search..."
+              className="compact-search-input"
+            />
           </div>
+          <div className="header-controls">
+            <button className="control-btn" onClick={openHistory}>
+              <FiClock size={18} />
+              <span>History</span>
+            </button>
+            <button className="control-btn theme-btn">
+              <FiSun size={18} />
+            </button>
+             <div className="sidebar-top-profile">
+                    <div
+                      className={`profile-dropdown-trigger ${profileDropdownOpen ? 'active' : ''}`}
+                      onClick={toggleProfileDropdown}
+                    >
+                      <div className="profile-avatar-sidebar">
+                        <FiUser size={16} />
+                      </div>
+                      {!isCollapsed && (
+                        <>
+                          <div className="profile-info">
+                            <span className="profile-name">
+                              {user?.first_name
+                                ? `${user.first_name} ${user.last_name?.charAt(0) || ''}.`
+                                : "John D."}
+                            </span>
+                            {/* <span className="profile-role">Member</span> */}
+                          </div>
+                          <div className="dropdown-arrow">
+                            {profileDropdownOpen ? <FiChevronUp size={16} /> : <FiChevronDown size={16} />}
+                          </div>
+                        </>
+                      )}
+                    </div>
 
-          <h3>CHATS</h3>
-          {chatSessions.length > 0 ? (
-            chatSessions.map((session) => (
-              <div
-                key={session.id}
-                className={`chat-sidebar-item ${session.id === currentSessionId ? "active" : ""}`}
-                title={`Last updated: ${new Date(session.timestamp).toLocaleString()}`}
-              >
-                <span className="chat-title" onClick={() => handleSelectChat(session.id)}>
-                  {session.title}
-                </span>
-                <FiTrash2
-                  className="chat-delete-icon"
-                  title="Delete chat"
-                  onClick={() => handleDeleteChat(session.id)}
-                />
-              </div>
-            ))
-          ) : (
-            <div className="chat-sidebar-item no-recent">No conversations yet</div>
-          )}
+                    {profileDropdownOpen && !isCollapsed && (
+                      <div className="profile-dropdown-menu">
+                        <div className="dropdown-item">
+                          <div className="user-details">
+                            {/* <strong>{user?.first_name || 'User'} {user?.last_name || ''}</strong> */}
+                            <span>{user?.email || 'user@example.com'}</span>
+                          </div>
+                        </div>
+                        <div className="dropdown-divider"></div>
+                        <div className="dropdown-item clickable">
+                          <FiUser size={14} />
+                          <Link to="/settings" className="dropdown-link">
+                          <span>View Profile</span>
+                          </Link>
+                        </div>
+                        <div className="dropdown-item clickable">
+                          <FiSettings size={14} />
+                                                    <Link to="/settings" className="dropdown-link">
+
+                          <span>Account Settings</span>
+                          </Link>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+          </div>
         </div>
 
-        <div className="chat-main">
-          <div className="chat-header">
-            <h2> Live AI Conversation</h2>
-          </div>
-
-          <div className="chat-messages">
-            {chatHistory.map((msg, idx) => (
-              <div key={idx} className={`chat-message ${msg.role}-message`}>
-                <div className="message-role">{msg.role === "user" ? "YOU" : "AI ASSISTANT"}</div>
-                <div className="message-content">
-                  <div className="message-text">{msg.text}</div>
-                  {msg.results?.length > 0 && (
-                    <div className="message-results">
-                      <ul>
-                        {msg.results.map((res, i) => (
-                          <li key={i} className="result-item">
-                            <span className="result-bullet"></span> {res.chunk_text}
-                          </li>
-                        ))}
-                      </ul>
+        {/* Main Content Area */}
+        <div className="chat-content-area">
+          {chatHistory.length === 0 ? (
+            <div className="welcome-area">
+              <div className="welcome-content">
+                <img
+                  src="https://api.builder.io/api/v1/image/assets/TEMP/6a96318cde428ff3923086fb78ab6a189e119652?width=143"
+                  alt="Vala AI Logo"
+                  className="vala-avatar"
+                />
+                <h2>Hi, I'm Vala.</h2>
+                <p>How can I help you today?</p>
+              </div>
+            </div>
+          ) : (
+            <div className="messages-area">
+              {chatHistory.map((msg, idx) => (
+                <div key={idx} className={`message ${msg.role}-msg`}>
+                  <div className="message-header">{msg.role === "user" ? "YOU" : "AI ASSISTANT"}</div>
+                  {msg.role === "user" ? (
+                    <div className="message-body">
+                      <div className="message-text">{msg.text}</div>
+                    </div>
+                  ) : (
+                    <div className="assistant-message-content">
+                      <div className="message-text">{msg.text}</div>
+                      {msg.results?.length > 0 && (
+                        <div className="message-sources">
+                          <ul>
+                            {msg.results.map((res, i) => (
+                              <li key={i} className="source-item">
+                                <span className="source-bullet"></span> {res.chunk_text}
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
+                      <div className="message-actions">
+                        <button
+                          className="message-action-btn"
+                          onClick={() => copyToClipboard(msg.text)}
+                          title="Copy message"
+                        >
+                          <FiCopy />
+                        </button>
+                        <button
+                          className={`message-action-btn ${messageActions[idx]?.liked ? 'liked' : ''}`}
+                          onClick={() => handleMessageAction(idx, 'liked')}
+                          title="Like message"
+                        >
+                          <FiThumbsUp />
+                        </button>
+                        <button
+                          className={`message-action-btn ${messageActions[idx]?.disliked ? 'disliked' : ''}`}
+                          onClick={() => handleMessageAction(idx, 'disliked')}
+                          title="Dislike message"
+                        >
+                          <FiThumbsDown />
+                        </button>
+                        <button
+                          className={`message-action-btn ${messageActions[idx]?.bookmarked ? 'bookmarked' : ''}`}
+                          onClick={() => handleMessageAction(idx, 'bookmarked')}
+                          title="Bookmark message"
+                        >
+                          <FiBookmark />
+                        </button>
+                      </div>
                     </div>
                   )}
                 </div>
-              </div>
-            ))}
-            {loading && (
-              <div className="chat-message assistant-message">
-                <div className="message-role">AI ASSISTANT</div>
-                <div className="message-content">
-                  <div className="typing-indicator">
-                    <span></span><span></span><span></span>
+              ))}
+              {loading && (
+                <div className="message assistant-msg">
+                  <div className="message-header">AI ASSISTANT</div>
+                  <div className="assistant-message-content">
+                    <div className="typing-dots">
+                      <span></span><span></span><span></span>
+                    </div>
                   </div>
                 </div>
-              </div>
-            )}
-          </div>
+              )}
+            </div>
+          )}
 
-          <form className="chat-input-area" onSubmit={handleSubmit}>
-            <input
-              type="text"
-              placeholder="Ask me anything ..."
-              value={inputValue}
-              onChange={(e) => setInputValue(e.target.value)}
-              className="chat-input"
-            />
-            <button
-              type="submit"
-              className="chat-send-button"
-              disabled={loading || !inputValue.trim()}
-              title="Send message"
-            >
-              <FiSend size={20} />
-            </button>
-          </form>
+          {/* Compact Input Area */}
+          <div className="input-area">
+            <form className="input-form" onSubmit={handleSubmit}>
+              <div className="input-wrapper">
+                <input
+                  type="text"
+                  placeholder="What do you want to know?"
+                  value={inputValue}
+                  onChange={(e) => setInputValue(e.target.value)}
+                  className="chat-input"
+
+                />
+
+                <div className="input-controls">
+                  <button type="button" className="attach-btn">
+                    <FiPaperclip size={18} />
+                  </button>
+                  <div className="deepsearch-pill">
+                    <FiTrendingUp size={16} />
+                    <span>DeepSearch</span>
+                  </div>
+                  <button
+                    type="submit"
+                    className="send-button"
+                    disabled={loading || !inputValue.trim()}
+                  >
+                    <FiArrowUp size={18} />
+                  </button>
+                </div>
+              </div>
+            </form>
+          </div>
         </div>
       </div>
+
+      <ChatHistory
+        isOpen={isHistoryOpen}
+        onClose={closeHistory}
+        chatSessions={chatSessions}
+        onSelectSession={handleSelectChat}
+      />
     </DashboardLayout>
   );
 }

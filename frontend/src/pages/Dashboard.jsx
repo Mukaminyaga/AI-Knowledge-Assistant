@@ -90,7 +90,7 @@ function Dashboard() {
     <DashboardLayout>
       <div
         className="overview-page"
-        style={{ maxWidth: "1400px", margin: "0 auto", padding: "40px" }}
+        style={{ padding: "2.5rem" }}
       >
         <div className="page-header">
           <div className="page-header-content">

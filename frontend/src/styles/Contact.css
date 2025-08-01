@@ -240,7 +240,7 @@
 
 .office-hours-title {
   font-family: Inter, -apple-system, Roboto, Helvetica, sans-serif;
-  font-size: 1.75rem;
+  font-size: 1.55rem;
   font-weight: 700;
   color: #2E2E2D;
   margin: 0 0 clamp(0.5rem, 1vw, 1rem) 0;
@@ -262,7 +262,7 @@
 
 .connect-title {
   font-family: Inter, -apple-system, Roboto, Helvetica, sans-serif;
-  font-size: 1.75rem;
+  font-size: 1.55rem;
   font-weight: 700;
   color: #2E2E2D;
   margin: 0 0 clamp(0.5rem, 1vw, 1rem) 0;
