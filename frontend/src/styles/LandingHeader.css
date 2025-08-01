@@ -24,6 +24,7 @@
 
 .landing-logo-link {
   display: flex;
+  border: none !important;
   align-items: center;
   text-decoration: none;
   gap: 0.75rem;
@@ -52,7 +53,8 @@
 
 .landing-nav-link {
   font-family: Inter, -apple-system, Roboto, Helvetica, sans-serif;
-  font-size: 1.1rem;
+  font-size: 1.13rem;
+
   font-weight: 500;
   color: #32137F;
   text-decoration: none;
@@ -72,12 +74,12 @@
 }
 
 .landing-login-btn {
-  padding: 0.5rem 1rem;
+  padding: 0.7rem 1.2rem;
   border-radius: 0.5rem;
   background: #FCFCFC;
   color: #32137F;
   font-family: Inter, -apple-system, Roboto, Helvetica, sans-serif;
-  font-size: 0.875rem;
+  font-size: 0.885rem;
   font-weight: 500;
   text-decoration: none;
   display: flex;
@@ -93,12 +95,12 @@
 }
 
 .landing-demo-btn {
-  padding: 0.5rem 1.25rem;
+  padding: 0.72rem 1.25rem;
   border-radius: 0.5rem;
   background: #32137F;
   color: #FCFCFC;
   font-family: Inter, -apple-system, Roboto, Helvetica, sans-serif;
-  font-size: 0.875rem;
+  font-size: 0.885rem;
   font-weight: 500;
   text-decoration: none;
   display: flex;

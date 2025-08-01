@@ -93,7 +93,7 @@ function Chat() {
     if (greetings.includes(normalizedQuery)) {
       const assistantMessage = {
         role: "assistant",
-        text: "Hello! I'm your Knowledge Assistant AI. How can I help you today?",
+        text: "Hello! I'm your Knowledge Assistant. How can I help you today?",
         results: [],
       };
       const updatedChat = [...newChat, assistantMessage];

@@ -17,6 +17,8 @@ import "../styles/SuperAdmin.css";
 const API_URL = process.env.REACT_APP_API_URL;
 
 function Dashboard() {
+  const user = JSON.parse(localStorage.getItem("user"));
+
   const [stats, setStats] = useState({
     total: 0,
     processed: 0,
@@ -96,7 +98,9 @@ function Dashboard() {
           <div className="page-header-content">
             <h1 className="page-title">Dashboard</h1>
             <p className="page-subtitle">
-              Welcome back! Here's what's happening with your knowledge base
+              Welcome,{user.first_name}
+                            <br></br>
+             Here's what's happening with your knowledge base
             </p>
           </div>
           <div className="page-header-actions">

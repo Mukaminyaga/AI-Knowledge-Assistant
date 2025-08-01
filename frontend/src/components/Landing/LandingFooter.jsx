@@ -27,7 +27,9 @@ function LandingFooter() {
             <div className="footer-link-group">
               <h4 className="footer-link-title">Company</h4>
               <ul className="footer-link-list">
-                <li><Link to="/about" className="footer-link">About</Link></li>
+<a href="https://www.goodpartnerske.org" target="_blank" rel="noopener noreferrer" className="footer-link">
+  About
+</a>
                 <li><span className="footer-link">Domains</span></li>
                 <li><Link to="/contact" className="footer-link">Contact Us</Link></li>
               </ul>

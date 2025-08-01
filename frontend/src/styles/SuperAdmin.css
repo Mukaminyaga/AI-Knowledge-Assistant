@@ -13,11 +13,16 @@
   align-items: center;
   justify-content: space-between;
   margin-bottom: 32px;
+   background-color:white ;
+   width: auto;
+   height: 110px;
+   border-radius: 15px;
 }
 
 .page-header-content {
   flex: 1;
   margin-left: 15px !important;
+ 
 }
 
 .page-title {

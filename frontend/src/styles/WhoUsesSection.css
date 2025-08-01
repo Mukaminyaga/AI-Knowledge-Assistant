@@ -1,7 +1,7 @@
 /* Who Uses Section Styles */
 .who-uses-section {
   background: rgba(252, 252, 252, 0.65);
-  padding: 5rem 0;
+  /* padding: 5rem 0; */
 }
 
 .who-uses-container {
@@ -16,7 +16,8 @@
   font-weight: 700;
   color: #080808;
   text-align: center;
-  margin: 0 0 3rem 0;
+  /* margin: 0 0 3rem 0; */
+  margin-bottom: 2rem !important;
 }
 
 /* Organization Types Grid */

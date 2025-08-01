@@ -181,7 +181,7 @@
 }
 
 .user-msg .message-body {
-  background: #d3d1d1;
+  background: #9CA3AF;
   color: white;
   border-bottom-right-radius: 4px;
 }
@@ -317,11 +317,11 @@
 .input-area {
   padding: 20px 24px;
   background: #F9FAFB;
-  border-top: 1px solid #E5E7EB;
+  /* border-top: 1px solid #E5E7EB; */
 }
 
 .input-form {
-  max-width: 600px;
+  max-width: auto;
   margin: 0 auto;
 }
 
@@ -336,9 +336,9 @@
 }
 
 .chat-input {
-  border: none;
+  border: none !important;
   background: transparent;
-  font-size: 16px;
+  font-size: 18px;
   color: #111827;
   outline: none;
   width: 100%;
@@ -348,12 +348,14 @@
 
 .chat-input::placeholder {
   color: #9CA3AF;
+  font-size: 16.5px;
 }
 
 .input-controls {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 5px;
 }
 
 .attach-btn {

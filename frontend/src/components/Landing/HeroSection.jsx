@@ -27,15 +27,16 @@ function HeroSection() {
         <div className="hero-content">
           <div className="hero-text">
             <h1 className="hero-title">
-              Unlock your
-              <span className="hero-title-gradient"> Organization's
+              Unlock your 
+              <span className="hero-title-gradient"> Organization's<br></br>
               Knowledge </span>
               Instantly.
             </h1>
 
             <p className="hero-description">
-              Empower your teams with fast, secure, and
-              AI-powered access to critical organization knowledge when and where they need it.
+              Empower your teams with fast, secure, and <br></br>
+              AI-powered access to critical organization<br></br>
+              knowledge when and where they need it.
             </p>
 
             <div className="hero-buttons">
@@ -49,14 +50,18 @@ function HeroSection() {
                 Login
               </Link>
             </div>
+            
           </div>
 
-          <div className="hero-image">
+          
+    <div className="hero-image">
             <img
-src="/icons/Rectangle 7667.png"              alt="AI Knowledge Management Platform"
+src="/icons/Rectangle 7667.png"     
+         alt="AI Knowledge Management Platform"
               className="hero-main-image"
             />
           </div>
+          
         </div>
       </div>
     </section>

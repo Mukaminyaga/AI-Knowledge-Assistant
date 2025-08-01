@@ -1,10 +1,9 @@
 /* Common styles and CSS variables */
 :root {
-   /* --primary-color: rgba(0, 0, 0, 1);             
+   /* --primary-color: rgba(0, 0, 0, 1);   91 33 182          
   --primary-dark: rgba(18, 20, 23, 1);   */
   --primary-color: rgba(33, 33, 36, 1);       
---primary-dark: rgba(18, 20, 23, 1);        
-
+--primary-dark: rgba(18, 20, 23, 1);  
   --white: rgba(255, 255, 255, 1);
   --black: rgba(0, 0, 0, 1);
   --text-dark: rgba(18, 20, 23, 1);
@@ -189,11 +188,11 @@ body {
 .form-textarea {
   border: none;
   border-radius: 12px;
-  border: 1px solid var(--border-light);
+  border: 1px solid var(--black) !important;
   padding: 12px 16px;
   font-size: 16px;
   font-family: var(--font-work-sans);
-  color: var(--text-dark);
+  color: #333 !important;
   background-color: var(--white);
   transition: border-color 0.2s ease;
 }
@@ -201,13 +200,14 @@ body {
 .form-input:focus,
 .form-textarea:focus {
   outline: none;
-  border-color: var(--primary-color);
-  box-shadow: 0 0 0 2px rgba(11, 58, 96, 0.1);
+  border-color: none !important;
+  /* border-color: var(--primary-color); */
+  /* box-shadow: 0 0 0 2px rgba(11, 58, 96, 0.1); */
 }
 
 .form-input::placeholder,
 .form-textarea::placeholder {
-  color: var(--text-light-gray);
+  color: none !important;
 }
 
 .form-textarea {

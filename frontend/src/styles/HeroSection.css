@@ -75,7 +75,7 @@
 
 .hero-description {
   font-family: Poppins, -apple-system, Roboto, Helvetica, sans-serif;
-  font-size: 1.125rem;
+  font-size: 1.225rem;
   font-weight: 400;
   color: #4a5568;
   line-height: 1.6;
@@ -236,6 +236,7 @@
     font-size: 0.95rem;
   }
 }
+
 
 @media (max-width: 768px) {
   .hero-section {

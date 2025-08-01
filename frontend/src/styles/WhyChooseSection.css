@@ -1,7 +1,7 @@
 /* Why Choose Section Styles */
 .why-choose-section {
   background: rgba(252, 252, 252, 0.65);
-  padding: 5rem 0;
+  padding: 3rem 0;
 }
 
 .why-choose-container {
@@ -17,6 +17,7 @@
   color: #080808;
   text-align: center;
   margin: 0 0 3rem 0;
+  margin-bottom: 3rem;
 }
 
 /* Benefits List */
