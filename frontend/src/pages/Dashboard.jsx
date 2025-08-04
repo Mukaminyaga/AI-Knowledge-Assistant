@@ -6,6 +6,8 @@ import {
   FiUpload,
   FiTrendingUp,
   FiCheck,
+  FiDatabase,
+  FiFile,
   // FiFileText,
 } from "react-icons/fi";
 import { MdPersonAdd } from "react-icons/md";
@@ -18,7 +20,8 @@ const API_URL = process.env.REACT_APP_API_URL;
 
 function Dashboard() {
   const user = JSON.parse(localStorage.getItem("user"));
-
+   const [documents, setDocuments] = useState([]);
+  
   const [stats, setStats] = useState({
     total: 0,
     processed: 0,
@@ -41,6 +44,25 @@ function Dashboard() {
       console.error("Fetch users error:", err);
     }
   };
+
+   const fetchDocuments = async () => {
+      console.log("Fetching documents...");
+      try {
+        const res = await axios.get(
+          `${process.env.REACT_APP_API_URL}/documents/`,
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+          },
+        );
+        setDocuments(res.data);
+         } catch (error) {
+              console.error("Error loading documents");
+         }
+          };
+           
+              
 
   const fetchRecentActivity = async () => {
     try {
@@ -79,12 +101,14 @@ function Dashboard() {
     const token = localStorage.getItem("token");
     const headers = { Authorization: `Bearer ${token}` };
 
+
     axios
       .get(`${API_URL}/documents/stats`, { headers })
       .then((res) => setStats(res.data))
       .catch(console.error);
 
     fetchUsers();
+    fetchDocuments();
     fetchRecentActivity();
   }, []);
 
@@ -94,10 +118,10 @@ function Dashboard() {
         className="overview-page"
         style={{ padding: "2.5rem" }}
       >
-        <div className="page-header">
+        <div className="page-header1">
           <div className="page-header-content">
-            <h1 className="page-title">Dashboard</h1>
-            <p className="page-subtitle">
+            <h1 className="page-title1">Dashboard</h1>
+            <p className="page-subtitle1">
               Welcome,{user.first_name}
                             <br></br>
              Here's what's happening with your knowledge base
@@ -134,10 +158,26 @@ function Dashboard() {
             </div>
           </div>
 
+           <div className="metric-card">
+            <div className="metric-icon">
+              <FiDatabase />
+            </div>
+            <div className="metric-content">
+              <div className="metric-value">  {(
+                documents.reduce((total, doc) => total + (doc.size || 0), 0) /
+                (1024 * 1024)
+              ).toFixed(1)}{" "}
+              MB</div>
+              <div className="metric-label">Document Size Used</div>
+            </div>
+          </div>
+          
+
           <div className="metric-card">
             <div className="metric-icon">
               <FiTrendingUp />
             </div>
+
             <div className="metric-content">
               <div className="metric-value">95%</div>
               <div className="metric-label">Accuracy Rate</div>
@@ -336,13 +376,17 @@ function Dashboard() {
                           ? "rgba(220,38,38,0.1)"
                           : key === "Processing"
                             ? "rgba(234,179,8,0.1)"
-                            : "rgba(34,197,94,0.1)",
+                            : key === "Total"
+        ? "#f3f4f6" // light gray background
+        : "rgba(34,197,94,0.1)",
                       color:
                         key === "Failed"
                           ? "#DC2626"
                           : key === "Processing"
                             ? "#D97706"
-                            : "#16a34a",
+                            : key === "Total"
+        ? "#000000" // black color
+        : "#16a34a",
                     }}
                   >
                     {value}
@@ -352,15 +396,28 @@ function Dashboard() {
             </div>
           </div>
         </div>
+             {/* <div className="view-all-section">
+            <Link to="/activity" className="view-all-link">
+              View All Document Activity
+            </Link>
+          </div> */}
 
         <div className="recent-tenants-section">
-          <h2 className="section-title">Recent Activity</h2>
+  <div className="recent-header" style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+    <h2 className="section-title" style={{ margin: 0 }}>Recent Activity</h2>
+    <Link to="/activity" className="view-all-link">View All </Link>
+  </div>
+          
           <div className="tenants-list">
+            
             {recent.map((item, i) => (
               <div key={i} className="tenant-card">
                 <div className="tenant-info">
-                  <div className="tenant-name">{item.filename} uploaded</div>
-                  <div className="tenant-email">Status: {item.status}</div>
+                  <div className="tenant-name">
+  <FiFile style={{ marginRight: "6px", verticalAlign: "middle" }} />
+  {item.filename} uploaded
+</div>
+                  {/* <div className="tenant-email">Status: {item.status}</div> */}
                 </div>
 
                 {item.status === "pending" && (
@@ -372,18 +429,38 @@ function Dashboard() {
                     Approve
                   </button>
                 )}
-                <div className="tenant-amount">
+               <div
+  className="tenant-email"
+  style={{
+    padding: "4px 12px",
+    borderRadius: "16px",
+    fontSize: "12px",
+    fontWeight: "600",
+    background:
+      item.status === "Failed"
+        ? "rgba(220,38,38,0.1)"
+        : item.status === "Processing"
+        ? "rgba(234,179,8,0.1)"
+        : "rgba(34,197,94,0.1)",
+    color:
+      item.status === "Failed"
+        ? "#DC2626"
+        : item.status === "Processing"
+        ? "#D97706"
+        : "#16a34a",
+  }}
+>
+   {item.status.charAt(0).toUpperCase() + item.status.slice(1)}
+</div>
+
+                {/* <div className="tenant-amount">
                   {new Date(item.uploaded_at).toLocaleTimeString()}
-                </div>
+                </div> */}
               </div>
             ))}
           </div>
 
-          <div className="view-all-section">
-            <Link to="/activity" className="view-all-link">
-              View All Document Activity
-            </Link>
-          </div>
+         
         </div>
       </div>
     </DashboardLayout>

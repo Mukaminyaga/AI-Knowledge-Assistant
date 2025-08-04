@@ -41,7 +41,16 @@ function Chat() {
   const [currentSessionId, setCurrentSessionId] = useState(null);
   const [isHistoryOpen, setIsHistoryOpen] = useState(false);
   const [messageActions, setMessageActions] = useState({});
+  const [inputPosition, setInputPosition] = useState('center'); // 'center' or 'bottom'
 
+  // Update input position based on chat history
+  useEffect(() => {
+    if (chatHistory.length > 0) {
+      setInputPosition('bottom');
+    } else {
+      setInputPosition('center');
+    }
+  }, [chatHistory]);
 
   useEffect(() => {
     const savedSessions = JSON.parse(localStorage.getItem(`chat_sessions_${userId}`)) || [];
@@ -230,6 +239,10 @@ function Chat() {
             />
           </div>
           <div className="header-controls">
+            <button className="control-btn new-chat-btn" onClick={startNewChat}>
+              <FiPlus size={18} />
+              <span>New Chat</span>
+            </button>
             <button className="control-btn" onClick={openHistory}>
               <FiClock size={18} />
               <span>History</span>
@@ -291,9 +304,9 @@ function Chat() {
         </div>
 
         {/* Main Content Area */}
-        <div className="chat-content-area">
+        <div className={`chat-content-area ${inputPosition}`}>
           {chatHistory.length === 0 ? (
-            <div className="welcome-area">
+            <div className="welcome-container">
               <div className="welcome-content">
                 <img
                   src="https://api.builder.io/api/v1/image/assets/TEMP/6a96318cde428ff3923086fb78ab6a189e119652?width=143"
@@ -303,109 +316,140 @@ function Chat() {
                 <h2>Hi, I'm Vala.</h2>
                 <p>How can I help you today?</p>
               </div>
+
+              {/* Centered Input when no chat history */}
+              <div className="centered-input-area">
+                <form className="input-form" onSubmit={handleSubmit}>
+                  <div className="input-wrapper">
+                    <input
+                      type="text"
+                      placeholder="What do you want to know?"
+                      value={inputValue}
+                      onChange={(e) => setInputValue(e.target.value)}
+                      className="chat-input"
+                    />
+                    <div className="input-controls">
+                      <button type="button" className="attach-btn">
+                        <FiPaperclip size={18} />
+                      </button>
+                      <div className="deepsearch-pill">
+                        <FiTrendingUp size={16} />
+                        <span>DeepSearch</span>
+                      </div>
+                      <button
+                        type="submit"
+                        className="send-button"
+                        disabled={loading || !inputValue.trim()}
+                      >
+                        <FiArrowUp size={18} />
+                      </button>
+                    </div>
+                  </div>
+                </form>
+              </div>
             </div>
           ) : (
-            <div className="messages-area">
-              {chatHistory.map((msg, idx) => (
-                <div key={idx} className={`message ${msg.role}-msg`}>
-                  <div className="message-header">{msg.role === "user" ? "YOU" : "AI ASSISTANT"}</div>
-                  {msg.role === "user" ? (
-                    <div className="message-body">
-                      <div className="message-text">{msg.text}</div>
-                    </div>
-                  ) : (
-                    <div className="assistant-message-content">
-                      <div className="message-text">{msg.text}</div>
-                      {msg.results?.length > 0 && (
-                        <div className="message-sources">
-                          <ul>
-                            {msg.results.map((res, i) => (
-                              <li key={i} className="source-item">
-                                <span className="source-bullet"></span> {res.chunk_text}
-                              </li>
-                            ))}
-                          </ul>
+            <>
+              <div className="messages-area">
+                {chatHistory.map((msg, idx) => (
+                  <div key={idx} className={`message ${msg.role}-msg`}>
+                    <div className="message-header">{msg.role === "user" ? "YOU" : "AI ASSISTANT"}</div>
+                    {msg.role === "user" ? (
+                      <div className="message-body">
+                        <div className="message-text">{msg.text}</div>
+                      </div>
+                    ) : (
+                      <div className="assistant-message-content">
+                        <div className="message-text">{msg.text}</div>
+                        {msg.results?.length > 0 && (
+                          <div className="message-sources">
+                            <ul>
+                              {msg.results.map((res, i) => (
+                                <li key={i} className="source-item">
+                                  <span className="source-bullet"></span> {res.chunk_text}
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+                        )}
+                        <div className="message-actions">
+                          <button
+                            className="message-action-btn"
+                            onClick={() => copyToClipboard(msg.text)}
+                            title="Copy message"
+                          >
+                            <FiCopy />
+                          </button>
+                          <button
+                            className={`message-action-btn ${messageActions[idx]?.liked ? 'liked' : ''}`}
+                            onClick={() => handleMessageAction(idx, 'liked')}
+                            title="Like message"
+                          >
+                            <FiThumbsUp />
+                          </button>
+                          <button
+                            className={`message-action-btn ${messageActions[idx]?.disliked ? 'disliked' : ''}`}
+                            onClick={() => handleMessageAction(idx, 'disliked')}
+                            title="Dislike message"
+                          >
+                            <FiThumbsDown />
+                          </button>
+                          <button
+                            className={`message-action-btn ${messageActions[idx]?.bookmarked ? 'bookmarked' : ''}`}
+                            onClick={() => handleMessageAction(idx, 'bookmarked')}
+                            title="Bookmark message"
+                          >
+                            <FiBookmark />
+                          </button>
                         </div>
-                      )}
-                      <div className="message-actions">
-                        <button
-                          className="message-action-btn"
-                          onClick={() => copyToClipboard(msg.text)}
-                          title="Copy message"
-                        >
-                          <FiCopy />
-                        </button>
-                        <button
-                          className={`message-action-btn ${messageActions[idx]?.liked ? 'liked' : ''}`}
-                          onClick={() => handleMessageAction(idx, 'liked')}
-                          title="Like message"
-                        >
-                          <FiThumbsUp />
-                        </button>
-                        <button
-                          className={`message-action-btn ${messageActions[idx]?.disliked ? 'disliked' : ''}`}
-                          onClick={() => handleMessageAction(idx, 'disliked')}
-                          title="Dislike message"
-                        >
-                          <FiThumbsDown />
-                        </button>
-                        <button
-                          className={`message-action-btn ${messageActions[idx]?.bookmarked ? 'bookmarked' : ''}`}
-                          onClick={() => handleMessageAction(idx, 'bookmarked')}
-                          title="Bookmark message"
-                        >
-                          <FiBookmark />
-                        </button>
+                      </div>
+                    )}
+                  </div>
+                ))}
+                {loading && (
+                  <div className="message assistant-msg">
+                    <div className="message-header">AI ASSISTANT</div>
+                    <div className="assistant-message-content">
+                      <div className="typing-dots">
+                        <span></span><span></span><span></span>
                       </div>
                     </div>
-                  )}
-                </div>
-              ))}
-              {loading && (
-                <div className="message assistant-msg">
-                  <div className="message-header">AI ASSISTANT</div>
-                  <div className="assistant-message-content">
-                    <div className="typing-dots">
-                      <span></span><span></span><span></span>
+                  </div>
+                )}
+              </div>
+
+              {/* Bottom Input Area when chat history exists */}
+              <div className="bottom-input-area">
+                <form className="input-form" onSubmit={handleSubmit}>
+                  <div className="input-wrapper">
+                    <input
+                      type="text"
+                      placeholder="What do you want to know?"
+                      value={inputValue}
+                      onChange={(e) => setInputValue(e.target.value)}
+                      className="chat-input"
+                    />
+                    <div className="input-controls">
+                      <button type="button" className="attach-btn">
+                        <FiPaperclip size={18} />
+                      </button>
+                      <div className="deepsearch-pill">
+                        <FiTrendingUp size={16} />
+                        <span>DeepSearch</span>
+                      </div>
+                      <button
+                        type="submit"
+                        className="send-button"
+                        disabled={loading || !inputValue.trim()}
+                      >
+                        <FiArrowUp size={18} />
+                      </button>
                     </div>
                   </div>
-                </div>
-              )}
-            </div>
-          )}
-
-          {/* Compact Input Area */}
-          <div className="input-area">
-            <form className="input-form" onSubmit={handleSubmit}>
-              <div className="input-wrapper">
-                <input
-                  type="text"
-                  placeholder="What do you want to know?"
-                  value={inputValue}
-                  onChange={(e) => setInputValue(e.target.value)}
-                  className="chat-input"
-
-                />
-
-                <div className="input-controls">
-                  <button type="button" className="attach-btn">
-                    <FiPaperclip size={18} />
-                  </button>
-                  <div className="deepsearch-pill">
-                    <FiTrendingUp size={16} />
-                    <span>DeepSearch</span>
-                  </div>
-                  <button
-                    type="submit"
-                    className="send-button"
-                    disabled={loading || !inputValue.trim()}
-                  >
-                    <FiArrowUp size={18} />
-                  </button>
-                </div>
+                </form>
               </div>
-            </form>
-          </div>
+            </>
+          )}
         </div>
       </div>
 

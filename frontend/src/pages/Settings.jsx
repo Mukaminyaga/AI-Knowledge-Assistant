@@ -71,12 +71,12 @@ function Settings() {
     <DashboardLayout>
         <div className="settings-container">
           <div className="settings-header">
-            <div className="header-top">
+            {/* <div className="header-top">
               <Link to="/dashboard" className="back-button">
                 <FiArrowLeft size={20} />
                 <span>Back to Dashboard</span>
               </Link>
-            </div>
+            </div> */}
             <h1 className="settings-title">Settings</h1>
             <p className="settings-subtitle">
               Manage your account and preferences
@@ -91,13 +91,15 @@ function Settings() {
                 <div className="card-title-section">
                   <FiUser className="card-icon" />
                   <h2 className="card-title">Profile Information</h2>
+                   <div className="form-group">
+                    {/* <label className="form-label">Role</label> */}
+                   
+                  </div>
+                   <div className="form-display role-badge">
+                      {userInfo.role}
+                    </div>
                 </div>
-                {!isEditing && (
-                  <button className="edit-button" onClick={handleEdit}>
-                    <FiEdit3 size={16} />
-                    <span>Edit</span>
-                  </button>
-                )}
+                
               </div>
 
               <div className="card-content">
@@ -149,13 +151,13 @@ function Settings() {
                       <div className="form-display">{userInfo.email}</div>
                     )}
                   </div>
-
-                  <div className="form-group">
-                    <label className="form-label">Role</label>
-                    <div className="form-display role-badge">
-                      {userInfo.role}
-                    </div>
-                  </div>
+                    {!isEditing && (
+                  <button className="edit-button" onClick={handleEdit}>
+                    <FiEdit3 size={16} />
+                    <span>Edit Profile</span>
+                  </button>
+                )}
+                 
                 </div>
 
                 {isEditing && (
@@ -171,108 +173,6 @@ function Settings() {
                 )}
               </div>
             </div>
-
-            {/* Account & Notification Settings */}
-            <div className="settings-card">
-              <div className="card-header">
-                <div className="card-title-section">
-                  <FiShield className="card-icon" />
-                  <h2 className="card-title">Account & Security</h2>
-                </div>
-              </div>
-
-              <div className="card-content">
-                <div className="settings-list">
-                  <div className="setting-item">
-  <div className="setting-info">
-    <h3 className="setting-name">Password</h3>
-    <p className="setting-description">
-      Change your account password
-    </p>
-  </div>
-  <Link to="/forgot" className="setting-action">
-    Change
-  </Link>
-</div>
-
-
-                  <div className="setting-item">
-                    <div className="setting-info">
-                      <h3 className="setting-name">
-                        Two-Factor Authentication
-                      </h3>
-                      <p className="setting-description">
-                        Add an extra layer of security
-                      </p>
-                    </div>
-                    <button className="setting-action">Enable</button>
-                  </div>
-
-                  <div className="setting-item">
-                    <div className="setting-info">
-                      <h3 className="setting-name">Login Sessions</h3>
-                      <p className="setting-description">
-                        Manage your active sessions
-                      </p>
-                    </div>
-                    <button className="setting-action">View</button>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div className="settings-card">
-              <div className="card-header">
-                <div className="card-title-section">
-                  <FiBell className="card-icon" />
-                  <h2 className="card-title">Notifications</h2>
-                </div>
-              </div>
-
-              <div className="card-content">
-                <div className="settings-list">
-                  <div className="setting-item">
-                    <div className="setting-info">
-                      <h3 className="setting-name">Email Notifications</h3>
-                      <p className="setting-description">
-                        Receive updates via email
-                      </p>
-                    </div>
-                    <label className="toggle-switch">
-                      <input type="checkbox" defaultChecked />
-                      <span className="toggle-slider"></span>
-                    </label>
-                  </div>
-
-                  <div className="setting-item">
-                    <div className="setting-info">
-                      <h3 className="setting-name">Push Notifications</h3>
-                      <p className="setting-description">
-                        Get notifications in your browser
-                      </p>
-                    </div>
-                    <label className="toggle-switch">
-                      <input type="checkbox" />
-                      <span className="toggle-slider"></span>
-                    </label>
-                  </div>
-
-                  <div className="setting-item">
-                    <div className="setting-info">
-                      <h3 className="setting-name">Weekly Summary</h3>
-                      <p className="setting-description">
-                        Receive weekly activity summaries
-                      </p>
-                    </div>
-                    <label className="toggle-switch">
-                      <input type="checkbox" defaultChecked />
-                      <span className="toggle-slider"></span>
-                    </label>
-                  </div>
-                </div>
-              </div>
-            </div>
-
             <div className="settings-card">
               <div className="card-header">
              <div className="card-title-section">
@@ -326,6 +226,109 @@ function Settings() {
                 </div>
               </div>
             </div>
+            <div className="settings-card">
+              <div className="card-header">
+                <div className="card-title-section">
+                  <FiBell className="card-icon" />
+                  <h2 className="card-title">Notifications</h2>
+                </div>
+              </div>
+
+              <div className="card-content">
+                <div className="settings-list">
+                  <div className="setting-item">
+                    <div className="setting-info">
+                      <h3 className="setting-name">Email Notifications</h3>
+                      <p className="setting-description">
+                        Receive updates via email
+                      </p>
+                    </div>
+                    <label className="toggle-switch">
+                      <input type="checkbox" defaultChecked />
+                      <span className="toggle-slider"></span>
+                    </label>
+                  </div>
+
+                  <div className="setting-item">
+                    <div className="setting-info">
+                      <h3 className="setting-name">Push Notifications</h3>
+                      <p className="setting-description">
+                        Get notifications in your browser
+                      </p>
+                    </div>
+                    <label className="toggle-switch">
+                      <input type="checkbox" />
+                      <span className="toggle-slider"></span>
+                    </label>
+                  </div>
+
+                  <div className="setting-item">
+                    <div className="setting-info">
+                      <h3 className="setting-name">Weekly Summary</h3>
+                      <p className="setting-description">
+                        Receive weekly activity summaries
+                      </p>
+                    </div>
+                    <label className="toggle-switch">
+                      <input type="checkbox" defaultChecked />
+                      <span className="toggle-slider"></span>
+                    </label>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Account & Notification Settings */}
+            <div className="settings-card">
+              <div className="card-header">
+                <div className="card-title-section">
+                  <FiShield className="card-icon" />
+                  <h2 className="card-title">Account & Security</h2>
+                </div>
+              </div>
+
+              <div className="card-content">
+                <div className="settings-list">
+                  <div className="setting-item">
+  <div className="setting-info">
+    <h3 className="setting-name">Password</h3>
+    <p className="setting-description">
+      Change your account password
+    </p>
+  </div>
+  <Link to="/forgot" className="setting-action">
+    Change
+  </Link>
+</div>
+
+
+                  <div className="setting-item">
+                    <div className="setting-info">
+                      <h3 className="setting-name">
+                        Two-Factor Authentication
+                      </h3>
+                      <p className="setting-description">
+                        Add an extra layer of security
+                      </p>
+                    </div>
+                    <button className="setting-action">Enable</button>
+                  </div>
+
+                  <div className="setting-item">
+                    <div className="setting-info">
+                      <h3 className="setting-name">Login Sessions</h3>
+                      <p className="setting-description">
+                        Manage your active sessions
+                      </p>
+                    </div>
+                    <button className="setting-action">View</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+           
+            
 
           </div>
         </div>

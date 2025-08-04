@@ -101,10 +101,10 @@ const Activity = () => {
     const diffHours = Math.floor(diffMs / 3600000);
     const diffDays = Math.floor(diffMs / 86400000);
 
-    if (diffMins < 1) return "Just now";
-    if (diffMins < 60) return `${diffMins}m ago`;
-    if (diffHours < 24) return `${diffHours}h ago`;
-    if (diffDays < 7) return `${diffDays}d ago`;
+    // if (diffMins < 1) return "Just now";
+    // if (diffMins < 60) return `${diffMins}m ago`;
+    // if (diffHours < 24) return `${diffHours}h ago`;
+    // if (diffDays < 7) return `${diffDays}d ago`;
 
     return date.toLocaleDateString();
   };
@@ -261,10 +261,14 @@ const Activity = () => {
                     </td>
                     <td>{activity.document}</td>
                     <td>
-                      <div>{formatTimestamp(activity.timestamp)}</div>
-                      <div className="timestamp-full">
-                        {new Date(activity.timestamp).toLocaleString()}
+                      <div>
+                      {/* <div>{formatTimestamp(activity.timestamp)} */}
+                         {new Date(activity.timestamp).toLocaleString()}
                       </div>
+
+                      {/* <div className="timestamp-full">
+                        {new Date(activity.timestamp).toLocaleString()}
+                      </div> */}
                     </td>
                     {/* <td>{formatTimestamp(activity.timestamp)}</td> */}
 

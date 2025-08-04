@@ -374,6 +374,7 @@ const KnowledgeBaseContent = () => {
             </div>
             <div className="stat-label">Pending Approval</div>
           </div>
+          
           <div className="stat-item">
             <div className="stat-value">
               {(

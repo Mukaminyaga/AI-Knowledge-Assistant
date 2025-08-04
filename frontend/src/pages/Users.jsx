@@ -10,6 +10,7 @@ import {
   FiShield,
   FiEdit,
   FiChevronLeft,
+  FiUser,
   FiChevronRight,
   // FiUserPlus,
 } from "react-icons/fi";
@@ -18,6 +19,7 @@ import {
   MdPending,
   MdAdminPanelSettings,
   MdPerson,
+  MdAccountCircle,
 } from "react-icons/md";
 import "../styles/Users.css";
 
@@ -263,15 +265,21 @@ const Users = () => {
               <tbody>
                 {currentUsers.map((user) => (
                   <tr key={user.id} className="user-row">
+
                     <td className="user-info">
-                      {/* <div className="user-avatar">{user.first_name?.[0]}{user.last_name?.[0]}</div> */}
-                      <div className="user-details">
-                        <span className="user-name">
-                          {user.first_name} {user.last_name}
-                        </span>
-                        <span className="user-email">{user.email}</span>
+                      <div className="user-details-wrapper">
+                        <div className="user-icon-container">
+                          <MdAccountCircle className="user-icon" />
+                        </div>
+                        <div className="user-details">
+                          <span className="user-name">
+                            {user.first_name} {user.last_name}
+                          </span>
+                          <span className="user-email">{user.email}</span>
+                        </div>
                       </div>
                     </td>
+
                     <td>
                       <span className={`role-badge ${user.role.toLowerCase()}`}>
                         {user.role === "Admin" && (
