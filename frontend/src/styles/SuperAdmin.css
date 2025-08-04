@@ -24,7 +24,7 @@
   justify-content: space-between;
   margin-bottom: 32px;
    background-color:rgb(10, 10, 10) ;
-   width: 73vw;
+   width: auto;
    height: 115px;
    border-radius: 15px;
 }

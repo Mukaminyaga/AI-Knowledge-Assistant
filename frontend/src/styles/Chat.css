@@ -3,7 +3,7 @@
   display: flex;
   flex-direction: column;
   height: 100vh;
-  max-width: 1400px;
+  /* max-width: 1400px; */
   margin: 0 auto;
   background: #ffffff;
   font-family: 'Inter', -apple-system, Roboto, Helvetica, sans-serif;
@@ -483,7 +483,7 @@
 /* Bottom Input Area (when chat history exists) */
 .bottom-input-area {
   padding: 20px 24px;
-  background: #F9FAFB;
+  background: #ffffff;
   border-top: 1px solid #E5E7EB;
   flex-shrink: 0;
 }
