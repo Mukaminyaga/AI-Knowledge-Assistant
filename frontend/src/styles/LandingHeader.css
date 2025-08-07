@@ -41,7 +41,7 @@
   font-family: Gugi, -apple-system, Roboto, Helvetica, sans-serif;
   font-size: 1.5rem;
   font-weight: 400;
-  color: #32137F;
+  color: #32137F !important;
 }
 
 /* Navigation */
