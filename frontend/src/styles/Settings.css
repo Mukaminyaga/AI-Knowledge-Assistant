@@ -354,7 +354,7 @@
 
 .setting-action {
   /* background-color: var(--background-light); */
-  color: var(--text-dark);
+  color: var(--active-background);
   border: 1px solid var(--border-light);
   border-radius: 8px;
   padding: 8px 16px;

@@ -249,7 +249,7 @@ function Dashboard() {
                         margin: "0 0 4px 0",
                         fontSize: "18px",
                         fontWeight: "600",
-                        color: "rgb(17, 24, 39)",
+                        color: "var(--active-background)",
                       }}
                     >
                       Knowledge Base
@@ -258,7 +258,7 @@ function Dashboard() {
                       style={{
                         margin: 0,
                         fontSize: "14px",
-                        color: "rgb(75, 85, 99)",
+                        color: "rgba(114, 121, 129, 1)",
                       }}
                     >
                       Manage your documents and knowledge articles
@@ -313,7 +313,7 @@ function Dashboard() {
                         margin: "0 0 4px 0",
                         fontSize: "18px",
                         fontWeight: "600",
-                        color: "rgb(17, 24, 39)",
+                        color: "var(--active-background)",
                       }}
                     >
                       Team Management
@@ -322,7 +322,7 @@ function Dashboard() {
                       style={{
                         margin: 0,
                         fontSize: "14px",
-                        color: "rgb(75, 85, 99)",
+                        color: "rgba(114, 121, 129, 1)",
                       }}
                     >
                       Add team members and manage permissions
