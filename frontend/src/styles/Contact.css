@@ -31,7 +31,7 @@
 .contact-form-card {
   width: 100%;
   min-height: 50rem;
-  background: #f5f2fe;
+  /* background: #f5f2fe; */
   border-radius: 1.25rem;
   box-shadow: 0 0.625rem 0.625rem 0 rgba(50, 19, 127, 0.10);
   padding: clamp(1.5rem, 4vw, 2.5rem);

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import DashboardLayout from "../components/DashboardLayout";
+import ThemeToggle from "../components/ThemeToggle";
 import {
   FiUsers,
   FiUserCheck,
@@ -194,6 +195,9 @@ const Users = () => {
               Manage team members, permissions, and user activity
             </p>
           </div>
+          {/* <div className="users-header-actions">
+            <ThemeToggle className="users-theme-toggle" />
+          </div> */}
           {/* <button className="add-user-btn">
             <FiUserPlus size={18} />
             Add New User

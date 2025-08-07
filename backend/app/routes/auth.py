@@ -4,6 +4,7 @@ from app.schemas import users as schemas
 from app import auth,database
 from app.models import tenant as tenant_model, users
 from sqlalchemy import func
+from app.utils.email import send_email
 
 router = APIRouter()
 
@@ -48,9 +49,31 @@ def register(user: schemas.UserCreate, db: Session = Depends(database.get_db)):
     db.add(new_user)
     db.commit()
     db.refresh(new_user)
+    send_email(
+        to_email=new_user.email,
+        subject="Welcome to Vala.ai – Awaiting Approval",
+        html_content=f"""
+            <p>Hi {new_user.first_name},</p>
+            <p>Thank you for signing up to Vala.ai. Your account is pending approval by your tenant admin.</p>
+        """
+    )
+    if not is_creator:
+        send_email(
+            to_email=tenant.contact_email,
+            subject="New User Awaiting Approval",
+            html_content=f"""
+                <p>A new user has registered for your tenant:</p>
+                <ul>
+                    <li>Name: {new_user.first_name} {new_user.last_name}</li>
+                    <li>Email: {new_user.email}</li>
+                    <li>Role Requested: {new_user.role}</li>
+                </ul>
+                <p>Please log in to approve this user.</p>
+            """
+        )
     return new_user
 
-
+    
 
 
 @router.post("/login")

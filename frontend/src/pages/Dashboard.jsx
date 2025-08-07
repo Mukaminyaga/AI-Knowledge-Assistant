@@ -13,6 +13,7 @@ import {
 import { MdPersonAdd } from "react-icons/md";
 // import { MdDocumentScanner, MdRecentActors } from "react-icons/md";
 import DashboardLayout from "../components/DashboardLayout";
+import ThemeToggle from "../components/ThemeToggle";
 import axios from "axios";
 import "../styles/SuperAdmin.css";
 
@@ -21,7 +22,7 @@ const API_URL = process.env.REACT_APP_API_URL;
 function Dashboard() {
   const user = JSON.parse(localStorage.getItem("user"));
    const [documents, setDocuments] = useState([]);
-  
+
   const [stats, setStats] = useState({
     total: 0,
     processed: 0,
@@ -61,8 +62,8 @@ function Dashboard() {
               console.error("Error loading documents");
          }
           };
-           
-              
+
+
 
   const fetchRecentActivity = async () => {
     try {
@@ -128,6 +129,7 @@ function Dashboard() {
             </p>
           </div>
           <div className="page-header-actions">
+            <ThemeToggle className="dashboard-theme-toggle" />
             <Link to="/" className="btn btn-secondary">
               Home
             </Link>
@@ -139,9 +141,9 @@ function Dashboard() {
 
         <div className="metrics-grid">
           <div className="metric-card">
-            <div className="metric-icon">
+            {/* <div className="metric-icon"> */}
               <FiBookOpen />
-            </div>
+            {/* </div> */}
             <div className="metric-content">
               <div className="metric-value">{stats.total}</div>
               <div className="metric-label">Documents</div>
@@ -149,9 +151,9 @@ function Dashboard() {
           </div>
 
           <div className="metric-card">
-            <div className="metric-icon">
+            {/* <div className="metric-icon"> */}
               <FiUsers />
-            </div>
+            {/* </div> */}
             <div className="metric-content">
               <div className="metric-value">{teamCount}</div>
               <div className="metric-label">Team Members</div>
@@ -159,9 +161,9 @@ function Dashboard() {
           </div>
 
            <div className="metric-card">
-            <div className="metric-icon">
+            {/* <div className="metric-icon"> */}
               <FiDatabase />
-            </div>
+            {/* </div> */}
             <div className="metric-content">
               <div className="metric-value">  {(
                 documents.reduce((total, doc) => total + (doc.size || 0), 0) /
@@ -171,12 +173,12 @@ function Dashboard() {
               <div className="metric-label">Document Size Used</div>
             </div>
           </div>
-          
+
 
           <div className="metric-card">
-            <div className="metric-icon">
+            {/* <div className="metric-icon"> */}
               <FiTrendingUp />
-            </div>
+            {/* </div> */}
 
             <div className="metric-content">
               <div className="metric-value">95%</div>
@@ -194,10 +196,9 @@ function Dashboard() {
           }}
         >
           <div
+            className="dashboard-section"
             style={{
-              background: "#fff",
               borderRadius: "16px",
-              border: "1px solid #e5e7eb",
               padding: "24px",
             }}
           >
@@ -340,10 +341,9 @@ function Dashboard() {
           </div>
 
           <div
+            className="dashboard-section"
             style={{
-              background: "#fff",
               borderRadius: "16px",
-              border: "1px solid #e5e7eb",
               padding: "24px",
             }}
           >
@@ -407,9 +407,9 @@ function Dashboard() {
     <h2 className="section-title" style={{ margin: 0 }}>Recent Activity</h2>
     <Link to="/activity" className="view-all-link">View All </Link>
   </div>
-          
+
           <div className="tenants-list">
-            
+
             {recent.map((item, i) => (
               <div key={i} className="tenant-card">
                 <div className="tenant-info">
@@ -460,7 +460,7 @@ function Dashboard() {
             ))}
           </div>
 
-         
+
         </div>
       </div>
     </DashboardLayout>

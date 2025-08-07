@@ -28,7 +28,7 @@
   font-family: Gugi, -apple-system, Roboto, Helvetica, sans-serif;
   font-size: 2rem;
   font-weight: 400;
-  color: #080808;
+  color: #080808 !important;
   margin: 0;
 }
 
@@ -36,7 +36,7 @@
   font-family: Inter, -apple-system, Roboto, Helvetica, sans-serif;
   font-size: 1rem;
   font-weight: 400;
-  color: #4a5568;
+  color: #4a5568 !important;
   line-height: 1.6;
   margin: 0;
 }
@@ -58,7 +58,7 @@
   font-family: Inter, -apple-system, Roboto, Helvetica, sans-serif;
   font-size: 1.125rem;
   font-weight: 700;
-  color: #080808;
+  color: #080808 !important;
   margin: 0;
   line-height: 1.2;
 }
@@ -76,7 +76,7 @@
   font-family: 'Open Sans', -apple-system, Roboto, Helvetica, sans-serif;
   font-size: 0.875rem;
   font-weight: 400;
-  color: #4a5568;
+  color: #4744d8 !important;
   text-decoration: none;
   line-height: 1.4;
   transition: color 0.3s ease;
@@ -107,7 +107,7 @@
   font-family: 'Open Sans', -apple-system, Roboto, Helvetica, sans-serif;
   font-size: 0.875rem;
   font-weight: 400;
-  color: #4a5568;
+  color: #4a5568 !important;
   line-height: 1.4;
 }
 
@@ -138,7 +138,7 @@
   font-family: Inter, -apple-system, Roboto, Helvetica, sans-serif;
   font-size: 1.5rem;
   font-weight: 700;
-  color: #080808;
+  color: #080808 !important;
   margin: 0;
   line-height: 1.2;
 }
@@ -147,7 +147,7 @@
   font-family: Inter, -apple-system, Roboto, Helvetica, sans-serif;
   font-size: 1rem;
   font-weight: 400;
-  color: #4a5568;
+  color: #4a5568 !important;
   line-height: 1.6;
   margin: 0;
 }

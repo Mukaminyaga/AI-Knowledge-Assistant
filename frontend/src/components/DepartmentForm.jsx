@@ -102,7 +102,7 @@ const DepartmentForm = ({ isOpen, onClose, onSubmit, initialData = null }) => {
         <form onSubmit={handleSubmit} className="department-form">
           <div className="form-grid">
             <div className="form-group form-group-full">
-              <label className="form-label">Department Name *</label>
+              <label className="form-label2">Department Name *</label>
               <input
                 type="text"
                 name="name"
@@ -117,7 +117,7 @@ const DepartmentForm = ({ isOpen, onClose, onSubmit, initialData = null }) => {
             </div>
 
             <div className="form-group form-group-full">
-              <label className="form-label">Description *</label>
+              <label className="form-label2">Description *</label>
               <textarea
                 name="description"
                 value={formData.description}
@@ -132,7 +132,7 @@ const DepartmentForm = ({ isOpen, onClose, onSubmit, initialData = null }) => {
             </div>
 
             <div className="form-group">
-              <label className="form-label">Department Color *</label>
+              <label className="form-label2">Department Color *</label>
               <div className="color-input-container">
                 <input
                   type="color"

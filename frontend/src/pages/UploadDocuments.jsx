@@ -1,14 +1,12 @@
 import React, { useState, useRef } from "react";
 import axios from "axios";
 import DashboardLayout from "../components/DashboardLayout";
+import ThemeToggle from "../components/ThemeToggle";
 import { DepartmentProvider, useDepartments } from "../context/DepartmentContext";
 import DepartmentsSection from "../components/DepartmentsSection";
 import "../styles/UploadDocuments.css";
 import {
-  FiFileText,
-  FiTag,
   FiFolder,
-  FiRefreshCcw,
 } from "react-icons/fi";
 
 function UploadDocumentsContent() {
@@ -136,6 +134,9 @@ function UploadDocumentsContent() {
           <div className="header-content">
             <h1 className="upload-title">Upload Documents</h1>
           </div>
+          {/* <div className="upload-header-actions">
+            <ThemeToggle className="upload-theme-toggle" />
+          </div> */}
         </div>
           <div className="department-selection">
               <div className="department-form-group">
@@ -161,8 +162,8 @@ function UploadDocumentsContent() {
 
        <div className="upload-content">
           <div className="upload-section">
-          
-          
+
+
             <div
               className={`upload-dropzone ${dragActive ? "drag-active" : ""}`}
               onDragEnter={handleDrag}

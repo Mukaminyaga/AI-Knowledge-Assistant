@@ -1,0 +1,492 @@
+/* Dark Theme Global Styles */
+
+/* Light Theme Variables (Default) */
+:root {
+  --primary-bg: #FFFFFF;
+  --secondary-bg: #F8F9FA;
+  --tertiary-bg: #FFFFFF;
+  --card-background: #FFFFFF;
+  --sidebar-background: #FFFFFF;
+  --header-background: #FFFFFF;
+  /* --text-primary: #374151;
+  --text-secondary: #6B7280; */
+  --text-tertiary: #9CA3AF;
+  --border-color: #E5E7EB;
+  --border-secondary: #D1D5DB;
+  --hover-background: #F3F4F6;
+  --active-background: #000000;
+  --shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  --shadow-medium: 0 4px 6px rgba(0, 0, 0, 0.1);
+  --shadow-large: 0 10px 15px rgba(0, 0, 0, 0.1);
+}
+
+/* Dark Theme Variables */
+.dark-theme {
+  --primary-bg: #1A1A1A;
+  --secondary-bg: #303030;
+  --tertiary-bg: #252525;
+  --card-background: #000000;
+  --sidebar-background: #1A1A1A;
+  --header-background: #1A1A1A;
+  --text-primary: #FCFCFC;
+  --text-secondary: #ACAAAA;
+  --text-tertiary: #808080;
+  --border-color: #303030;
+  --border-secondary: #404040;
+  --hover-background: #2A2A2A;
+  --active-background: #FCFCFC;
+  --shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+  --shadow-medium: 0 4px 6px rgba(0, 0, 0, 0.3);
+  --shadow-large: 0 10px 15px rgba(0, 0, 0, 0.3);
+}
+
+/* Action badge colors for activity log */
+.dark-theme {
+  --action-view-bg: rgba(37, 99, 235, 0.10);
+  --action-view-color: #2563EB;
+  --action-upload-bg: rgba(76, 175, 80, 0.10);
+  --action-upload-color: #4CAF50;
+  --action-download-bg: rgba(255, 152, 0, 0.10);
+  --action-download-color: #FF9800;
+  --action-delete-bg: rgba(239, 68, 68, 0.10);
+  --action-delete-color: #EF4444;
+}
+
+:root {
+  --action-view-bg: rgba(37, 99, 235, 0.10);
+  --action-view-color: #2563EB;
+  --action-upload-bg: rgba(76, 175, 80, 0.10);
+  --action-upload-color: #4CAF50;
+  --action-download-bg: rgba(255, 152, 0, 0.10);
+  --action-download-color: #FF9800;
+  --action-delete-bg: rgba(239, 68, 68, 0.10);
+  --action-delete-color: #EF4444;
+}
+
+/* Global body and html styling */
+body {
+  background-color: var(--primary-bg);
+  color: var(--text-primary);
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Override any white backgrounds in dark mode */
+.dark-theme {
+  color-scheme: dark;
+}
+
+.dark-theme *::placeholder {
+  color: var(--text-secondary);
+}
+
+.dark-theme input,
+.dark-theme textarea,
+.dark-theme select {
+  background-color: var(--secondary-bg);
+  color: var(--text-primary);
+  border-color: var(--border-color);
+}
+
+.dark-theme input:focus,
+.dark-theme textarea:focus,
+.dark-theme select:focus {
+  border-color: var(--text-secondary);
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(172, 170, 170, 0.2);
+}
+
+/* Scrollbar styling for dark theme */
+.dark-theme ::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.dark-theme ::-webkit-scrollbar-track {
+  background: var(--secondary-bg);
+  border-radius: 4px;
+}
+
+.dark-theme ::-webkit-scrollbar-thumb {
+  background: var(--text-secondary);
+  border-radius: 4px;
+}
+
+.dark-theme ::-webkit-scrollbar-thumb:hover {
+  background: var(--text-primary);
+}
+
+/* Table styling for dark theme */
+.dark-theme table {
+  background-color: var(--card-background);
+  color: var(--text-primary);
+}
+
+.dark-theme th {
+  background-color: var(--secondary-bg);
+  color: var(--text-secondary);
+  border-color: var(--border-color);
+}
+
+.dark-theme td {
+  border-color: var(--border-color);
+  color: var(--text-primary);
+}
+
+.dark-theme tr:hover {
+  background-color: var(--hover-background);
+}
+
+/* Button styling for dark theme */
+.dark-theme button {
+  color: var(--text-primary);
+}
+
+.dark-theme .btn-primary {
+  background-color: var(--active-background);
+  color: var(--primary-bg);
+  border-color: var(--active-background);
+}
+
+.dark-theme .btn-secondary {
+  background-color: var(--secondary-bg);
+  color: var(--text-primary);
+  border-color: var(--border-color);
+}
+
+.dark-theme .btn-secondary:hover {
+  background-color: var(--hover-background);
+  border-color: var(--text-secondary);
+}
+
+/* Card styling for dark theme */
+.dark-theme .card,
+.dark-theme .container,
+.dark-theme .panel {
+  background-color: var(--card-background);
+  border-color: var(--border-color);
+}
+
+/* Form elements */
+.dark-theme .form-control,
+.dark-theme .form-input {
+  background-color: var(--secondary-bg);
+  color: var(--text-primary);
+  border-color: var(--border-color);
+}
+
+.dark-theme .form-label {
+  color: var(--text-primary);
+}
+
+/* Loading states */
+.dark-theme .loading-state {
+  color: var(--text-secondary);
+}
+
+/* Pagination */
+.dark-theme .pagination-btn,
+.dark-theme .pagination-number {
+  background-color: var(--secondary-bg);
+  color: var(--text-primary);
+  border-color: var(--border-color);
+}
+
+.dark-theme .pagination-number.active {
+  background-color: var(--active-background);
+  color: var(--primary-bg);
+}
+
+.dark-theme .pagination-btn:hover,
+.dark-theme .pagination-number:hover {
+  background-color: var(--hover-background);
+}
+
+/* Modal overlays */
+.dark-theme .modal-overlay {
+  background-color: rgba(0, 0, 0, 0.8);
+}
+
+.dark-theme .modal-content {
+  background-color: var(--card-background);
+  border-color: var(--border-color);
+}
+
+/* Filter buttons */
+.dark-theme .filter-btn {
+  background-color: var(--secondary-bg);
+  color: var(--text-secondary);
+  border-color: var(--border-color);
+}
+
+.dark-theme .filter-btn.active {
+  background-color: var(--active-background);
+  color: var(--primary-bg);
+}
+
+.dark-theme .filter-btn:hover {
+  background-color: var(--hover-background);
+  color: var(--text-primary);
+}
+
+/* Search inputs */
+.dark-theme .search-input,
+.dark-theme input[type="search"] {
+  background-color: var(--secondary-bg);
+  color: var(--text-primary);
+  border-color: var(--border-color);
+}
+
+/* Dropdown menus */
+.dark-theme .dropdown-menu {
+  background-color: var(--card-background);
+  border-color: var(--border-color);
+  box-shadow: var(--shadow-medium);
+}
+
+.dark-theme .dropdown-item {
+  color: var(--text-primary);
+}
+
+.dark-theme .dropdown-item:hover {
+  background-color: var(--hover-background);
+}
+
+/* Stats and badges */
+.dark-theme .stats-card {
+  background-color: var(--card-background);
+  border-color: var(--border-color);
+}
+
+.dark-theme .badge {
+  background-color: var(--secondary-bg);
+  color: var(--text-primary);
+}
+
+/* Alerts and notifications */
+.dark-theme .alert {
+  background-color: var(--secondary-bg);
+  border-color: var(--border-color);
+  color: var(--text-primary);
+}
+
+.dark-theme .error-message {
+  background-color: rgba(239, 68, 68, 0.1);
+  color: #EF4444;
+  border-color: rgba(239, 68, 68, 0.3);
+}
+
+.dark-theme .success-message {
+  background-color: rgba(76, 175, 80, 0.1);
+  color: #4CAF50;
+  border-color: rgba(76, 175, 80, 0.3);
+}
+
+/* Sidebar specific dark theme adjustments */
+.dark-theme .sidebar-container {
+  background-color: var(--sidebar-background);
+  border-color: var(--border-color);
+}
+
+.dark-theme .nav-link1 {
+  color: var(--text-secondary);
+}
+
+.dark-theme .nav-link1:hover {
+  background-color: var(--hover-background);
+  color: var(--text-primary);
+}
+
+.dark-theme .nav-link1.active {
+  background-color: var(--active-background);
+  color: var(--primary-bg);
+}
+
+/* Header specific adjustments */
+.dark-theme .dashboard-main,
+.dark-theme .chat-compact-header {
+  background-color: var(--header-background);
+}
+
+/* Ensure text contrast in dark mode */
+.dark-theme h1,
+.dark-theme h2,
+.dark-theme h3,
+.dark-theme h4,
+.dark-theme h5,
+.dark-theme h6 {
+  color: var(--text-primary);
+}
+
+.dark-theme p,
+.dark-theme span,
+.dark-theme div {
+  color: inherit;
+}
+
+/* Force override any remaining white backgrounds */
+.dark-theme .upload-section,
+.dark-theme .upload-dropzone,
+.dark-theme .upload-options,
+.dark-theme .uploaded-files,
+.dark-theme .upload-tips,
+.dark-theme .department-selection,
+.dark-theme .departments-section .settings-card,
+.dark-theme .tip-item,
+.dark-theme .file-item,
+.dark-theme .option-card {
+  background-color: var(--card-background) !important;
+  border-color: var(--border-color) !important;
+}
+
+/* Override any hardcoded white backgrounds in forms */
+.dark-theme input,
+.dark-theme select,
+.dark-theme textarea {
+  background-color: var(--secondary-bg) !important;
+  color: var(--text-primary) !important;
+  border-color: var(--border-color) !important;
+}
+
+/* Override any white backgrounds in modals and dropdowns */
+.dark-theme .modal-content,
+.dark-theme .dropdown-menu,
+.dark-theme .profile-dropdown-menu {
+  background-color: var(--card-background) !important;
+  border-color: var(--border-color) !important;
+}
+
+/* Override any white backgrounds in tables */
+.dark-theme .table-wrapper,
+.dark-theme .activity-table-container,
+.dark-theme .payments-table-wrapper {
+  background-color: var(--card-background) !important;
+}
+
+/* Override department and upload related elements */
+.dark-theme .department-form-group select,
+.dark-theme .department-select {
+  background-color: var(--secondary-bg) !important;
+  color: var(--text-primary) !important;
+  border-color: var(--border-color) !important;
+}
+
+
+
+/* Force override ALL white backgrounds */
+.dark-theme [style*="background: rgb(255, 255, 255)"],
+.dark-theme [style*="background-color: rgb(255, 255, 255)"],
+.dark-theme [style*="background: #fff"],
+.dark-theme [style*="background: #FFF"],
+.dark-theme [style*="background: white"],
+.dark-theme .btn-secondary,
+.dark-theme .clear-selection-button,
+.dark-theme .department-filter-card,
+.dark-theme .chart-card,
+.dark-theme .summary-card,
+.dark-theme .info-card,
+.dark-theme .tab-content,
+.dark-theme .payment-history-modal,
+.dark-theme .history-table-wrapper,
+.dark-theme .super-admin-header,
+.dark-theme .tenants-table-section,
+.dark-theme .payments-table-section {
+  background: var(--card-background) !important;
+  background-color: var(--card-background) !important;
+  border-color: var(--border-color) !important;
+  color: var(--text-primary) !important;
+}
+
+/* Remove white hover effects */
+.dark-theme .btn-secondary:hover,
+.dark-theme .clear-selection-button:hover,
+.dark-theme .chart-card:hover,
+.dark-theme .metric-card:hover,
+.dark-theme .summary-card:hover {
+  background-color: var(--hover-background) !important;
+}
+
+/* Fix recent activities and other hover effects */
+.dark-theme .recent-item:hover,
+.dark-theme .tenant-row:hover,
+.dark-theme .activity-row:hover,
+.dark-theme tr:hover,
+.dark-theme .file-item:hover,
+.dark-theme .option-card:hover,
+.dark-theme .tip-item:hover {
+  background-color: var(--hover-background) !important;
+}
+
+/* Users page - remove gradient and use black background in dark theme */
+.dark-theme .user-container.enhanced {
+  background: #000000 !important;
+}
+
+/* Knowledge base file type indicators - make visible in dark theme */
+.dark-theme .type-doc,
+.dark-theme .type-pdf,
+.dark-theme .type-txt,
+.dark-theme .type-image,
+.dark-theme .type-default {
+  color: var(--text-primary) !important;
+  background-color: var(--secondary-bg) !important;
+  border-color: var(--border-color) !important;
+}
+
+/* Activity log specific styling */
+.dark-theme .activity-container {
+  background-color: var(--primary-bg);
+}
+
+.dark-theme .activity-table-container {
+  background-color: var(--card-background);
+  border-color: var(--border-color);
+}
+
+.dark-theme .activity-table {
+  background-color: var(--card-background);
+}
+
+.dark-theme .activity-table thead th {
+  background-color: var(--card-background);
+  color: var(--text-secondary);
+  border-color: var(--border-color);
+}
+
+.dark-theme .activity-table tbody tr {
+  background-color: var(--secondary-bg);
+  border-color: var(--border-color);
+}
+
+.dark-theme .activity-table tbody tr:hover {
+  background-color: var(--hover-background);
+}
+
+.dark-theme .activity-row td {
+  color: var(--text-primary);
+  border-color: var(--border-color);
+}
+
+/* Action badges with the design colors */
+.dark-theme .action-badge.action-view {
+  background-color: var(--action-view-bg);
+  color: var(--action-view-color);
+}
+
+.dark-theme .action-badge.action-upload {
+  background-color: var(--action-upload-bg);
+  color: var(--action-upload-color);
+}
+
+.dark-theme .action-badge.action-download {
+  background-color: var(--action-download-bg);
+  color: var(--action-download-color);
+}
+
+.dark-theme .action-badge.action-delete {
+  background-color: var(--action-delete-bg);
+  color: var(--action-delete-color);
+}
+/* .dark-theme .form-input {
+  background-color: #ffffff !important;
+  color: var(--text-dark) !important;
+} */

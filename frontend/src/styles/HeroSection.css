@@ -60,7 +60,7 @@
   font-family: Inter, -apple-system, Roboto, Helvetica, sans-serif;
   font-size: 3rem;
   font-weight: 700;
-  color: #32137F;
+  color: #32137F !important;
   line-height: 1.1;
   margin: 0;
 }
@@ -87,6 +87,36 @@
   gap: 1rem;
   margin-top: 1.5rem;
   flex-wrap: wrap;
+}
+
+.hero-stats {
+  display: flex;
+  gap: 2rem;
+  margin-top: 2rem;
+  flex-wrap: wrap;
+}
+
+.hero-stats .stat-item1 {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.hero-stats .stat-number1 {
+  font-family: Inter, -apple-system, Roboto, Helvetica, sans-serif;
+  font-size: 2rem;
+  font-weight: 700;
+  color: #32137F;
+  line-height: 1;
+  margin-bottom: 0.5rem;
+}
+
+.hero-stats .stat-label1 {
+  font-family: Poppins, -apple-system, Roboto, Helvetica, sans-serif;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #6B7280;
+  line-height: 1.3;
 }
 
 .hero-btn-primary {
@@ -274,6 +304,15 @@
     min-width: auto;
   }
 
+  .hero-stats {
+    gap: 1.5rem;
+    margin-top: 1.5rem;
+  }
+
+  .hero-stats .stat-number {
+    font-size: 1.75rem;
+  }
+
   .hero-wave {
     display: none;
   }
@@ -285,9 +324,9 @@
   }
 
   .hero-content {
-    grid-template-columns: 1fr;
-    gap: 1.5rem;
-    text-align: center;
+    grid-template-columns: 1fr 0.8fr;
+    gap: 1rem;
+    text-align: left;
   }
 
   .hero-title {
@@ -296,6 +335,25 @@
 
   .hero-description {
     font-size: 1rem;
+  }
+
+  .hero-stats {
+    justify-content: flex-start;
+    gap: 1rem;
+    margin-top: 1rem;
+  }
+
+  .hero-stats .stat-item {
+    align-items: flex-start;
+    text-align: left;
+  }
+
+  .hero-stats .stat-number {
+    font-size: 1.5rem;
+  }
+
+  .hero-stats .stat-label {
+    font-size: 0.8rem;
   }
 
   .hero-buttons {
@@ -316,5 +374,22 @@
   .hero-main-image {
     max-width: 100%;
     margin-top: 1rem;
+  }
+}
+
+@media (max-width: 380px) {
+  .hero-content {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+    text-align: center;
+  }
+
+  .hero-stats {
+    justify-content: center;
+  }
+
+  .hero-stats .stat-item {
+    align-items: center;
+    text-align: center;
   }
 }

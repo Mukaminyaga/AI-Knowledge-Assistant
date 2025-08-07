@@ -1,7 +1,6 @@
 import React from "react";
 import LandingHeader from "../components/Landing/LandingHeader";
 import HeroSection from "../components/Landing/HeroSection";
-import StatsSection from "../components/Landing/StatsSection";
 import FeaturesOverview from "../components/Landing/FeaturesOverview";
 import KeyUseCases from "../components/Landing/KeyUseCases";
 import HowItWorks from "../components/Landing/HowItWorks";
@@ -17,7 +16,6 @@ function LandingPage() {
       <LandingHeader />
       <main className="landing-main">
         <HeroSection />
-        <StatsSection />
         <FeaturesOverview />
         <KeyUseCases />
         <HowItWorks />

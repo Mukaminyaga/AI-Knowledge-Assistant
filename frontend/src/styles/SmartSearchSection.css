@@ -19,7 +19,7 @@
 
 /* Smart Search Text */
 .smart-search-text {
-  background: #E8F9FF;
+  background: #E8F9FF ;
   padding: 2rem;
   border-radius: 1rem;
   height: auto;
@@ -33,7 +33,7 @@
   font-family: Inter, -apple-system, Roboto, Helvetica, sans-serif;
   font-size: 2rem;
   font-weight: 700;
-  color: #080808;
+  color: #080808 !important;
   margin: 0 0 1rem 0;
 }
 
@@ -41,7 +41,7 @@
   font-family: Inter, -apple-system, Roboto, Helvetica, sans-serif;
   font-size: 1rem;
   font-weight: 400;
-  color: #4a5568;
+  color: #4a5568 !important;
   line-height: 1.6;
   margin-bottom: 2rem;
   flex-grow: 1;

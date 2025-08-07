@@ -1,6 +1,6 @@
 /* Settings Page Styles */
 .settings-container {
-  background-color: var(--background-light);
+  background-color: var(--primary-bg);
   min-height: 100vh;
   padding: 40px;
 }
@@ -91,11 +91,11 @@
 
 /* Settings Cards */
 .settings-card {
-  background-color: var(--white);
+  background-color: var(--card-background);
   border-radius: 20px;
-  box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.08);
+  box-shadow: var(--shadow-medium);
   overflow: hidden;
-  border: 1px solid rgba(240, 242, 245, 0.8);
+  border: 1px solid var(--border-color);
   transition: box-shadow 0.2s ease;
 }
 
@@ -138,7 +138,7 @@
 .card-icon {
   font-size: 24px;
   /* margin-top: 20px !important; */
-  color: var(--primary-dark);
+  color: var(--text-primary) !important;
   flex-shrink: 0;
   display: flex;
   align-items: center;
@@ -149,7 +149,7 @@
   font-size: 24px;
   font-family: var(--font-work-sans);
   font-weight: 700;
-  color: var(--text-dark);
+  color: var(--text-primary) !important;
   margin: 0;
 }
 
@@ -170,6 +170,7 @@
   border: none;
   border-radius: 12px;
   padding: 13px 14px;
+  width: 140px !important;
   font-size: 14px;
   font-family: var(--font-inter);
   font-weight: 500;
@@ -218,18 +219,18 @@
   font-size: 14px;
   font-family: var(--font-inter);
   font-weight: 600;
-  color: var(--text-dark);
+  color: var(--text-dark) ;
   margin: 0;
 }
 
 .form-input {
-  border: 1px solid var(--border-light);
+  border: 1px solid var(--border-color);
   border-radius: 12px;
   padding: 12px 16px;
   font-size: 16px;
-  font-family: var(--font-inter);
-  color: var(--text-dark);
-  background-color: var(--white);
+  font-family: 'Inter', -apple-system, Roboto, Helvetica, sans-serif;
+  color: var(--text-primary);
+  background-color: var(--card-background);
   transition: border-color 0.2s ease;
 }
 
@@ -241,17 +242,17 @@
 
 .form-display {
   padding: 12px 16px;
-  background-color: var(--background-light);
+  background-color: var(--card-background);
   border-radius: 12px;
   font-size: 16px;
-  font-family: var(--font-inter);
-  color: var(--text-dark);
-  border: 1px solid transparent;
+  font-family: 'Inter', -apple-system, Roboto, Helvetica, sans-serif;
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
 }
 
 .role-badge {
-  background-color: var(--background-light);
-  color: black;
+  background-color: var(--secondary-bg);
+  color: var(--text-primary);
   font-weight: 500;
   text-align: center;
   max-width: fit-content;
@@ -293,20 +294,20 @@
 }
 
 .cancel-button {
-  background-color: var(--white);
-  color: var(--text-gray);
-  border: 1px solid var(--border-light);
+  background-color: var(--secondary-bg);
+  color: var(--text-secondary);
+  border: 1px solid var(--border-color);
   border-radius: 12px;
   padding: 12px 24px;
   font-size: 16px;
-  font-family: var(--font-inter);
+  font-family: 'Inter', -apple-system, Roboto, Helvetica, sans-serif;
   font-weight: 500;
   cursor: pointer;
   transition: all 0.2s ease;
 }
 
 .cancel-button:hover {
-  background-color: var(--background-light);
+  /* background-color: var(--background-light); */
   border-color: var(--text-gray);
 }
 
@@ -352,7 +353,7 @@
 }
 
 .setting-action {
-  background-color: var(--background-light);
+  /* background-color: var(--background-light); */
   color: var(--text-dark);
   border: 1px solid var(--border-light);
   border-radius: 8px;
@@ -372,13 +373,13 @@
 }
 
 .setting-select {
-  border: 1px solid var(--border-light);
+  border: 1px solid var(--border-color);
   border-radius: 8px;
   padding: 8px 12px;
   font-size: 14px;
-  font-family: var(--font-inter);
-  color: var(--text-dark);
-  background-color: var(--white);
+  font-family: 'Inter', -apple-system, Roboto, Helvetica, sans-serif;
+  color: var(--text-primary);
+  background-color: var(--card-background);
   cursor: pointer;
   min-width: 120px;
 }
@@ -580,7 +581,7 @@ input:focus + .toggle-slider {
   border: 1px solid var(--border-light);
   border-radius: 12px;
   padding: 16px;
-  background: var(--white);
+  background-color: var(--card-background);
   transition: box-shadow 0.2s ease;
 }
 
@@ -628,10 +629,11 @@ input:focus + .toggle-slider {
   display: flex;
   gap: 4px;
   flex-shrink: 0;
+
 }
 
 .action-btn {
-  background: none;
+  background-color: var(--card-background) !important;
   border: none;
   padding: 6px;
   border-radius: 6px;
@@ -667,6 +669,8 @@ input:focus + .toggle-slider {
   display: flex;
   align-items: center;
   gap: 4px;
+  background-color: var(--hover-background) !important;
+
 }
 
 .stat-icon {
@@ -683,7 +687,7 @@ input:focus + .toggle-slider {
 }
 
 .departments-info {
-  background-color: var(--background-light);
+  background-color: var(--hover-background);
   border-radius: 8px;
   padding: 16px;
   margin-top: 24px;
@@ -700,7 +704,7 @@ input:focus + .toggle-slider {
   margin: 0;
   padding-left: 16px;
   font-size: 13px;
-  color: var(--text-gray);
+  color: var(--text-tertiary) !important;
   line-height: 1.5;
 }
 
@@ -724,7 +728,7 @@ input:focus + .toggle-slider {
 }
 
 .modal-container {
-  background-color: var(--white);
+  background-color: var(--primary-bg);
   border-radius: 16px;
   box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
   width: 100%;

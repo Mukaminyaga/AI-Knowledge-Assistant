@@ -8,6 +8,7 @@ from app.models import users
 from app.auth import get_current_user
 from app.models import tenant as tenant_model
 from app.database import get_db
+from app.utils.email import send_email
 
 router = APIRouter()
 
@@ -42,7 +43,16 @@ def approve_user(
     db.commit()
     db.refresh(user)
 
-    return {"message": f"{user.email} has been approved."}
+    send_email(
+        to_email=user.email,
+        subject="Your Vala.ai Account Has Been Approved",
+        html_content=f"""
+            <p>Hi {user.first_name},</p>
+            <p>Your account has been approved by your admin. You can now <a href="https://vala.ke/login">log in</a> to Vala.ai.</p>
+        """
+    )
+
+    return {"message": f"{user.email} has been approved and notified."}
 
 
 

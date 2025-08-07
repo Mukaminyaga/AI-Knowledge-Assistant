@@ -22,7 +22,7 @@
   font-family: Inter, -apple-system, Roboto, Helvetica, sans-serif;
   font-size: 2.5rem;
   font-weight: 700;
-  color: #080808;
+  color: #080808 !important;
   line-height: 1.2;
   margin: 0;
 }
@@ -31,7 +31,7 @@
   font-family: Inter, -apple-system, Roboto, Helvetica, sans-serif;
   font-size: 1.125rem;
   font-weight: 400;
-  color: #4a5568;
+  color: #4a5568 !important;
   line-height: 1.6;
   margin: 0;
 }
@@ -47,7 +47,7 @@
   font-family: Inter, -apple-system, Roboto, Helvetica, sans-serif;
   font-size: 1rem;
   font-weight: 500;
-  color: #4a5568;
+  color: #4a5568 !important;
   text-align: center;
   cursor: pointer;
   transition: all 0.3s ease;
@@ -57,11 +57,11 @@
 
 .feature-tab.active {
   font-weight: 600;
-  color: #31617B;
+  color: #31617B !important;
 }
 
 .feature-tab:hover {
-  color: #31617B;
+  color: #31617B !important;
 }
 
 /* Features Divider */

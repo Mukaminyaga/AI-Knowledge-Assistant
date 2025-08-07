@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import DashboardLayout from "../components/DashboardLayout";
+import ThemeToggle from "../components/ThemeToggle";
 import { DepartmentProvider, useDepartments } from "../context/DepartmentContext";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -350,6 +351,9 @@ const KnowledgeBaseContent = () => {
               Manage your uploaded documents and their indexing status
             </p>
           </div>
+          {/* <div className="page-header-actions">
+            <ThemeToggle className="knowledge-theme-toggle" />
+          </div> */}
         </div>
           <div className="document-stats">
           <div className="stat-item">
@@ -374,7 +378,7 @@ const KnowledgeBaseContent = () => {
             </div>
             <div className="stat-label">Pending Approval</div>
           </div>
-          
+
           <div className="stat-item">
             <div className="stat-value">
               {(
@@ -470,7 +474,7 @@ const KnowledgeBaseContent = () => {
           </div>
         </div>
 
-      
+
         {/* Bulk Assignment Controls */}
         {selectedDocuments.size > 0 && (
           <div className="bulk-assignment-controls">

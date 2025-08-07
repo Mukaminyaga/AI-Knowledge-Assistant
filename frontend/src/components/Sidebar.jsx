@@ -1,18 +1,16 @@
 import React, { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import "../styles/Sidebar.css";
+import { useTheme } from "../context/ThemeContext";
 import {
   FiHome,
   FiUpload,
   FiMessageSquare,
   FiBook,
-  FiUser,
   FiUsers,
   FiSettings,
   FiLogOut,
   FiActivity,
-  FiChevronDown,
-  FiChevronUp,
 } from "react-icons/fi";
 import { logout } from "../utils/auth";
 
@@ -20,6 +18,7 @@ function Sidebar({ isOpen = false, onClose, isMobile = false }) {
   const location = useLocation();
   const navigate = useNavigate();
   const [isCollapsed, setIsCollapsed] = useState(false);
+  const { isDarkMode } = useTheme();
   const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
 
   const toggleSidebar = () => {
@@ -29,22 +28,22 @@ function Sidebar({ isOpen = false, onClose, isMobile = false }) {
       setIsCollapsed(!isCollapsed);
     }
   };
-  
+
   const handleLinkClick = () => {
     if (isMobile && onClose) {
       onClose();
     }
   };
-  
+
   const handleLogout = () => {
     logout();
     navigate("/login");
   };
-  
+
   const toggleProfileDropdown = () => {
     setProfileDropdownOpen(!profileDropdownOpen);
   };
-  
+
   // Get the user data from localStorage
   const user = JSON.parse(localStorage.getItem("user"));
 
@@ -72,7 +71,7 @@ function Sidebar({ isOpen = false, onClose, isMobile = false }) {
     >
       {/* Profile Dropdown at Top */}
       {/* <div className="sidebar-top-profile">
-        <div 
+        <div
           className={`profile-dropdown-trigger ${profileDropdownOpen ? 'active' : ''}`}
           onClick={toggleProfileDropdown}
         >
@@ -95,7 +94,7 @@ function Sidebar({ isOpen = false, onClose, isMobile = false }) {
             </>
           )}
         </div>
-        
+
         {profileDropdownOpen && !isCollapsed && (
           <div className="profile-dropdown-menu">
             <div className="dropdown-item">
@@ -121,10 +120,15 @@ function Sidebar({ isOpen = false, onClose, isMobile = false }) {
         <div className="brand-section">
           {!isCollapsed ? (
             <div className="brand-text">
-              <div className="brand-subtitle-container ">
- <img src="/icons/vala ai logo black.png" alt="Vala AI Logo" className="brand-logo" />
-              <h3 className="brand-title">Vala AI</h3>  
-              </div>
+  <Link to="/" className="brand-subtitle-container">
+    <img
+      src={isDarkMode ? "/icons/vala ai logo white.png" : "/icons/vala ai logo black.png"}
+      alt="Vala AI Logo"
+      className="brand-logo"
+    />
+    <h3 className="brand-title">Vala AI</h3>
+  </Link>
+
                 {/* <button
                   className="toggle-button"
                   onClick={toggleSidebar}
@@ -139,7 +143,7 @@ function Sidebar({ isOpen = false, onClose, isMobile = false }) {
                   {isMobile ? "✕" : "←"}
                 </button> */}
               </div>
-          
+
           ) : (
             <button
               className="toggle-button collapsed-only"

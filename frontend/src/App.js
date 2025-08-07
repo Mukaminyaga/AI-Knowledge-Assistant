@@ -17,12 +17,14 @@ import Users from "./pages/Users";
 import Activity from "./pages/Activity";
 import Settings from "./pages/Settings";
 import "./styles/common.css";
+import "./styles/DarkTheme.css";
 import "./App.css";
 import KnowledgeChat from "./pages/KnowledgeChat";
 import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
 import TermsOfService from "./pages/Terms";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
+import { ThemeProvider } from "./context/ThemeContext";
 
 // Super Admin imports
 import Overview from "./pages/SuperAdmin/Overview";
@@ -38,8 +40,9 @@ import "react-toastify/dist/ReactToastify.css";
 
 function App() {
   return (
-    <div className="App">
-      <Routes>
+    <ThemeProvider>
+      <div className="App">
+        <Routes>
         {/* Public Routes */}
         <Route path="/" element={<LandingPage />} />
         <Route path="/home-old" element={<Home />} />
@@ -178,7 +181,8 @@ function App() {
         />
       </Routes>
       <ToastContainer />
-    </div>
+      </div>
+    </ThemeProvider>
   );
 }
 

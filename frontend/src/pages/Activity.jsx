@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import DashboardLayout from "../components/DashboardLayout";
+import ThemeToggle from "../components/ThemeToggle";
 import {
   FiActivity,
   FiEye,
@@ -190,6 +191,9 @@ const Activity = () => {
               Track document views, uploads, and downloads by users
             </p>
           </div>
+          {/* <div className="header-controls">
+            <ThemeToggle className="activity-theme-toggle" />
+          </div> */}
         </div>
 
         {error && <div className="error-message">{error}</div>}

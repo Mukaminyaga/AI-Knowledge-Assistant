@@ -70,7 +70,7 @@
 .auth-title {
   font-size: 28px;
   font-weight: 700;
-  color: var(--text-dark);
+  color: var(--text-dark) !important;
   font-family: var(--font-inter);
   margin-bottom: 12px;
   letter-spacing: -0.5px;
@@ -78,7 +78,7 @@
 
 .auth-subtitle {
   font-size: 16px;
-  color: var(--text-gray);
+  color: var(--text-gray) !important;
   line-height: 1.5;
 }
 
@@ -97,7 +97,7 @@
 .form-label {
   font-size: 14px;
   font-weight: 600;
-  color: var(--text-dark);
+  color: var(--text-dark) !important;
   font-family: var(--font-work-sans);
 }
 
@@ -113,12 +113,16 @@
   padding: 14px 16px;
   font-size: 16px;
   font-family: var(--font-work-sans);
-  color: var(--text-dark);
-  background-color: var(--white);
+  color: var(--text-dark) !important;
+  background-color: var(--white) !important;
   transition: all 0.2s ease;
   min-height: 48px;
   width: 100%;
   box-sizing: border-box;
+}
+.dark-theme .form-input {
+  background-color: #ffffff !important;
+  color: var(--text-dark) !important;
 }
 
 .password-input-wrapper {
@@ -153,7 +157,7 @@
 
 
 .password-toggle-btn:hover {
-  color: var(--primary-color);
+  /* color: var(--primary-color); */
   background-color: rgba(11, 58, 96, 0.05);
 }
 
@@ -166,6 +170,10 @@
   width: 20px;
   height: 20px;
   pointer-events: none;
+}
+.dark-theme .password-toggle-btn {
+  background-color: #ffffff !important;
+  color: var(--text-dark) !important;
 }
 
 
@@ -226,14 +234,18 @@
   height: 16px;
   border-radius: 4px;
   border: 2px solid var(--border-light);
-  background-color: var(--white);
+  background-color: var(--white) !important;
   cursor: pointer;
   position: relative;
   transition: all 0.2s ease;
 }
+.dark-theme .form-checkbox {
+  background-color: #ffffff !important;
+  color: var(--text-dark) !important;
+}
 
 .form-checkbox:checked {
-  background-color: var(--primary-color);
+  background-color: var(--primary-color) !important;
   border-color: var(--primary-color);
 }
 
@@ -323,11 +335,11 @@
 
 .auth-footer-text {
   font-size: 14px;
-  color: var(--text-gray);
+  color: var(--text-gray) !important;
 }
 
 .auth-link {
-  color: var(--primary-color);
+  color: var(--primary-color) ;
   text-decoration: none;
   font-weight: 600;
 }
@@ -361,7 +373,7 @@
   background-color: var(--white);
   padding: 0 16px;
   font-size: 14px;
-  color: var(--text-light-gray);
+  color: var(--text-light-gray) !important;
   position: relative;
   z-index: 2;
 }

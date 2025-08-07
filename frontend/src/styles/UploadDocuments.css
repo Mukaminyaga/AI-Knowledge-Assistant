@@ -1,19 +1,19 @@
 /* Upload Documents Page Styles */
 .upload-page-container {
   min-height: 100vh;
-  background-color: var(--white) !important;
+  background-color: var(--primary-bg) !important;
   padding: 40px;
 }
 
 /* Department Selection Styles */
 .department-selection {
-  background-color: var(--white);
+  background-color: var(--card-background);
   border-radius: 20px;
   padding: 24px;
   align-self: flex-start;
   margin-bottom: 24px;
-  box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.08);
-  border: 1px solid rgba(240, 242, 245, 0.8);
+  box-shadow: var(--shadow-medium);
+  border: 1px solid var(--border-color);
 }
 
 .department-form-group {
@@ -28,35 +28,35 @@
   gap: 8px;
   font-size: 16px;
   font-weight: 600;
-  color: var(--text-dark);
+  color: var( --text-primary) ;
   margin-bottom: 8px;
 }
 
 .department-icon {
-  color: var(--primary-color);
+  color: var( --text-primary);
   font-size: 18px;
 }
 
 .department-select {
-  border: 1px solid var(--border-light);
+  border: 1px solid var(--border-color);
   border-radius: 12px;
   padding: 12px 16px;
   font-size: 16px;
-  font-family: var(--font-inter);
-  color: var(--text-dark);
-  background-color: var(--white);
+  font-family: 'Inter', -apple-system, Roboto, Helvetica, sans-serif;
+  color: var(--text-primary);
+  background-color: var(--card-background);
   transition: border-color 0.2s ease;
   cursor: pointer;
 }
 
 .department-select:focus {
   outline: none;
-  border-color: var(--primary-color);
-  box-shadow: 0 0 0 2px rgba(11, 58, 96, 0.1);
+  border-color: var(--text-secondary);
+  box-shadow: 0 0 0 2px rgba(172, 170, 170, 0.1);
 }
 
 .department-select:disabled {
-  background-color: var(--background-light);
+  background-color: var(--secondary-bg);
   cursor: not-allowed;
   opacity: 0.7;
 }
@@ -96,11 +96,11 @@
 }
 
 .departments-section .settings-card {
-  background-color: var(--white);
+  background-color: var(--card-background);
   border-radius: 20px;
   padding: 32px;
-  box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.08);
-  border: 1px solid rgba(240, 242, 245, 0.8);
+  box-shadow: var(--shadow-medium);
+  border: 1px solid var(--border-color);
   margin-bottom: 0;
 }
 
@@ -154,13 +154,32 @@
   justify-content: space-between;
   align-items: flex-start;
   margin-bottom: 40px;
-  background-color: var(--white);
+  background-color: var(--card-background);
   padding: 20px;
   border-radius: 12px;
-  box-shadow: var(--shadow-card);
-  border: 1px solid var(--border-light);
+  box-shadow: var(--shadow-medium);
+  border: 1px solid var(--border-color);
   position: relative;
   z-index: 2;
+}
+
+.upload-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.upload-theme-toggle {
+  background: var(--secondary-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  padding: 10px 12px;
+  color: var(--text-secondary);
+}
+
+.upload-theme-toggle:hover {
+  background: var(--hover-background);
+  border-color: var(--text-secondary);
 }
 
 @media (max-width: 768px) {
@@ -222,8 +241,8 @@
 }
 
 .back-button:hover {
-  background-color: var(--white);
-  box-shadow: var(--shadow-light);
+  background-color: var(--hover-background);
+  box-shadow: var(--shadow);
   transform: translateY(-1px);
 }
 
@@ -257,8 +276,8 @@
 .uploaded-files {
   flex: 1;
   min-width: 300px;
-  background-color: var(--white) !important;
-  border: 1px solid #e0e0e0;
+  background-color: var(--card-background) !important;
+  border: 1px solid var(--border-color);
   border-radius: 8px;
   padding: 1rem;
 }
@@ -272,8 +291,8 @@
 }
 
 .upload-dropzone {
-  background-color: var(--white);
-  border: 2px dashed var(--border-gray);
+  background-color: var(--card-background);
+  border: 2px dashed var(--border-color);
   border-radius: 16px;
   padding: 60px 40px;
   text-align: center;
@@ -366,7 +385,7 @@
 }
 
 .file-type {
-  background-color: var(--background-light);
+  /* background-color: var(--background-light); */
   color: var(--text-dark);
   padding: 8px 16px;
   border-radius: 20px;
@@ -380,20 +399,20 @@
 
 /* Upload Options */
 .upload-options {
-  background-color: var(--white);
+  background-color: var(--card-background);
   padding: 30px;
   border-radius: 16px;
-  box-shadow: var(--shadow-card);
-  border: 1px solid var(--border-light);
+  box-shadow: var(--shadow-medium);
+  border: 1px solid var(--border-color);
   position: relative;
   z-index: 1;
 }
 
 .options-title {
   font-size: 20px;
-  font-family: var(--font-work-sans);
+  font-family: 'Inter', -apple-system, Roboto, Helvetica, sans-serif;
   font-weight: 600;
-  color: var(--text-dark);
+  color: var(--text-primary);
   margin: 0 0 20px 0;
 }
 
@@ -408,7 +427,7 @@
   align-items: flex-start;
   gap: 12px;
   padding: 18px;
-  background-color: var(--background-light);
+  background-color: var(--secondary-bg);
   border-radius: 12px;
   cursor: pointer;
   transition: all 0.2s ease;
@@ -417,10 +436,10 @@
 }
 
 .option-card:hover {
-  background-color: var(--white);
-  box-shadow: var(--shadow-light);
+  background-color: var(--hover-background);
+  box-shadow: var(--shadow);
   transform: translateY(-1px);
-  border-color: var(--border-light);
+  border-color: var(--border-color);
 }
 
 .option-card input[type="checkbox"] {
@@ -462,11 +481,11 @@
 
 /* Uploaded Files */
 .uploaded-files {
-  background-color: var(--white);
+  background-color: var(--card-background);
   padding: 30px;
   border-radius: 16px;
-  box-shadow: var(--shadow-card);
-  border: 1px solid var(--border-light);
+  box-shadow: var(--shadow-medium);
+  border: 1px solid var(--border-color);
   animation: slideInUp 0.3s ease-out;
   position: relative;
   z-index: 1;
@@ -486,9 +505,9 @@
 
 .files-title {
   font-size: 20px;
-  font-family: var(--font-work-sans);
+  font-family: 'Inter', -apple-system, Roboto, Helvetica, sans-serif;
   font-weight: 600;
-  color: var(--text-dark);
+  color: var(--text-primary);
   margin: 0 0 20px 0;
   display: flex;
   align-items: center;
@@ -510,14 +529,14 @@
   background-color: var(--background-light);
   border-radius: 12px;
   transition: all 0.2s ease;
-  border: 1px solid var(--border-light);
+  border: 1px solid var(--border-color);
 }
 
 .file-item:hover {
-  background-color: var(--white);
-  box-shadow: var(--shadow-light);
+  background-color: var(--hover-background);
+  box-shadow: var(--shadow);
   transform: translateX(4px);
-  border-color: var(--primary-color);
+  border-color: var(--text-secondary);
 }
 
 .file-info {
@@ -540,9 +559,9 @@
 
 .file-name {
   font-size: 16px;
-  font-family: var(--font-work-sans);
+  font-family: 'Inter', -apple-system, Roboto, Helvetica, sans-serif;
   font-weight: 600;
-  color: var(--text-dark);
+  color: var(--text-primary);
   margin: 0 0 4px 0;
   white-space: nowrap;
   overflow: hidden;
@@ -655,31 +674,31 @@
 }
 
 .clear-button {
-  background-color: var(--white);
-  color: var(--text-dark);
-  border: 1px solid var(--border-light);
+  background-color: var(--secondary-bg);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
   border-radius: 12px;
   padding: 14px 28px;
   font-size: 16px;
-  font-family: var(--font-work-sans);
+  font-family: 'Inter', -apple-system, Roboto, Helvetica, sans-serif;
   font-weight: 500;
   cursor: pointer;
   transition: all 0.2s ease;
 }
 
 .clear-button:hover {
-  background-color: var(--background-light);
+  background-color: var(--hover-background);
   transform: translateY(-1px);
-  box-shadow: var(--shadow-light);
+  box-shadow: var(--shadow);
 }
 
 /* Upload Tips */
 .upload-tips {
-  background-color: var(--white);
+  background-color: var(--card-background);
   padding: 30px;
   border-radius: 16px;
-  box-shadow: var(--shadow-card);
-  border: 1px solid var(--border-light);
+  box-shadow: var(--shadow-medium);
+  border: 1px solid var(--border-color);
   max-width: 1200px;
   margin: 0 auto;
   position: relative;
@@ -711,15 +730,15 @@
 .tip-item {
   text-align: center;
   padding: 24px;
-  background-color: var(--white);
+  background-color: var(--secondary-bg);
   border-radius: 12px;
   transition: all 0.2s ease;
-  border: 1px solid var(--border-light);
+  border: 1px solid var(--border-color);
 }
 
 .tip-item:hover {
-  background-color: var(--white);
-  box-shadow: var(--shadow-light);
+  background-color: var(--hover-background);
+  box-shadow: var(--shadow);
   transform: translateY(-2px);
 }
 
@@ -731,16 +750,16 @@
 
 .tip-item h4 {
   font-size: 18px;
-  font-family: var(--font-work-sans);
+  font-family: 'Inter', -apple-system, Roboto, Helvetica, sans-serif;
   font-weight: 600;
-  color: var(--text-dark);
+  color: var(--text-primary);
   margin: 0 0 8px 0;
 }
 
 .tip-item p {
   font-size: 14px;
-  font-family: var(--font-inter);
-  color: var(--text-gray);
+  font-family: 'Inter', -apple-system, Roboto, Helvetica, sans-serif;
+  color: var(--text-secondary);
   margin: 0;
   line-height: 1.5;
 }
@@ -828,14 +847,14 @@
 .upload-options,
 .uploaded-files,
 .upload-tips {
-  background-color: var(--white) !important;
-  border: 1px solid var(--border-light);
+  background-color: var(--card-background) !important;
+  border: 1px solid var(--border-color);
 }
 
-/* Additional stability for white containers */
+/* Additional stability for containers */
 .upload-section > *,
 .upload-content > * {
-  background-color: var(--white);
+  background-color: var(--card-background);
   will-change: auto;
   backface-visibility: hidden;
   transform: translateZ(0);

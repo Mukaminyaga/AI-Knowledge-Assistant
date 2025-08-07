@@ -93,7 +93,7 @@
     var(--primary-color) 50%,
       var(--primary-dark)50%
   );
-  
+
   position: relative;
   overflow: hidden;
 }

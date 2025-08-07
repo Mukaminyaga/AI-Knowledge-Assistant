@@ -1,13 +1,11 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import {
-  FiSend,
   FiPlus,
   FiTrash2,
   FiChevronDown,
   FiChevronUp,
   FiSearch,
-  FiSun,
   FiUser,
   FiPaperclip,
   FiArrowUp,
@@ -21,12 +19,9 @@ import {
 } from "react-icons/fi";
 import DashboardLayout from "../components/DashboardLayout";
 import ChatHistory from "../components/ChatHistory";
+import ThemeToggle from "../components/ThemeToggle";
 import "../styles/Chat.css";
 import { Link } from "react-router-dom";
-
-
-
-
 
 
 function Chat() {
@@ -247,9 +242,7 @@ function Chat() {
               <FiClock size={18} />
               <span>History</span>
             </button>
-            <button className="control-btn theme-btn">
-              <FiSun size={18} />
-            </button>
+            <ThemeToggle className="control-btn" />
              <div className="sidebar-top-profile">
                     <div
                       className={`profile-dropdown-trigger ${profileDropdownOpen ? 'active' : ''}`}

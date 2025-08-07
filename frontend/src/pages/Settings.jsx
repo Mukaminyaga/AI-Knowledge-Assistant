@@ -9,8 +9,10 @@ import {
   FiEdit3,
   FiMessageCircle,
   FiArrowLeft,
+  FiMoon,
 } from "react-icons/fi";
 import DashboardLayout from "../components/DashboardLayout";
+import ThemeToggle from "../components/ThemeToggle";
 
 import "../styles/Settings.css";
 
@@ -93,19 +95,19 @@ function Settings() {
                   <h2 className="card-title">Profile Information</h2>
                    <div className="form-group">
                     {/* <label className="form-label">Role</label> */}
-                   
+
                   </div>
                    <div className="form-display role-badge">
                       {userInfo.role}
                     </div>
                 </div>
-                
+
               </div>
 
               <div className="card-content">
                 <div className="form-grid">
                   <div className="form-group">
-                    <label className="form-label">First Name</label>
+                    <label className="form-label1">First Name</label>
                     {isEditing ? (
                       <input
                         type="text"
@@ -121,7 +123,7 @@ function Settings() {
                   </div>
 
                   <div className="form-group">
-                    <label className="form-label">Last Name</label>
+                    <label className="form-label1">Last Name</label>
                     {isEditing ? (
                       <input
                         type="text"
@@ -137,7 +139,7 @@ function Settings() {
                   </div>
 
                   <div className="form-group">
-                    <label className="form-label">Email Address</label>
+                    <label className="form-label1">Email Address</label>
                     {isEditing ? (
                       <input
                         type="email"
@@ -157,7 +159,7 @@ function Settings() {
                     <span>Edit Profile</span>
                   </button>
                 )}
-                 
+
                 </div>
 
                 {isEditing && (
@@ -327,8 +329,29 @@ function Settings() {
               </div>
             </div>
 
-           
-            
+            {/* Theme Settings Card */}
+            <div className="settings-card">
+              <div className="card-header">
+                <div className="card-title-section">
+                  <FiMoon className="card-icon" />
+                  <h2 className="card-title">Appearance</h2>
+                </div>
+              </div>
+
+              <div className="card-content">
+                <div className="settings-list">
+                  <div className="setting-item">
+                    <div className="setting-info">
+                      <h3 className="setting-name">Theme</h3>
+                      <p className="setting-description">
+                        Choose between light and dark mode
+                      </p>
+                    </div>
+                    <ThemeToggle className="settings-theme-toggle" showLabel={true} />
+                  </div>
+                </div>
+              </div>
+            </div>
 
           </div>
         </div>
