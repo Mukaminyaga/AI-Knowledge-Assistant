@@ -127,13 +127,14 @@ const TenantForm = ({ isOpen, onClose, onSubmit, initialData = null }) => {
     e.preventDefault();
     if (!validateForm()) return;
 
-    const payload = {
-      ...formData,
-      monthly_fee: parseFloat(formData.monthly_fee),
-      max_users: parseInt(formData.max_users),
-      plan: formData.plan, 
-      country: formData.country,
-    };
+  const payload = {
+  ...formData,
+  monthly_fee: parseFloat(formData.monthly_fee),
+  max_users: parseInt(formData.max_users),
+  plan: formData.plan.toLowerCase(),   
+  country: formData.country,
+};
+
 
     if (initialData?.id) {
       payload.serial_code = formData.serial_code;

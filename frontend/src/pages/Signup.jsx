@@ -208,7 +208,7 @@ const handleSubmit = async (e) => {
 
     console.log("Signup successful:", response.data);
     setSuccessMessage(
-      "Signup successful! Redirecting to Home Page for login as you await approval..."
+      "Signup successful! Please check your email…"
     );
 
     // Reset form
@@ -245,7 +245,8 @@ const handleSubmit = async (e) => {
   } finally {
     setIsSubmitting(false);
   }
-};
+}; 
+
 
   return (
     <div className="auth-page">

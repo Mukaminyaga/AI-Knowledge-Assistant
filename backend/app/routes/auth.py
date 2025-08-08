@@ -4,6 +4,7 @@ from app.schemas import users as schemas
 from app import auth,database
 from app.models import tenant as tenant_model, users
 from sqlalchemy import func
+from datetime import datetime
 from app.utils.email import send_email
 
 router = APIRouter()
@@ -49,28 +50,120 @@ def register(user: schemas.UserCreate, db: Session = Depends(database.get_db)):
     db.add(new_user)
     db.commit()
     db.refresh(new_user)
-    send_email(
+    
+    if new_user.email.lower() == tenant.contact_email.lower():
+    # Email for tenant-linked user
+      send_email(
         to_email=new_user.email,
-        subject="Welcome to Vala.ai – Awaiting Approval",
+        subject="Welcome to Vala.ai – Your Account is Ready",
         html_content=f"""
-            <p>Hi {new_user.first_name},</p>
-            <p>Thank you for signing up to Vala.ai. Your account is pending approval by your tenant admin.</p>
+        <html>
+        <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
+            <p>Dear {new_user.first_name},</p>
+
+            <p>Welcome to <strong>Vala.ai</strong>! Your account is now active and ready to use.</p>
+
+            <p>You can log in right away using the link below:</p>
+
+            <p>
+                <a href="https://vala.ke/login" 
+                   style="background-color: #4CAF50; color: white; padding: 10px 20px; 
+                          text-decoration: none; border-radius: 5px; display: inline-block;">
+                   Log In to Vala.ai
+                </a>
+            </p>
+
+            <p>If you have any questions or need support, please feel free to reach out to us.</p>
+
+            <p>Warm regards,<br>
+               Vala.ai Support<br>
+            <a href="mailto:vala.ai@goodpartnerske.org">vala.ai@goodpartnerske.org</a></p>
+
+            <hr style="margin: 20px 0;">
+            <p style="font-size: 0.9em; color: #777;">
+                Sent from Vala.ai | {datetime.now().strftime('%b %d, %Y – %I:%M %p')} EAT<br>
+                Need help? Contact us at: <a href="mailto:vala.ai@goodpartnerske.org">vala.ai@goodpartnerske.org</a><br>
+                This is an automated message. Do not reply directly to this email.
+            </p>
+        </body>
+        </html>
         """
     )
+
+    else:
+    # Email for normal user (awaiting approval)
+      send_email(
+        to_email=new_user.email,
+        subject="Welcome to Vala.ai",
+        html_content=f"""
+        <html>
+        <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
+            <p>Dear {new_user.first_name},</p>
+
+            <p>Welcome to <strong>Vala.ai</strong>! We're excited to have you on board. Your user account has been successfully created.</p>
+
+            <p>Before you can log in, your account must be approved by your administrator.</p>
+
+            <p>You will receive an email notification once your account has been approved.</p>
+
+            <p>If you have any questions or need support, feel free to reach out to us.</p>
+
+            <p>Warm regards,<br>
+               Vala.ai Support<br>
+            <a href="mailto:vala.ai@goodpartnerske.org">vala.ai@goodpartnerske.org</a></p>
+
+            <hr style="margin: 20px 0;">
+            <p style="font-size: 0.9em; color: #777;">
+                Sent from Vala.ai | {datetime.now().strftime('%b %d, %Y – %I:%M %p')} EAT<br>
+                Need help? Contact us at: <a href="mailto:vala.ai@goodpartnerske.org">vala.ai@goodpartnerske.org</a><br>
+                This is an automated message. Do not reply directly to this email.
+            </p>
+        </body>
+        </html>
+        """
+    )
+
     if not is_creator:
-        send_email(
-            to_email=tenant.contact_email,
-            subject="New User Awaiting Approval",
-            html_content=f"""
-                <p>A new user has registered for your tenant:</p>
-                <ul>
-                    <li>Name: {new_user.first_name} {new_user.last_name}</li>
-                    <li>Email: {new_user.email}</li>
-                    <li>Role Requested: {new_user.role}</li>
-                </ul>
-                <p>Please log in to approve this user.</p>
-            """
-        )
+     send_email(
+    to_email=tenant.contact_email,
+    subject = f"Action Required: New User Request ({new_user.first_name} {new_user.last_name})",
+    html_content=f"""
+        <p style="color:black;">Dear {tenant.company_name} Admin,</p>
+
+        <p style="color:black;">A new user has registered under your tenant on <strong>Vala.ai</strong> and is awaiting your approval:</p>
+
+        <ul style="color:black;">
+            <li><strong>Full Name</strong>: {new_user.first_name} {new_user.last_name}</li>
+            <li><strong>Email</strong>: {new_user.email}</li>
+            <li><strong>Requested Role</strong>: {new_user.role}</li>
+        </ul>
+
+        <p style="color:black;">
+            To review, approve this user and/or edit their role, please visit
+            <a href="https://vala.ke/users">https://vala.ke/users</a>.
+        </p>
+
+        <p style="color:black;">Thank you for using Vala.ai.</p>
+
+        <br>
+        <p style="color:black;">
+            Warm regards,<br>
+            Vala.ai Support<br>
+            <a href="mailto:vala.ai@goodpartnerske.org">vala.ai@goodpartnerske.org</a>
+        </p>
+
+        <hr>
+        <p style="font-size: 12px; color:black;">
+            Sent from Vala.ai | {datetime.now().strftime('%b %d, %Y - %I:%M %p %Z')}
+            <br>
+            Need help? Contact us at: 
+            <a href="mailto:vala.ai@goodpartnerske.org">vala.ai@goodpartnerske.org</a><br>
+            This is an automated message. Do not reply directly to this email.
+        </p>
+    """
+)
+
+
     return new_user
 
     

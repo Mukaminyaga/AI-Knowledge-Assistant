@@ -3,12 +3,12 @@ import os
 from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Mail
 
-def send_email(to_email, subject, content):
+def send_email(to_email, subject, html_content):
     message = Mail(
         from_email=os.getenv("SENDER_EMAIL"),
         to_emails=to_email,
         subject=subject,
-        html_content=content
+        html_content=html_content
     )
     try:
         sg = SendGridAPIClient(os.getenv("SENDGRID_API_KEY"))

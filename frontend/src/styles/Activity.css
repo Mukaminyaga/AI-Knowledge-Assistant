@@ -332,9 +332,9 @@
 }
 
 .filter-btn.active {
-  background-color: #020407;
-  border-color: #020408;
-  color: var(--white);
+  background-color: var(--active-background) !important;
+  border-color: var(--active-background) !important;
+  color: var(--primary-bg) !important;
 }
 
 @media (max-width: 768px) {

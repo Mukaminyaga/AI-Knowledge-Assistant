@@ -171,9 +171,6 @@ def approve_document(
     return {"message": "Document approved and indexing started."}
 
 
-
-
-
 # Download (Viewer/Editor/Admin)
 @router.get("/download/{filename}")
 def download_file(
@@ -189,12 +186,25 @@ def download_file(
     if not os.path.exists(file_path):
         raise HTTPException(status_code=404, detail="File not found")
 
-    document = db.query(Document).filter_by(filename=decoded).first()
-    if document:
-        db.add(DocumentInteraction(user_id=current_user.id, document_id=document.id, action="download"))
-        db.commit()
+    # Ensure document belongs to the same tenant
+    document = db.query(Document).filter_by(
+        filename=decoded,
+        tenant_id=current_user.tenant_id
+    ).first()
+
+    if not document:
+        raise HTTPException(status_code=404, detail="Document not found for your tenant")
+
+    # Log interaction
+    db.add(DocumentInteraction(
+        user_id=current_user.id,
+        document_id=document.id,
+        action="download"
+    ))
+    db.commit()
 
     return FileResponse(path=file_path, filename=decoded, media_type="application/octet-stream")
+
 
 # View (Viewer/Editor/Admin)
 @router.get("/view/{filename}")
@@ -218,10 +228,22 @@ def view_document(
         "docx": "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
     }.get(ext, "application/octet-stream")
 
-    document = db.query(Document).filter_by(filename=decoded).first()
-    if document:
-        db.add(DocumentInteraction(user_id=current_user.id, document_id=document.id, action="view"))
-        db.commit()
+    # Ensure document belongs to the same tenant
+    document = db.query(Document).filter_by(
+        filename=decoded,
+        tenant_id=current_user.tenant_id
+    ).first()
+
+    if not document:
+        raise HTTPException(status_code=404, detail="Document not found for your tenant")
+
+    # Log interaction
+    db.add(DocumentInteraction(
+        user_id=current_user.id,
+        document_id=document.id,
+        action="view"
+    ))
+    db.commit()
 
     return FileResponse(path=file_path, media_type=media_type, filename=decoded)
 
@@ -365,8 +387,11 @@ def get_total_documents_for_all_tenants(db: Session = Depends(get_db), current_u
     return {"total_documents": total_documents}
 
 @router.get("/admin/activity-log")
-def get_user_activity_log(db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
-    ensure_permission(current_user, ["admin", "super_admin"])
+def get_user_activity_log(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    ensure_permission(current_user, ["admin"])
 
     interactions = (
         db.query(
@@ -378,15 +403,18 @@ def get_user_activity_log(db: Session = Depends(get_db), current_user: User = De
         )
         .join(User, User.id == DocumentInteraction.user_id)
         .join(Document, Document.id == DocumentInteraction.document_id)
+        .filter(Document.tenant_id == current_user.tenant_id)  
         .order_by(DocumentInteraction.timestamp.desc())
         .limit(50)
         .all()
     )
+
     return [
         {
             "user": f"{row.first_name} {row.last_name}",
             "action": row.action,
             "document": row.filename,
             "timestamp": row.timestamp.isoformat()
-        } for row in interactions
+        }
+        for row in interactions
     ]
