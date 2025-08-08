@@ -199,6 +199,7 @@ def download_file(
     db.add(DocumentInteraction(
         user_id=current_user.id,
         document_id=document.id,
+        tenant_id=current_user.tenant_id,
         action="download"
     ))
     db.commit()
@@ -241,6 +242,7 @@ def view_document(
     db.add(DocumentInteraction(
         user_id=current_user.id,
         document_id=document.id,
+        tenant_id=current_user.tenant_id,
         action="view"
     ))
     db.commit()
@@ -277,7 +279,7 @@ def delete_document(
 
     return {"message": f"Deleted document '{filename}' successfully."}
 
-# --- Other routes (access based on role or tenant context) ---
+
 
 @router.get("/")
 def get_all_documents(db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
