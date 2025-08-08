@@ -168,17 +168,23 @@ def register(user: schemas.UserCreate, db: Session = Depends(database.get_db)):
 
     
 
-
 @router.post("/login")
 def login(user: schemas.UserLogin, db: Session = Depends(database.get_db)):
     db_user = db.query(users.User).filter(users.User.email == user.email).first()
 
+    # Check credentials
     if not db_user or not auth.verify_password(user.password, db_user.hashed_password):
         raise HTTPException(status_code=400, detail="Invalid credentials")
 
+    # Prevent login if inactive
+    if db_user.status == "inactive":
+        raise HTTPException(status_code=403, detail="Your account has been deactivated. Please contact an administrator.")
+
+    # Prevent login if not approved
     if not db_user.is_approved:
         raise HTTPException(status_code=403, detail="Your account is pending approval")
 
+    # Create token
     token = auth.create_access_token({
         "sub": db_user.email,
         "role": db_user.role,
@@ -195,6 +201,7 @@ def login(user: schemas.UserLogin, db: Session = Depends(database.get_db)):
             "email": db_user.email,
             "role": db_user.role,
             "is_approved": db_user.is_approved,
+            "status": db_user.status,  
             "tenant_id": db_user.tenant_id,
         },
     }

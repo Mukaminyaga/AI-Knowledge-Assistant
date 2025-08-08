@@ -102,6 +102,60 @@ def get_all_users(
     ).all()
 
 
+@router.put("/deactivate/{user_id}")
+def deactivate_user(
+    user_id: int,
+    db: Session = Depends(get_db),
+    current_user: users.User = Depends(get_current_user)
+):
+    # Only admins can deactivate
+    if current_user.role.lower() != "admin":
+        raise HTTPException(status_code=403, detail="Only admins can deactivate users")
+
+    user = db.query(users.User).filter(
+        users.User.id == user_id,
+        users.User.tenant_id == current_user.tenant_id  # prevent affecting other tenants
+    ).first()
+
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found in your tenant")
+
+    if user.status == "inactive":
+        raise HTTPException(status_code=400, detail="User is already inactive")
+
+    user.status = "inactive"
+    db.commit()
+    db.refresh(user)
+
+    return {"message": f"{user.email} has been deactivated."}
+
+
+@router.put("/activate/{user_id}")
+def activate_user(
+    user_id: int,
+    db: Session = Depends(get_db),
+    current_user: users.User = Depends(get_current_user)
+):
+    if current_user.role.lower() != "admin":
+        raise HTTPException(status_code=403, detail="Only admins can activate users")
+
+    user = db.query(users.User).filter(
+        users.User.id == user_id,
+        users.User.tenant_id == current_user.tenant_id
+    ).first()
+
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found in your tenant")
+
+    if user.status == "active":
+        raise HTTPException(status_code=400, detail="User is already active")
+
+    user.status = "active"
+    db.commit()
+    db.refresh(user)
+
+    return {"message": f"{user.email} has been activated."}
+
 
 @router.delete("/delete/{user_id}")
 def delete_user(
@@ -114,7 +168,7 @@ def delete_user(
 
     user = db.query(users.User).filter(
         users.User.id == user_id,
-        users.User.tenant_id == current_user.tenant_id  #  prevent deleting users from other tenants
+        users.User.tenant_id == current_user.tenant_id 
     ).first()
 
     if not user:

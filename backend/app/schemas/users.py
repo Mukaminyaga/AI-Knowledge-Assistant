@@ -19,6 +19,7 @@ class UserOut(BaseModel):
     email: str
     role: str
     is_approved: bool
+    status: str
     tenant_id: int
 
     class Config:

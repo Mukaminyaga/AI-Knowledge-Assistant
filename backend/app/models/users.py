@@ -17,6 +17,7 @@ class User(Base):
     role = Column(String, nullable=False, default="Viewer")  # 'Viewer', 'Editor', 'Admin'
     is_approved = Column(Boolean, nullable=False, default=False)
     tenant_id = Column(Integer, ForeignKey("tenants.id"), nullable=False)
+    status = Column(String, nullable=False, default="active")
     tenant = relationship("Tenant", back_populates="users")
     chats = relationship("ChatSession", back_populates="user", cascade="all, delete-orphan")
 

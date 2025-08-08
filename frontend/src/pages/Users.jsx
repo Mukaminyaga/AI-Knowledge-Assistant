@@ -7,7 +7,7 @@ import {
   FiUserCheck,
   FiUserX,
   FiActivity,
-  FiTrash2,
+  // FiTrash2,
   FiShield,
   FiEdit,
   FiChevronLeft,
@@ -62,6 +62,14 @@ const Users = () => {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
       });
+      const sortedUsers = res.data.sort((a, b) => {
+      if (a.status === b.status) return 0;
+      if (a.status === "active") return -1;  // a before b
+      if (b.status === "active") return 1;   // b before a
+      return 0;
+    });
+
+     setUsers(sortedUsers);
       setUsers(res.data);
       setUserStats(calculateStats(res.data));
     } catch (err) {
@@ -93,31 +101,70 @@ const Users = () => {
       setError("Error approving user");
     }
   };
+  // Deactivate user
+const deactivateUser = async (userId) => {
+  const confirmDeactivate = window.confirm("Are you sure you want to deactivate this user?");
+  if (!confirmDeactivate) return;
 
-  // Delete user
-  const deleteUser = async (userId) => {
-    const confirmDelete = window.confirm(
-      "Are you sure you want to delete this user?",
-    );
-    if (!confirmDelete) return;
+  try {
+    const res = await axios.put(`${API_URL}/users/deactivate/${userId}`, {}, {
+      headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+    });
 
-    try {
-      const res = await axios.delete(`${API_URL}/users/delete/${userId}`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-      });
-
-      if (res.status === 200) {
-        fetchUsers();
-      } else {
-        setError("Failed to delete user");
-      }
-    } catch (err) {
-      console.error("Delete error:", err.response || err);
-      setError("Error deleting user");
+    if (res.status === 200) {
+      fetchUsers();
+    } else {
+      setError("Failed to deactivate user");
     }
-  };
+  } catch (err) {
+    console.error("Deactivate error:", err.response || err);
+    setError("Error deactivating user");
+  }
+};
+
+// Activate user
+const activateUser = async (userId) => {
+  try {
+    const res = await axios.put(`${API_URL}/users/activate/${userId}`, {}, {
+      headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+    });
+
+    if (res.status === 200) {
+      fetchUsers();
+    } else {
+      setError("Failed to activate user");
+    }
+  } catch (err) {
+    console.error("Activate error:", err.response || err);
+    setError("Error activating user");
+  }
+};
+
+
+  
+  // const deleteUser = async (userId) => {
+  //   const confirmDelete = window.confirm(
+  //     "Are you sure you want to delete this user?",
+  //   );
+  //   if (!confirmDelete) return;
+
+  //   try {
+  //     const res = await axios.delete(`${API_URL}/users/delete/${userId}`, {
+  //       headers: {
+  //         Authorization: `Bearer ${localStorage.getItem("token")}`,
+  //       },
+  //     });
+
+  //     if (res.status === 200) {
+  //       fetchUsers();
+  //     } else {
+  //       setError("Failed to delete user");
+  //     }
+  //   } catch (err) {
+  //     console.error("Delete error:", err.response || err);
+  //     setError("Error deleting user");
+  //   }
+  // };
 
   // Edit user functions
   const openEditModal = (user) => {
@@ -156,6 +203,8 @@ const Users = () => {
     }
   };
 
+
+
   // Pagination calculations
   const totalPages = Math.ceil(users.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
@@ -176,6 +225,20 @@ const Users = () => {
     if (currentPage < totalPages) {
       setCurrentPage(currentPage + 1);
     }
+  };
+
+   const getStatusBadge = (status) => {
+    const statusColors = {
+      active: "success",
+      inactive: "warning",
+      suspended: "danger",
+    };
+
+    return (
+      <span className={`status-badge status-${statusColors[status] || "default"}`}>
+        {status?.charAt(0).toUpperCase() + status?.slice(1)}
+      </span>
+    );
   };
 
   useEffect(() => {
@@ -260,7 +323,8 @@ const Users = () => {
                 <tr>
                   <th>User</th>
                   <th>Role</th>
-                  <th>Status</th>
+                   <th>Status</th>
+                  <th>Approved</th>
                   {/* <th>Last Active</th>
                   <th>Join Date</th> */}
                   <th>Actions</th>
@@ -283,7 +347,11 @@ const Users = () => {
                         </div>
                       </div>
                     </td>
-
+                     
+ 
+     
+      
+   
                     <td>
                       <span className={`role-badge ${user.role.toLowerCase()}`}>
                         {user.role === "Admin" && (
@@ -295,6 +363,10 @@ const Users = () => {
                         {user.role}
                       </span>
                     </td>
+
+                  <td>
+  {getStatusBadge(user.status)}
+</td>
                     <td>
                       <span
                         className={`status-badge ${user.is_approved ? "approved" : "pending"}`}
@@ -315,6 +387,7 @@ const Users = () => {
                       {user.last_active || "N/A"}
                     </td>
                     <td className="join-date">{user.join_date || "N/A"}</td> */}
+                    
                     <td className="actions">
                       <div className="action-buttons">
                         {!user.is_approved && (
@@ -333,13 +406,29 @@ const Users = () => {
                         >
                           <FiEdit size={16} />
                         </button>
-                        <button
+                         {user.status === "active" ? (
+    <button
+      className="action-btn deactivate"
+      onClick={() => deactivateUser(user.id)}
+      title="Deactivate User"
+    >
+      <FiUserX size={16} />
+    </button>
+  ) : (
+    <button
+      className="action-btn activate"
+      onClick={() => activateUser(user.id)}
+      title="Activate User"
+    >
+      <FiUser size={16} />
+    </button> )}
+                        {/* <button
                           className="action-btn delete"
                           onClick={() => deleteUser(user.id)}
                           title="Delete User"
                         >
                           <FiTrash2 size={16} />
-                        </button>
+                        </button> */}
                       </div>
                     </td>
                   </tr>

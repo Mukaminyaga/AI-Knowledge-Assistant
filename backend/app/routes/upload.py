@@ -235,11 +235,10 @@ def view_document(
         tenant_id=current_user.tenant_id
     ).first()
 
-    if not document:
-        raise HTTPException(status_code=404, detail="Document not found for your tenant")
+    if  document:
 
     # Log interaction
-    db.add(DocumentInteraction(
+     db.add(DocumentInteraction(
         user_id=current_user.id,
         document_id=document.id,
         tenant_id=current_user.tenant_id,
