@@ -33,7 +33,7 @@ const Payments = () => {
   const fetchPayments = async () => {
     try {
       setLoading(true);
-      const res = await axios.get(`${API_URL}/payments`);
+      const res = await axios.get(`${API_URL}/payments/`);
       setPayments(res.data);
     } catch (err) {
       console.error("Error fetching payments:", err);

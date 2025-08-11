@@ -13,7 +13,7 @@ function LandingHeader() {
               alt="Vala AI Logo"
               className="landing-logo-image"
             />
-            <span className="landing-logo-text">Vala AI</span>
+            <span className="landing-logo-text">Vala.ai</span>
           </Link>
         </div>
 

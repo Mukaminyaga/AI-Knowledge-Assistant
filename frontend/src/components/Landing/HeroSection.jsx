@@ -27,7 +27,7 @@ function HeroSection() {
         <div className="hero-content">
           <div className="hero-text">
             <h1 className="hero-title">
-              Unlock your
+              Unlock your 
               <span className="hero-title-gradient"> Organization's<br></br>
               Knowledge </span>
               Instantly.
@@ -67,7 +67,7 @@ function HeroSection() {
 
     <div className="hero-image">
             <img
-src="/icons/Rectangle 7667.png"
+src="/icons/Rectangle 7667 (2).png"
          alt="AI Knowledge Management Platform"
               className="hero-main-image"
             />

@@ -24,7 +24,7 @@ const Tenants = () => {
 
   const fetchTenants = async () => {
     try {
-      const response = await axios.get(`${API_URL}/tenants/tenants`);
+      const response = await axios.get(`${API_URL}/tenants/tenants/`);
       setTenants(response.data);
     } catch (err) {
       console.error(err);

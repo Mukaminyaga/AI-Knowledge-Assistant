@@ -21,8 +21,8 @@ function WhyChooseSection() {
       bgColor: "#E8F9FF"
     },
     {
-      number: "1000+",
-      label: "Users",
+      number: "10GB+",
+      label: "Storage Space",
       bgColor: "rgba(254, 214, 170, 0.70)"
     }
   ];
@@ -50,7 +50,7 @@ function WhyChooseSection() {
               className="stat-card"
               style={{ backgroundColor: stat.bgColor }}
             >
-              <div className="stat-number">{stat.number}</div>
+              <div className="stat-number3">{stat.number}</div>
               <div className="stat-label">{stat.label}</div>
             </div>
           ))}
