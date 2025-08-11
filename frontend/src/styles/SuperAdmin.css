@@ -1356,13 +1356,13 @@
 .donut-total {
   font-size: 20px;
   font-weight: 700;
-  color: rgb(17, 24, 39);
+ color: var(--active-background);
   margin-bottom: 2px;
 }
 
 .donut-label {
   font-size: 10px;
-  color: rgb(75, 85, 99);
+  color: var(--active-background);
   font-weight: 500;
 }
 
