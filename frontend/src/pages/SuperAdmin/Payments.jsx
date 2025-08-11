@@ -13,6 +13,7 @@ import {
 } from "react-icons/fi";
 import "../../styles/SuperAdmin.css";
 import axios from "axios";
+import ThemeToggle from "../../components/ThemeToggle";
 
 const API_URL = process.env.REACT_APP_API_URL;
 
@@ -200,6 +201,8 @@ const Payments = () => {
             <p className="page-subtitle">Track and manage all tenant payments and billing history</p>
           </div>
           <div className="page-header-actions">
+          <ThemeToggle className="dashboard-theme-toggle" />
+
             <button className="btn btn-secondary" onClick={handleRefresh}>
               <FiRefreshCw className="btn-icon" /> Refresh
             </button>

@@ -5,6 +5,7 @@
 .payments-page,
 .analytics-page {
   width: 100%;
+ /* background-color: var(--secondary-bg); */
 }
 
 /* Page Header */
@@ -293,7 +294,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  color: rgb(75, 85, 99); /* gray-600 */
+  color: var( --text-tertiary)!important; /* gray-600 */
   font-size: 24px;
   flex-shrink: 0;
 }
@@ -845,9 +846,9 @@
   gap: 20px;
   margin-bottom: 32px;
   padding: 24px;
-  background: rgb(255, 255, 255);
+  background: var(--card-background);
   border-radius: 16px;
-  border: 1px solid rgb(229, 231, 235); 
+  border: 1px solid var(--border-color); 
 }
 
 .stat-item {
@@ -1115,7 +1116,8 @@
 
 .trend-bar {
   width: 24px;
-  background: linear-gradient(135deg, rgb(1, 5, 8), rgb(1, 5, 8));
+  background: var(--active-background);
+  /* background: linear-gradient(135deg, rgb(1, 5, 8), rgb(1, 5, 8)); */
   border-radius: 4px 4px 0 0;
   transition: all 0.3s ease;
   cursor: pointer;
@@ -1144,6 +1146,7 @@
   align-items: center;
   justify-content: space-between;
   padding: 12px 0;
+  
 }
 
 .status-info {
@@ -1186,10 +1189,10 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background: rgb(255, 255, 255);
+  background: var(--card-background);
   padding: 16px 24px;
   border-radius: 12px;
-  border: 1px solid rgb(229, 231, 235);
+  border: 1px solid var(--border-color);
   margin-bottom: 24px;
 }
 
@@ -1213,7 +1216,7 @@
 .main-chart-card {
   grid-column: 1;
   grid-row: 1 / 3;
-  background: rgb(255, 255, 255);
+  background: var(--card-background);
   border-radius: 16px;
   border: 1px solid rgb(229, 231, 235);
   overflow: hidden;
@@ -1293,7 +1296,8 @@
 .chart-bar {
   width: 100%;
   max-width: 32px;
-  background: linear-gradient(135deg, rgb(0, 0, 0), rgb(0, 3, 5));
+  background: var(--active-background);
+  /* background: linear-gradient(135deg, rgb(0, 0, 0), rgb(0, 3, 5)); */
   border-radius: 4px 4px 0 0;
   transition: all 0.3s ease;
   cursor: pointer;
@@ -1464,13 +1468,13 @@
   align-items: center;
   gap: 12px;
   padding: 12px;
-  background: rgb(249, 250, 251);
+ background: var(--hover-background);
   border-radius: 8px;
   transition: all 0.2s ease;
 }
 
 .performer-item:hover {
-  background: rgb(243, 244, 246);
+  background: var(--hover-background);
 }
 
 .performer-rank {
@@ -2209,7 +2213,7 @@
   display: inline-flex;
   align-items: center;
   padding: 4px 8px;
-  background: rgb(243, 244, 246);
+  background: var(--border-color);
   color: rgb(75, 85, 99);
   border-radius: 6px;
   font-size: 12px;

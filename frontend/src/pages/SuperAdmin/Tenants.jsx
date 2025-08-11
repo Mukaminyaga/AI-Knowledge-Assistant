@@ -8,6 +8,7 @@ import "../../styles/SuperAdmin.css";
 import * as XLSX from "xlsx";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
+import ThemeToggle from "../../components/ThemeToggle";
 
 const API_URL = process.env.REACT_APP_API_URL;
 
@@ -334,6 +335,8 @@ const Tenants = () => {
             </p>
           </div>
           <div className="page-header-actions">
+                            <ThemeToggle className="dashboard-theme-toggle" />
+
             <div className="btn-group">
               <div className="export-dropdown">
                 <button className="btn btn-secondary dropdown-toggle">

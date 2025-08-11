@@ -14,7 +14,7 @@
   align-items: center;
   gap: 8px;
   padding: 8px 12px;
-  background: rgb(249, 250, 251);
+  background: var(--bo);
   color: rgb(75, 85, 99);
   border: 1px solid rgb(229, 231, 235);
   border-radius: 8px;
@@ -78,7 +78,7 @@
 .info-icon {
   width: 48px;
   height: 48px;
-  background: rgb(249, 250, 251);
+  /* background: rgb(249, 250, 251); */
   border-radius: 12px;
   display: flex;
   align-items: center;

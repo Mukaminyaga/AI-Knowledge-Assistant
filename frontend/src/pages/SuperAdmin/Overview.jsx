@@ -5,6 +5,8 @@ import OverdueTenantsModal from "../../components/SuperAdmin/OverdueTenantsModal
 import { FiUsers, FiDollarSign, FiAlertTriangle, FiTrendingUp, FiPlus, FiFileText } from "react-icons/fi";
 import { Link } from "react-router-dom";
 import "../../styles/SuperAdmin.css";
+import ThemeToggle from "../../components/ThemeToggle";
+
 
 
 const API_URL = process.env.REACT_APP_API_URL;
@@ -20,6 +22,7 @@ const Overview = () => {
 });
 const [overdueTenantsModal, setOverdueTenantsModal] = useState(false);
 const [allPayments, setAllPayments] = useState([]);
+const user = JSON.parse(localStorage.getItem("user"));
 
 
 
@@ -63,10 +66,14 @@ useEffect(() => {
           <div className="page-header-content">
             <h1 className="page-title">Super Admin Dashboard</h1>
             <p className="page-subtitle">
-              Manage tenants, subscriptions, and billing
+               Welcome,{user.first_name}
+                            <br></br>
+              Manage your tenants, subscriptions, and billing
             </p>
           </div>
          <div className="page-header-actions">
+                <ThemeToggle className="dashboard-theme-toggle" />
+
   <Link to="/super-admin/tenants" className="btn btn-primary">
     <FiPlus className="btn-icon" />
     Add Tenant

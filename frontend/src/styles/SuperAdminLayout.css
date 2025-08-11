@@ -2,7 +2,7 @@
 .super-admin-layout {
   display: flex;
   min-height: 100vh;
-  background-color: rgb(249, 250, 251); /* gray-50 */
+  background-color: var(--primary-bg); /* gray-50 */
 }
 
 .super-admin-main-container {

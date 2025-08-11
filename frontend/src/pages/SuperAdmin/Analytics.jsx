@@ -8,6 +8,8 @@ import {
   FiDollarSign,
 } from "react-icons/fi";
 import "../../styles/SuperAdmin.css";
+import ThemeToggle from "../../components/ThemeToggle";
+
 
 const API_URL = process.env.REACT_APP_API_URL;
 
@@ -80,6 +82,8 @@ const Analytics = () => {
             </p>
           </div>
           <div className="page-header-actions">
+                            <ThemeToggle className="dashboard-theme-toggle" />
+
             <select
               value={timeRange}
               onChange={(e) => setTimeRange(e.target.value)}

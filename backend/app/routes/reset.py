@@ -95,7 +95,7 @@ def reset_password(request: ResetPasswordRequest):
             html_content=f"""
                 <html>
                 <body style="font-family: Arial, sans-serif; color: black; line-height: 1.6;">
-                    <p>Dear {user.first_name or 'User'},</p>
+                    <p>Hi {user.first_name or 'User'},</p>
                     <p>Your password for <strong>Vala.ai</strong> has been successfully reset.</p>
                     <p>If you did not make this change, please contact our support team immediately.</p>
                     <p>Warm regards,<br>

@@ -217,7 +217,7 @@ const TenantDetails = () => {
               </button>
             </div>
             <h1 className="page-title">{tenant.companyName || tenant.company_name}</h1>
-            <p className="page-subtitle">Manage users and documents for this tenant</p>
+            {/* <p className="page-subtitle">Manage users and documents for this tenant</p> */}
           </div>
           <div className="page-header-actions">{getStatusBadge(tenant.status)}</div>
         </div>

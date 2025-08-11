@@ -77,40 +77,26 @@ const SuperAdminSidebar = ({ activePage }) => {
           })}
         </ul>
       </nav>
-       <div className="sidebar-footer">
-              <div className="user-profile">
-                <div className="user-avatar1">
-                  <FiUser size={20} />
-                </div>
-               
-                  <div className="user-info">
-                     <p className="user-name">
-                        {user?.first_name
-                         ? `${user.first_name}.${user.last_name?.charAt(0).toUpperCase() || ""}`
-                          : "John.D"}
-                    </p>
       
-                    <p className="user-email">{user?.email || "john@example.com"}</p>
-                     </div>
-                
-                
-                  <div className="profile-actions">
-                    <FiLogOut
-                      className="logout-icon"
-                      title="Logout"
-                      onClick={handleLogout}
-                    />
-                  </div>
+        <div className="sidebar-footer">
+              <button
+                className="logout-button-bottom"
+                onClick={handleLogout}
+              >
+                <span className="nav-icon">
+                  <FiLogOut size={20} />
+                </span>
               
-              </div>
-              </div>
-
+                  <span className="nav-label">Logout</span>
+                
+              </button>
       {/* <div className="sidebar-footer">
         <Link to="/settings" className="nav-link">
           <FiSettings className="nav-icon" />
           <span className="nav-text">Settings</span>
         </Link>
       </div> */}
+    </div>
     </div>
   );
 };

@@ -212,7 +212,7 @@ const TenantForm = ({ isOpen, onClose, onSubmit, initialData = null }) => {
         <form onSubmit={handleSubmit} className="tenant-form">
           <div className="form-grid">
             <div className="form-group">
-              <label className="form-label">Company Name *</label>
+              <label className="form-label1">Company Name *</label>
               <input
                 type="text"
                 name="company_name"
@@ -226,7 +226,7 @@ const TenantForm = ({ isOpen, onClose, onSubmit, initialData = null }) => {
             </div>
 
             <div className="form-group">
-              <label className="form-label">Contact Email *</label>
+              <label className="form-label1">Contact Email *</label>
               <input
                 type="email"
                 name="contact_email"
@@ -240,7 +240,7 @@ const TenantForm = ({ isOpen, onClose, onSubmit, initialData = null }) => {
             </div>
 
             <div className="form-group">
-              <label className="form-label">Slug URL *</label>
+              <label className="form-label1">Slug URL *</label>
               <input
                 type="text"
                 name="slug_url"
@@ -254,7 +254,7 @@ const TenantForm = ({ isOpen, onClose, onSubmit, initialData = null }) => {
             </div>
 
             <div className="form-group">
-              <label className="form-label">Contact Phone *</label>
+              <label className="form-label1">Contact Phone *</label>
               <input
                 type="tel"
                 name="contact_phone"
@@ -268,7 +268,7 @@ const TenantForm = ({ isOpen, onClose, onSubmit, initialData = null }) => {
             </div>
 
             <div className="form-group">
-              <label className="form-label">Country *</label>
+              <label className="form-label1">Country *</label>
               <select
                 name="country"
                 value={formData.country}
@@ -345,7 +345,7 @@ const TenantForm = ({ isOpen, onClose, onSubmit, initialData = null }) => {
             </div>
 
             <div className="form-group">
-              <label className="form-label">Plan *</label>
+              <label className="form-label1">Plan *</label>
               <select
                 name="plan"
                 value={formData.plan}
@@ -363,7 +363,7 @@ const TenantForm = ({ isOpen, onClose, onSubmit, initialData = null }) => {
             </div>
 
             <div className="form-group form-group-full">
-              <label className="form-label">Billing Address *</label>
+              <label className="form-label1">Billing Address *</label>
               <textarea
                 name="billing_address"
                 value={formData.billing_address}
@@ -376,7 +376,7 @@ const TenantForm = ({ isOpen, onClose, onSubmit, initialData = null }) => {
             </div>
 
             <div className="form-group">
-              <label className="form-label">Monthly Fee (KES) *</label>
+              <label className="form-label1">Monthly Fee (KES) *</label>
               <input
                 type="number"
                 name="monthly_fee"
@@ -390,7 +390,7 @@ const TenantForm = ({ isOpen, onClose, onSubmit, initialData = null }) => {
             </div>
 
             <div className="form-group">
-              <label className="form-label">Max Users *</label>
+              <label className="form-label1">Max Users *</label>
               <input
                 type="number"
                 name="max_users"
@@ -404,7 +404,7 @@ const TenantForm = ({ isOpen, onClose, onSubmit, initialData = null }) => {
             </div>
 
             <div className="form-group">
-              <label className="form-label">Status *</label>
+              <label className="form-label1">Status *</label>
               <select
                 name="status"
                 value={formData.status}
@@ -422,7 +422,7 @@ const TenantForm = ({ isOpen, onClose, onSubmit, initialData = null }) => {
 
             {initialData?.id && (
               <div className="form-group">
-                <label className="form-label">Serial Code *</label>
+                <label className="form-label1">Serial Code *</label>
                 <input
                   type="text"
                   name="serial_code"

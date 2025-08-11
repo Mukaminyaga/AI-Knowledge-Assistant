@@ -15,7 +15,6 @@ import { toast } from "react-toastify";
 import MarkAsPaidModal from "./MarkAsPaidModal";
 import "../../styles/SuperAdmin.css";
 
-// ...imports remain unchanged
 
 const TenantTable = ({
   tenants,
