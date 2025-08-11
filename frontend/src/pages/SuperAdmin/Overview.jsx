@@ -36,9 +36,9 @@ useEffect(() => {
       };
 
       const [overviewRes, documentsRes, paymentsRes] = await Promise.all([
-        axios.get(`${API_URL}/tenants/tenants/dashboard/overview`, { headers }),
-        axios.get(`${API_URL}/documents/superadmin/stats/total-documents`, { headers }),
-        axios.get(`${API_URL}/payments`, { headers })
+        axios.get(`${API_URL}/tenants/tenants/dashboard/overview/`, { headers }),
+        axios.get(`${API_URL}/documents/superadmin/stats/total-documents/`, { headers }),
+        axios.get(`${API_URL}/payments/`, { headers })
       ]);
 
       const mergedData = {
