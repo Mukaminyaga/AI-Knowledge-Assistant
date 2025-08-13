@@ -113,6 +113,7 @@ function Chat() {
         {
           query: userQuery,
           top_k: 3,
+          summarize: false
         },
         {
           headers: {
