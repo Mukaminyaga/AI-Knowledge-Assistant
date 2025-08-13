@@ -1,14 +1,13 @@
-from fastapi import APIRouter, HTTPException, Depends, Path
+# updated_search_router.py  (paste into your existing router file, replacing the old search_docs function)
+import os
+import time
+import requests
+import re
+from fastapi import APIRouter, HTTPException, Depends
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
-import re
-from datetime import datetime
-from app.utils.faiss_search import DocumentSearcher
-from app.utils.embedding_utils import embed_chunks
-from app.utils.summarizer import summarize_results
 from app.auth import get_current_user
 from app.models.users import User
-from app.models.chat import ChatSession, ChatMessage
 from app.database import get_db
 
 router = APIRouter()
@@ -16,194 +15,152 @@ router = APIRouter()
 class QueryRequest(BaseModel):
     query: str
     top_k: int = 10
+    summarize: bool = False
 
-def clean_text(text):
-    return re.sub(r'\s+', ' ', text).strip()
+# --- RunPod settings via env vars ---
+RUNPOD_API_KEY = os.environ.get("RUNPOD_API_KEY")  # set this locally (do NOT hardcode)
+RUNPOD_POD_ID = os.environ.get("RUNPOD_POD_ID")  
+RUNPOD_BASE = os.environ.get("RUNPOD_API_BASE", "https://rest.runpod.io/v1")
+POLL_TIMEOUT = int(os.environ.get("RUNPOD_START_TIMEOUT", 120))  # seconds to wait for pod to boot
+POLL_INTERVAL = float(os.environ.get("RUNPOD_POLL_INTERVAL", 2.0))
+POD_INTERNAL_PORT = int(os.environ.get("POD_INTERNAL_PORT", 8000))  # port worker listens on in the pod
+POD_SHARED_SECRET = os.environ.get("POD_SHARED_SECRET") 
+
+def _start_pod(pod_id: str):
+    url = f"{RUNPOD_BASE}/pods/{pod_id}/start"
+    headers = {"Authorization": f"Bearer {RUNPOD_API_KEY}"}
+    r = requests.post(url, headers=headers, timeout=30)
+    if r.status_code not in (200, 202):
+        raise RuntimeError(f"Failed to start pod: {r.status_code} {r.text}")
+    return r.json()
+
+def _get_pod_info(pod_id: str):
+    url = f"{RUNPOD_BASE}/pods/{pod_id}"
+    headers = {"Authorization": f"Bearer {RUNPOD_API_KEY}"}
+    r = requests.get(url, headers=headers, timeout=30)
+    if r.status_code != 200:
+        raise RuntimeError(f"Failed to get pod info: {r.status_code} {r.text}")
+    return r.json()
+
+def _stop_pod(pod_id: str):
+    url = f"{RUNPOD_BASE}/pods/{pod_id}/stop"
+    headers = {"Authorization": f"Bearer {RUNPOD_API_KEY}"}
+    r = requests.post(url, headers=headers, timeout=30)
+    # Accept 200 or 202 as success
+    if r.status_code not in (200, 202):
+        raise RuntimeError(f"Failed to stop pod: {r.status_code} {r.text}")
+    return r.json()
+
+def _find_external_port(pod_info: dict, internal_port: int):
+    """
+    pod_info should contain a 'portMappings' dict like {"22": 10341}
+    Look up internal_port as str and return external port (int).
+    """
+    pm = pod_info.get("portMappings") or {}
+    # keys might be strings; compare as str
+    ext = pm.get(str(internal_port))
+    if ext:
+        return int(ext)
+    # fallback: if there's a 'ports' listing and only one port exposed, try to use that
+    ports = pod_info.get("ports") or []
+    if len(ports) == 1:
+        # format can be "8000/http" - try to parse it
+        p = ports[0].split("/")[0]
+        try:
+            return int(p)
+        except:
+            pass
+    return None
 
 @router.post("/search")
+@router.post("/search/")
 def search_docs(
     request: QueryRequest,
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
-    query = clean_text(request.query).lower()
-    greeting_keywords = {"hello", "h", "hi", "hey", "goodmorning", "good morning"}
+    if not RUNPOD_API_KEY or not RUNPOD_POD_ID:
+        raise HTTPException(status_code=500, detail="RUNPOD_API_KEY and RUNPOD_POD_ID must be set in env")
 
-    # Check for greetings
-    if query in greeting_keywords:
-        greeting_response = "Hello! I'm your Knowledge Assistant AI. How can I help you today?"
-
-        # Create a new chat session for greeting
-        session = ChatSession(
-            user_id=current_user.id,
-            tenant_id=current_user.tenant_id,
-            title="Greeting",
-            created_at=datetime.utcnow(),
-            bookmarked=False
-        )
-        db.add(session)
-        db.commit()
-        db.refresh(session)
-
-        # User message
-        user_msg = ChatMessage(
-            session_id=session.id,
-            user_id=current_user.id,
-            tenant_id=current_user.tenant_id,
-            role="user",
-            text=request.query,
-            created_at=datetime.utcnow()
-)
-        db.add(user_msg)
-
-# Assistant response
-        assistant_msg = ChatMessage(
-              session_id=session.id,
-              user_id=current_user.id,
-              tenant_id=current_user.tenant_id,
-              role="assistant",
-              text=greeting_response,
-              results=[],  # or keep as is
-              created_at=datetime.utcnow()
-)
-        db.add(assistant_msg)
-
-        db.commit()
-
-
-        return {
-            "query": request.query,
-            "answer": greeting_response,
-            "source_files": [],
-            "session_id": session.id
-        }
-
-    # Perform semantic search
+    # 1) start pod
     try:
-        searcher = DocumentSearcher()
-    except FileNotFoundError as e:
-        raise HTTPException(status_code=500, detail=f"Index or metadata not found: {str(e)}")
+        _start_pod(RUNPOD_POD_ID)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to start pod: {e}")
 
-    query_embedding = embed_chunks([request.query])[0]
-    results = searcher.search(query_embedding, top_k=request.top_k, tenant_id=current_user.tenant_id)
+    # 2) wait for pod to be running and get public IP + external port
+    start_at = time.time()
+    pod_info = None
+    public_ip = None
+    external_port = None
+    while time.time() - start_at < POLL_TIMEOUT:
+        try:
+            pod_info = _get_pod_info(RUNPOD_POD_ID)
+        except Exception as e:
+            # keep polling
+            pod_info = None
 
-    if results:
-        answer = summarize_results(request.query, results)
-        source_files = list({r.get("filename", "unknown") for r in results})
-    else:
-        answer = "Sorry, I couldn’t find any relevant documents for your query."
-        source_files = []
+        if pod_info:
+            # pod_info typically contains 'publicIp' and 'portMappings'
+            public_ip = pod_info.get("publicIp")
+            external_port = _find_external_port(pod_info, POD_INTERNAL_PORT)
+            state = pod_info.get("state") or pod_info.get("status") or pod_info.get("podState") or pod_info.get("phase")
+            # consider RUNNING when we have public_ip and external_port
+            if public_ip and external_port:
+                break
 
-    # ✅ Try to find the latest existing session for this user
-    session = (
-        db.query(ChatSession)
-        .filter_by(user_id=current_user.id, tenant_id=current_user.tenant_id)
-        .order_by(ChatSession.created_at.desc())
-        .first()
-    )
+        time.sleep(POLL_INTERVAL)
 
-    # If no session exists, create a new one with the query title
-    if not session:
-        session = ChatSession(
-            user_id=current_user.id,
-            tenant_id=current_user.tenant_id,
-            title=request.query[:30],
-            created_at=datetime.utcnow(),
-            bookmarked=False
-        )
-        db.add(session)
-        db.commit()
-        db.refresh(session)
+    if not public_ip or not external_port:
+        # try to stop pod before returning error
+        try:
+            _stop_pod(RUNPOD_POD_ID)
+        except Exception:
+            pass
+        raise HTTPException(status_code=504, detail="Pod did not become reachable in time")
 
-    # Store chat message under the same session
-        user_msg = ChatMessage(
-            session_id=session.id,
-            user_id=current_user.id,
-            tenant_id=current_user.tenant_id,
-            role="user",
-            text=request.query,
-            created_at=datetime.utcnow()
-)
-        db.add(user_msg)
+    # 3) call the worker inside the pod
+    worker_url = f"http://{public_ip}:{external_port}/search"
+    payload = {"query": request.query, "top_k": request.top_k, "summarize": bool(request.summarize), "tenant_id": current_user.tenant_id}
+    headers = {}
+    if POD_SHARED_SECRET:
+        headers["Authorization"] = f"Bearer {POD_SHARED_SECRET}"
 
-# Assistant response
-        assistant_msg = ChatMessage(
-              session_id=session.id,
-              user_id=current_user.id,
-              tenant_id=current_user.tenant_id,
-              role="assistant",
-              text=greeting_response,
-              results=[],  # or keep as is
-              created_at=datetime.utcnow()
-)
-        db.add(assistant_msg)
+    try:
+        resp = requests.post(worker_url, json=payload, headers=headers, timeout=60 + (request.top_k * 2))
+    except Exception as e:
+        # try to stop pod, then raise
+        try:
+            _stop_pod(RUNPOD_POD_ID)
+        except Exception:
+            pass
+        raise HTTPException(status_code=500, detail=f"Failed to call worker in pod: {e}")
 
-        db.commit()
+    # Always try to stop the pod after the job is done (best-effort)
+    try:
+        _stop_pod(RUNPOD_POD_ID)
+    except Exception as e:
+        # don't fail the user if stop failed; just log
+        print("Warning: failed to stop pod:", e)
 
+    if resp.status_code != 200:
+        raise HTTPException(status_code=500, detail=f"Worker error: {resp.status_code} {resp.text}")
+
+    result = resp.json()
+
+    # filter results by tenant just to be safe (worker already attempted this).
+    results = []
+    for r in result.get("results", []):
+        if str(r.get("tenant_id")) == str(current_user.tenant_id):
+            results.append(r)
+
+    if not results:
+        raise HTTPException(status_code=404, detail="No matching documents found for your tenant.")
+
+    # Summarizer result available in result.get('summary')
     return {
         "query": request.query,
-        "answer": answer,
-        "source_files": source_files,
-        "session_id": session.id
-    }
-
-
-class MessageRequest(BaseModel):
-    query: str
-    top_k: int = 10
-
-@router.post("/chat/session/{session_id}/message")
-def post_message_to_session(
-    session_id: str = Path(..., description="ID of the chat session"),
-    request: MessageRequest = ...,
-    current_user: User = Depends(get_current_user),
-    db: Session = Depends(get_db)
-):
-    query = request.query.strip()
-
-    # Ensure the session exists and belongs to the user
-    session = (
-        db.query(ChatSession)
-        .filter_by(id=session_id, user_id=current_user.id, tenant_id=current_user.tenant_id)
-        .first()
-    )
-    if not session:
-        raise HTTPException(status_code=404, detail="Chat session not found.")
-
-    # Perform semantic search
-    try:
-        searcher = DocumentSearcher()
-        query_embedding = embed_chunks([query])[0]
-        results = searcher.search(query_embedding, top_k=request.top_k, tenant_id=current_user.tenant_id)
-    except FileNotFoundError as e:
-        raise HTTPException(status_code=500, detail=f"Search index error: {str(e)}")
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Unexpected error: {str(e)}")
-
-    # Summarize results
-    if results:
-        answer = summarize_results(query, results)
-        source_files = list({r.get("filename", "unknown") for r in results})
-    else:
-        answer = "Sorry, I couldn’t find any relevant documents for your query."
-        source_files = []
-
-    # Save message to DB
-    chat_msg = ChatMessage(
-        session_id=session_id,
-        user_id=current_user.id,
-        tenant_id=current_user.tenant_id,
-        text=query,
-        response=answer,
-        results=results if results else [],
-        created_at=datetime.utcnow()
-    )
-    db.add(chat_msg)
-    db.commit()
-
-    return {
-        "query": query,
-        "answer": answer,
-        "source_files": source_files,
-        "session_id": session_id
+        "answer": result.get("summary") or "",   # summary if available
+        "raw_results": results,
+        "source_files": list({r.get("filename","unknown") for r in results})
     }
