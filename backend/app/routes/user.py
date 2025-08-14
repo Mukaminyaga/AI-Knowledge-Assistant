@@ -127,6 +127,35 @@ def deactivate_user(
     db.commit()
     db.refresh(user)
 
+    send_email(
+    to_email=user.email,
+    subject="Your Vala.ai Account Has Been Deacticated",
+    html_content=f"""
+        <html>
+        <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
+            <p>Dear {user.first_name},</p>
+
+            <p>We would like to inform you that your <strong>Vala.ai</strong> account has been deactivated by your administrator  as of {datetime.now().strftime('%b %d, %Y – %I:%M %p')}.</p>
+
+            <p>You will no longer be able to log in or access Vala ai platform using this account.</p>
+
+            <p>If you believe this was a mistake or you require continued access, please contact our support team</p>
+
+            <p>Warm regards,<br>
+            Vala.ai Support<br>
+            <a href="mailto:vala.ai@goodpartnerske.org">vala.ai@goodpartnerske.org</a></p>
+
+            <hr style="margin: 20px 0;">
+            <p style="font-size: 0.9em; color: #777;">
+                Sent from Vala.ai | {datetime.now().strftime('%b %d, %Y – %I:%M %p')} EAT<br>
+                Need help? Contact us at: <a href="mailto:vala.ai@goodpartnerske.org">vala.ai@goodpartnerske.org</a><br>
+                This is an automated message. Do not reply directly to this email.
+            </p>
+        </body>
+        </html>
+    """
+)
+
     return {"message": f"{user.email} has been deactivated."}
 
 
@@ -153,6 +182,36 @@ def activate_user(
     user.status = "active"
     db.commit()
     db.refresh(user)
+
+    send_email(
+    to_email=user.email,
+    subject="Your Vala.ai Account Has Been Reacticated",
+    html_content=f"""
+        <html>
+        <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
+            <p>Dear {user.first_name},</p>
+
+            <p>Your <strong>Vala.ai</strong> account has been successfully reactivated by your administrator  as of {datetime.now().strftime('%b %d, %Y – %I:%M %p')}.</p>
+
+            <p>You may now log in and continue using the platform with this account.</p>
+
+            <p>Welcome back!</p>
+
+            <p>Warm regards,<br>
+            Vala.ai Support<br>
+            <a href="mailto:vala.ai@goodpartnerske.org">vala.ai@goodpartnerske.org</a></p>
+
+            <hr style="margin: 20px 0;">
+            <p style="font-size: 0.9em; color: #777;">
+                Sent from Vala.ai | {datetime.now().strftime('%b %d, %Y – %I:%M %p')} EAT<br>
+                Need help? Contact us at: <a href="mailto:vala.ai@goodpartnerske.org">vala.ai@goodpartnerske.org</a><br>
+                This is an automated message. Do not reply directly to this email.
+            </p>
+        </body>
+        </html>
+    """
+)
+
 
     return {"message": f"{user.email} has been activated."}
 

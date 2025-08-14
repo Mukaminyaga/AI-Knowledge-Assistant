@@ -24,7 +24,7 @@ POD_INTERNAL_PORT = int(os.environ.get("POD_INTERNAL_PORT", 8888))
 POD_SHARED_SECRET = os.environ.get("POD_SHARED_SECRET")
 RUNPOD_WORKER_URL = os.environ.get(
     "RUNPOD_WORKER_URL",
-    "https://sxc5vdggwxf6am-8000.proxy.runpod.net"
+    "https://sqan4d7a8194h5-8000.proxy.runpod.net"
 )
 
 def clean_text(text: str) -> str:
