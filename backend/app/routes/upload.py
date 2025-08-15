@@ -91,7 +91,7 @@ async def upload_documents(
         logger.info(f"Document saved to DB with id: {document.id}")
 
         # Log upload
-        db.add(DocumentInteraction(user_id=current_user.id, document_id=document.id, action="upload"))
+        db.add(DocumentInteraction(user_id=current_user.id, document_id=document.id, tenant_id=current_user.tenant_id, action="upload"))
         db.commit()
         logger.info(f"Logged upload interaction for user {current_user.id}, document {document.id}")
 
