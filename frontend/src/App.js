@@ -7,6 +7,7 @@ import Dashboard from "./pages/Dashboard";
 import Chat from "./pages/Chat";
 import ChatUser from "./pages/ChatUser";
 import Contact from "./pages/Contact";
+import WhoUses from "./pages/WhoUses";
 import Features from "./pages/Features";
 import About from "./pages/About";
 import Login from "./pages/Login";
@@ -49,6 +50,7 @@ function App() {
         <Route path="/features" element={<Features />} />
         <Route path="/about" element={<About />} />
         <Route path="/contact" element={<Contact />} />
+        <Route path="/whouses" element={<WhoUses />} />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/forgot" element={<ForgotPassword />} />

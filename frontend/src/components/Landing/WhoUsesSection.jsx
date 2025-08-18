@@ -65,8 +65,16 @@ function WhoUsesSection() {
   return (
     <section className="who-uses-section">
       <div className="who-uses-container">
-        <h2 className="who-uses-title">Who Uses Vala AI</h2>
-        
+ <div className="who-uses-intro">
+      <p>
+        Vala.ai is built to serve diverse teams and organizations. Whether you’re 
+        in the corporate world, education, healthcare, or development sectors, 
+        our platform empowers you to manage knowledge seamlessly and stay aligned. 
+        Here’s a look at who benefits most from using Vala.ai:
+      </p>
+    </div>
+
+    {/* <h2 className="who-uses-title">Who Uses Vala.ai</h2>         */}
         <div className="organization-types-grid">
           {organizationTypes.map((org, index) => (
             <div 

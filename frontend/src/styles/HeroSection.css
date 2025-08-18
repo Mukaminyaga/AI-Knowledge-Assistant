@@ -2,7 +2,7 @@
 .hero-section {
   position: relative;
   background: rgba(249, 236, 255, 0.65);
-  min-height: 100vh;
+  min-height: 80vh;
   display: flex;
   align-items: center;
   overflow: hidden;
@@ -35,7 +35,7 @@
 .hero-container {
   max-width: 1280px;
   margin: 0 auto;
-  padding: 0 2rem;
+  padding: 0 3rem;
   position: relative;
   z-index: 3;
   width: 100%;

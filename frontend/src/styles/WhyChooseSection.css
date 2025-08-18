@@ -1,7 +1,7 @@
 /* Why Choose Section Styles */
 .why-choose-section {
   background: rgba(252, 252, 252, 0.65);
-  padding: 3rem 0;
+  padding: 2rem 0;
 }
 
 .why-choose-container {
@@ -12,35 +12,35 @@
 
 .why-choose-title {
   font-family: Inter, -apple-system, Roboto, Helvetica, sans-serif;
-  font-size: 2.5rem;
+  font-size: 2.3rem;
   font-weight: 700;
   color: #080808 !important;
   text-align: center;
   margin: 0 0 3rem 0;
-  margin-bottom: 3rem;
+  margin-bottom: 2rem !important;
 }
 
 /* Benefits List */
 .benefits-list {
   display: flex;
   flex-direction: column;
+  align-items: center;   
   gap: 1.5rem;
   margin-bottom: 3rem;
-  max-width: 800px;
-  margin-left: auto;
-  margin-right: auto;
 }
 
 .benefit-item {
   display: flex;
   align-items: center;
   gap: 1.5rem;
+  width: 100%;           
+  max-width: 600px;      
 }
+
 
 .check-icon {
   flex-shrink: 0;
 }
-
 .benefit-text {
   font-family: Inter, -apple-system, Roboto, Helvetica, sans-serif;
   font-size: 1.125rem;

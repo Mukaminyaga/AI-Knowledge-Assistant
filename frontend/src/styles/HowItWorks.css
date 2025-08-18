@@ -1,7 +1,7 @@
 /* How It Works Styles */
 .how-it-works {
-  background: rgba(252, 252, 252, 0.65);
-  padding: 4rem 0;
+  background: rgba(255, 255, 255, 0.65);
+  padding: 3rem 0;
 }
 
 .how-it-works-container {
@@ -9,15 +9,25 @@
   margin: 0 auto;
   padding: 0 2rem;
 }
+.how-it-works-intro {
+   max-width: 1000px;
+  margin: 0 auto 2rem auto;
+  text-align: center;
+  font-family: Inter, -apple-system, Roboto, Helvetica, sans-serif;
+  font-size: 1.125rem;
+  color: #4a5568;
+  line-height: 1.7;
+}
+
 
 .how-it-works-title {
-   font-family: Inter, -apple-system, Roboto, Helvetica, sans-serif !important;
-  font-size: 2.5rem !important;
-  font-weight: 700 !important;
+   font-family: Inter, -apple-system, Roboto, Helvetica, sans-serif;
+  font-size: 2rem;
+  font-weight: 700;
   color: #080808 !important;
   text-align: center;
   /* margin: 0 0 3rem 0; */
-  margin-bottom: 2rem !important;
+  margin-bottom: 3rem !important;
 }
 
 /* Visual Section */

@@ -112,8 +112,8 @@ function Chat() {
         `${process.env.REACT_APP_API_URL}/search/search`,
         {
           query: userQuery,
-          top_k: 3,
-          summarize: true
+          top_k: 10,
+          summarize: false
         },
         {
           headers: {

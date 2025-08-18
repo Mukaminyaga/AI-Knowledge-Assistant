@@ -34,8 +34,8 @@ function HeroSection() {
             </h1>
 
             <p className="hero-description">
-              Empower your teams with fast, secure, and <br></br>
-              AI-powered access to critical organization<br></br>
+              Empower your teams with fast, secure, and 
+              AI-powered access to critical organization
               knowledge when and where they need it.
             </p>
 
@@ -65,13 +65,13 @@ function HeroSection() {
           </div>
 
 
-    <div className="hero-image">
+    {/* <div className="hero-image">
             <img
 src="/icons/Rectangle 7667 (2).png"
          alt="AI Knowledge Management Platform"
               className="hero-main-image"
             />
-          </div>
+          </div> */}
 
         </div>
       </div>

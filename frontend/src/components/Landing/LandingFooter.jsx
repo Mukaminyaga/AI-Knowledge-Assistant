@@ -20,8 +20,9 @@ function LandingFooter() {
               <ul className="footer-link-list">
                 <li><Link to="/" className="footer-link">Home</Link></li>
                 <li><Link to="/features" className="footer-link">Features</Link></li>
+                <li><Link to="/about" className="footer-link">How it Works</Link></li>
                 <li><Link to="/contact" className="footer-link">Schedule a demo</Link></li>
-              </ul>
+            </ul>
             </div>
 
             <div className="footer-link-group">

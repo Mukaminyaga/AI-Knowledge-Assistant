@@ -13,22 +13,30 @@ function LandingHeader() {
               alt="Vala AI Logo"
               className="landing-logo-image"
             />
-            <span className="landing-logo-text">Vala.ai</span>
+                 <div className="logo poppins-logo">
+      <span className="vala">vala</span>
+      <span className="dot-ai">.ai</span>
+    </div>
           </Link>
         </div>
 
         <nav className="landing-nav">
           <Link to="/" className="landing-nav-link">Home</Link>
-          <Link to="/features" className="landing-nav-link">Features</Link>
-          <Link to="/contact" className="landing-nav-link">Contact</Link>
+          <Link to="/about" className="landing-nav-link">About</Link>
+          {/* <Link to="/features" className="landing-nav-link">Features</Link> */}
+           <Link to="/whouses" className="landing-nav-link">Who Uses Vala.ai</Link>
+          <Link to="/contact" className="landing-nav-link">Contact Us</Link>
         </nav>
 
         <div className="landing-auth-buttons">
           <Link to="/login" className="landing-login-btn">
             Log In
           </Link>
+          <Link to="/signup" className="landing-login-btn">
+            Sign Up
+          </Link>
           <Link to="/contact" className="landing-demo-btn">
-            Schedule a Meeting
+            Request a Demo 
           </Link>
         </div>
       </div>
