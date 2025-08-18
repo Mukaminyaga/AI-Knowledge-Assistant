@@ -8,8 +8,10 @@ function LandingFooter() {
       <div className="landing-footer-container">
         <div className="landing-footer-main">
           <div className="landing-footer-brand">
-            <h3 className="landing-footer-logo">Vala.ai</h3>
-            <p className="landing-footer-description">
+<div className="logo poppins-logo">
+      <span className="vala">vala</span>
+      <span className="dot-ai">.ai</span>
+    </div>            <p className="landing-footer-description">
               We are experts in knowledge management software. We help companies enable their employees to work more efficiently, align teams, and achieve better results.
             </p>
           </div>

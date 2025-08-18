@@ -74,24 +74,45 @@ function Contact() {
                   />
                 </div>
 
-                <div className="form-field">
-                  <label htmlFor="subject" className="form-label">Subject</label>
-                  <div className="select-wrapper">
-                    <input
-                      id="subject"
-                      name="subject"
-                      type="text"
-                      value={formData.subject}
-                      onChange={handleInputChange}
-                      className="form-input select-input"
-                      placeholder="Select a subject"
-                      required
-                    />
-                    <svg className="select-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                      <path d="M19.9181 8.94995L13.3981 15.47C12.6281 16.24 11.3681 16.24 10.5981 15.47L4.07812 8.94995" stroke="#585857" strokeWidth="1.5" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round"/>
-                    </svg>
-                  </div>
-                </div>
+              <div className="form-field">
+  <label htmlFor="subject" className="form-label">Subject</label>
+  <div className="select-wrapper">
+    <select
+      id="subject"
+      name="subject"
+      value={formData.subject}
+      onChange={handleInputChange}
+      className="form-input select-input"
+      required
+    >
+      <option value="">Select a subject</option>
+      <option value="general">General Inquiry</option>
+      <option value="support">Customer Support</option>
+      <option value="feedback">Feedback</option>
+      <option value="partnership">Partnership</option>
+      <option value="other">Other</option>
+    </select>
+
+    <svg
+      className="select-icon"
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      {/* <path
+        d="M19.9181 8.94995L13.3981 15.47C12.6281 16.24 11.3681 16.24 10.5981 15.47L4.07812 8.94995"
+        stroke="#585857"
+        strokeWidth="1.5"
+        strokeMiterlimit="10"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      /> */}
+    </svg>
+  </div>
+</div>
+
 
                 <div className="form-field">
                   <label htmlFor="message" className="form-label">Message</label>

@@ -34,7 +34,7 @@ async def send_email(data: ContactForm):
     html_content = f"""
     <html>
     <body style="font-family: Arial, sans-serif;">
-        <h2>New Contact Form Submission</h2>
+        <h3>New Contact Form Submission</h3>
         <p><strong>Name:</strong> {data.name}</p>
         <p><strong>Email:</strong> <a href="mailto:{data.email}">{data.email}</a></p>
         <p><strong>Subject:</strong> {data.subject}</p>
