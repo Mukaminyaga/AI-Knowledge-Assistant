@@ -8,6 +8,7 @@ function Contact() {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
+    contact: "",
     subject: "",
     message: "",
   });
@@ -24,7 +25,7 @@ function Contact() {
       const res = await axios.post(`${process.env.REACT_APP_API_URL}/contact/send-email`, formData);
       if (res.data.success) {
         setStatus({ success: true, message: "Thank you for your message! We'll get back to you soon." });
-        setFormData({ name: "", email: "", subject: "", message: "" });
+        setFormData({ name: "", email: "", contact: "", subject: "", message: "" });
         setTimeout(() => {
           window.location.reload();
         }, 3000);
@@ -73,6 +74,19 @@ function Contact() {
                     required
                   />
                 </div>
+                
+                <div className="form-field">
+                  <label htmlFor="contact" className="form-label">Contact</label>
+                  <input
+                    id="contact"
+                    name="contact"
+                    type="contact"
+                    value={formData.contact}
+                    onChange={handleInputChange}
+                    className="form-input"
+                    required
+                  />
+                </div>
 
               <div className="form-field">
   <label htmlFor="subject" className="form-label">Subject</label>
@@ -85,12 +99,12 @@ function Contact() {
       className="form-input select-input"
       required
     >
-      <option value="">Select a subject</option>
-      <option value="general">General Inquiry</option>
-      <option value="support">Customer Support</option>
-      <option value="feedback">Feedback</option>
-      <option value="partnership">Partnership</option>
-      <option value="other">Other</option>
+<option value="General Inquiry">General Inquiry</option>
+<option value="Customer Support">Customer Support</option>
+<option value="Feedback">Feedback</option>
+<option value="Partnership">Partnership</option>
+<option value="Other">Other</option>
+
     </select>
 
     <svg

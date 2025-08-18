@@ -26,7 +26,7 @@
   gap: 12px;
   margin-bottom: 32px;
   text-decoration: none;
-  color: rgba(66, 133, 244, 1);
+  color: rgb(0, 0, 0) !important;
   font-weight: 500;
   font-size: 16px;
   transition: all 0.2s ease;

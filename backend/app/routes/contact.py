@@ -16,6 +16,7 @@ load_dotenv(dotenv_path=env_path)
 class ContactForm(BaseModel):
     name: str
     email: str
+    contact: str
     subject: str
     message: str
 
@@ -37,6 +38,7 @@ async def send_email(data: ContactForm):
         <h3>New Contact Form Submission</h3>
         <p><strong>Name:</strong> {data.name}</p>
         <p><strong>Email:</strong> <a href="mailto:{data.email}">{data.email}</a></p>
+         <p><strong>Contact:</strong> {data.contact}</p>
         <p><strong>Subject:</strong> {data.subject}</p>
         <p><strong>Message:</strong><br/>{formatted_message}</p>
     </body>
