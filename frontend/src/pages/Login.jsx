@@ -368,10 +368,10 @@ const handleSubmit = async (e) => {
                 <div className="stat-number">2.5s</div>
                 <div className="stat-label">Avg Response</div>
               </div>
-              <div className="stat-item">
+              {/* <div className="stat-item">
                 <div className="stat-number">10k+</div>
                 <div className="stat-label">Happy Users</div>
-              </div>
+              </div> */}
             </div>
 
             {/* <div className="testimonial">

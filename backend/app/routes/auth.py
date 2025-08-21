@@ -1,11 +1,14 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from app.schemas import users as schemas
+from app.schemas.users import ChangePasswordRequest
 from app import auth,database
 from app.models import tenant as tenant_model, users
 from sqlalchemy import func
 from datetime import datetime
 from app.utils.email import send_email
+from app.auth import get_current_user
+from app.models.users import User
 
 router = APIRouter()
 
@@ -205,3 +208,73 @@ def login(user: schemas.UserLogin, db: Session = Depends(database.get_db)):
             "tenant_id": db_user.tenant_id,
         },
     }
+
+@router.post("/change-password")
+def change_password(
+    payload: ChangePasswordRequest,
+    db: Session = Depends(database.get_db),
+    current_user: users.User = Depends(get_current_user),
+    
+):
+    # 1. Verify current password
+    if not auth.verify_password(payload.current_password, current_user.hashed_password):
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="The current password is incorrect"
+        )
+
+    # 2. Prevent reusing same password
+    if auth.verify_password(payload.new_password, current_user.hashed_password):
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="New password must be different from current password"
+        )
+
+    # 3. Backend-side validation (optional but good practice)
+    if len(payload.new_password) < 8 or len(payload.new_password) > 128:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Password must be between 8 and 128 characters"
+        )
+    if not any(c.islower() for c in payload.new_password):
+        raise HTTPException(status_code=400, detail="Password must contain at least one lowercase letter")
+    if not any(c.isupper() for c in payload.new_password):
+        raise HTTPException(status_code=400, detail="Password must contain at least one uppercase letter")
+    if not any(c.isdigit() for c in payload.new_password):
+        raise HTTPException(status_code=400, detail="Password must contain at least one number")
+    if not any(c in "!@#$%^&*()_+-=[]{};':\"\\|,.<>/?"
+               for c in payload.new_password):
+        raise HTTPException(status_code=400, detail="Password must contain at least one special character")
+
+    # 4. Hash and update
+    hashed_pw = auth.hash_password(payload.new_password)
+    current_user.hashed_password = hashed_pw
+
+    db.add(current_user)
+    db.commit()
+    send_email(
+            to_email=current_user.email,
+            subject="Vala.ai – Password Reset Successful",
+            html_content=f"""
+                <html>
+                <body style="font-family: Arial, sans-serif; color: black; line-height: 1.6;">
+                    <p>Hi {current_user.first_name or 'User'},</p>
+                    <p>Your password for <strong>Vala.ai</strong> has been successfully reset.</p>
+                    <p>If you did not make this change, please contact our support team immediately.</p>
+                    <p>Warm regards,<br>
+                       Vala.ai Support<br>
+                       <a href="mailto:vala.ai@goodpartnerske.org">vala.ai@goodpartnerske.org</a>
+                    </p>
+                    <hr>
+                    <p style="font-size: 12px; color: #888;">
+                        Sent from Vala.ai | {datetime.now().strftime('%b %d, %Y - %I:%M %p %Z')}<br>
+                        Need help? Contact us at: 
+                        <a href="mailto:vala.ai@goodpartnerske.org">vala.ai@goodpartnerske.org</a><br>
+                        This is an automated message. Do not reply directly to this email.
+                    </p>
+                </body>
+                </html>
+            """
+        )
+    db.refresh(current_user)
+    return {"message": "Password changed successfully"}

@@ -139,7 +139,7 @@
   width: 100%;
   height: clamp(2.5rem, 4vw, 3.125rem);
   border-radius: 0.625rem;
-  background: #32137F;
+  background: #2a0f6b;
   border: none;
   color: #fff;
   font-family: Inter, -apple-system, Roboto, Helvetica, sans-serif;
@@ -151,7 +151,7 @@
 }
 
 .submit-button:hover {
-  background: #2a0f6b;
+  background: #32137F;
   transform: translateY(-2px);
 }
 

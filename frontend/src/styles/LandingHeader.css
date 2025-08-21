@@ -38,7 +38,7 @@
   font-family: 'Poppins', sans-serif;
   font-weight: 600; /* Bold for VALA */
   font-size: 2rem;  /* Adjust size to fit navbar */
-  color: #32137F;   /* Brand purple */
+  color: #32137F !important;   /* Brand purple */
   letter-spacing: 1px;
   cursor: pointer;
   user-select: none;
@@ -46,12 +46,12 @@
 }
 
 .poppins-logo:hover {
-  color: #4f2bb6; /* Slightly lighter purple on hover */
+  color: #4f2bb6 !important; /* Slightly lighter purple on hover */
 }
 
 .poppins-logo .dot-ai {
   font-weight: 400;
-  color: #6A4BCF;   /* A softer shade of your main purple (#32137F) */
+  color: #6A4BCF !important;   /* A softer shade of your main purple (#32137F) */
   margin-left: 2px;
 }
 
@@ -125,7 +125,7 @@
   font-size: 0.9rem;
   font-weight: 500;
   text-decoration: none;
-  border: 1px solid #ddd;
+  border: 1px solid #ddd !important;
   transition: all 0.3s ease;
 }
 

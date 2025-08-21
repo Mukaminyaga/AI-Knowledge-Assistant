@@ -286,7 +286,7 @@ const handleSubmit = async (e) => {
               
                 <h1 className="auth-title">Create your account</h1>
                 <p className="auth-subtitle">
-                  Join thousands of teams already using AI to work smarter
+                  Join teams already using AI to work smarter
                 </p>
               </div>
 

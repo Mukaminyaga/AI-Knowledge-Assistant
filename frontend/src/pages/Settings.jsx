@@ -10,6 +10,9 @@ import {
   FiMessageCircle,
   FiArrowLeft,
   FiMoon,
+  FiEye,
+  FiEyeOff,
+  FiLock,
 } from "react-icons/fi";
 import DashboardLayout from "../components/DashboardLayout";
 import ThemeToggle from "../components/ThemeToggle";
@@ -20,6 +23,19 @@ function Settings() {
   const [isEditing, setIsEditing] = useState(false);
   const [userInfo, setUserInfo] = useState(null);
   const [editedInfo, setEditedInfo] = useState({});
+  const [isChangingPassword, setIsChangingPassword] = useState(false);
+  const [passwordData, setPasswordData] = useState({
+    currentPassword: "",
+    newPassword: "",
+    confirmPassword: ""
+  });
+  const [passwordErrors, setPasswordErrors] = useState({});
+  const [showPasswords, setShowPasswords] = useState({
+    current: false,
+    new: false,
+    confirm: false
+  });
+  const [passwordSuccess, setPasswordSuccess] = useState("");
   const navigate = useNavigate();
 
   const token = localStorage.getItem("token");
@@ -65,6 +81,143 @@ function Settings() {
       ...prev,
       [field]: value,
     }));
+  };
+
+  // Password change handlers
+  const handlePasswordEdit = () => {
+    setIsChangingPassword(true);
+  };
+
+  const handlePasswordCancel = () => {
+    setIsChangingPassword(false);
+    setPasswordData({
+      currentPassword: "",
+      newPassword: "",
+      confirmPassword: ""
+    });
+    setPasswordErrors({});
+    setPasswordSuccess("");
+  };
+
+  const handlePasswordInputChange = (field, value) => {
+    setPasswordData(prev => ({
+      ...prev,
+      [field]: value
+    }));
+
+    // Clear error when user starts typing
+    if (passwordErrors[field]) {
+      setPasswordErrors(prev => ({
+        ...prev,
+        [field]: ""
+      }));
+    }
+  };
+
+  const togglePasswordVisibility = (field) => {
+    setShowPasswords(prev => ({
+      ...prev,
+      [field]: !prev[field]
+    }));
+  };
+
+  const validatePassword = (password) => {
+    const errors = [];
+
+    if (password.length < 8) {
+      errors.push("Must be at least 8 characters");
+    }
+    if (password.length > 128) {
+      errors.push("Must be less than 128 characters");
+    }
+    if (!/(?=.*[a-z])/.test(password)) {
+      errors.push("Must contain at least one lowercase letter");
+    }
+    if (!/(?=.*[A-Z])/.test(password)) {
+      errors.push("Must contain at least one uppercase letter");
+    }
+    if (!/(?=.*\d)/.test(password)) {
+      errors.push("Must contain at least one number");
+    }
+    if (!/(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?])/.test(password)) {
+      errors.push("Must contain at least one special character");
+    }
+
+    return errors;
+  };
+
+  const handlePasswordSave = async () => {
+    const newErrors = {};
+
+    // Current password validation
+    if (!passwordData.currentPassword) {
+      newErrors.currentPassword = "Current password is required";
+    }
+
+    // New password validation
+    if (!passwordData.newPassword) {
+      newErrors.newPassword = "New password is required";
+    } else {
+      const passwordValidationErrors = validatePassword(passwordData.newPassword);
+      if (passwordValidationErrors.length > 0) {
+        newErrors.newPassword = passwordValidationErrors[0];
+      }
+    }
+
+    // Confirm password validation
+    if (!passwordData.confirmPassword) {
+      newErrors.confirmPassword = "Please confirm your new password";
+    } else if (passwordData.newPassword !== passwordData.confirmPassword) {
+      newErrors.confirmPassword = "Passwords don't match";
+    }
+
+    // Check if new password is same as current
+    if (passwordData.currentPassword && passwordData.newPassword &&
+        passwordData.currentPassword === passwordData.newPassword) {
+      newErrors.newPassword = "New password must be different from current password";
+    }
+
+    if (Object.keys(newErrors).length > 0) {
+      setPasswordErrors(newErrors);
+      return;
+    }
+
+    try {
+      await axios.post(
+        `${process.env.REACT_APP_API_URL}/auth/change-password`,
+        {
+          current_password: passwordData.currentPassword,
+          new_password: passwordData.newPassword,
+        },
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+
+      setPasswordSuccess("Password changed successfully!");
+      setPasswordData({
+        currentPassword: "",
+        newPassword: "",
+        confirmPassword: ""
+      });
+      setPasswordErrors({});
+
+      // Reset editing state after success
+      setTimeout(() => {
+        setIsChangingPassword(false);
+        setPasswordSuccess("");
+      }, 2000);
+
+    } catch (error) {
+      console.error("Password change error:", error);
+      const detail = error.response?.data?.detail;
+
+      if (detail?.includes("current password")) {
+        setPasswordErrors({ currentPassword: "Current password is incorrect" });
+      } else {
+        setPasswordErrors({ general: detail || "Failed to change password. Please try again." });
+      }
+    }
   };
 
   if (!userInfo) return <div>Loading...</div>;
@@ -291,17 +444,120 @@ function Settings() {
 
               <div className="card-content">
                 <div className="settings-list">
-                  <div className="setting-item">
-  <div className="setting-info">
-    <h3 className="setting-name">Password</h3>
-    <p className="setting-description">
-      Change your account password
-    </p>
-  </div>
-  <Link to="/forgot" className="setting-action">
-    Change
-  </Link>
-</div>
+                  <div className="setting-item password-setting">
+                    <div className="setting-info">
+                      <h3 className="setting-name">Password</h3>
+                      <p className="setting-description">
+                        Change your account password
+                      </p>
+                    </div>
+                    {!isChangingPassword ? (
+                      <button
+                        className="setting-action"
+                        onClick={handlePasswordEdit}
+                      >
+                        <FiEdit3 size={16} />
+                        Change
+                      </button>
+                    ) : (
+                      <div className="password-change-form">
+                        {passwordErrors.general && (
+                          <div className="error-message general-error">
+                            {passwordErrors.general}
+                          </div>
+                        )}
+                        {passwordSuccess && (
+                          <div className="success-message">
+                            {passwordSuccess}
+                          </div>
+                        )}
+
+                        <div className="password-form-grid">
+                          {/* Current Password */}
+                          <div className="form-group">
+                            <label className="form-label1">Current Password</label>
+                            <div className="password-input-wrapper">
+                              <input
+                                type={showPasswords.current ? "text" : "password"}
+                                className={`form-input ${passwordErrors.currentPassword ? "error" : ""}`}
+                                value={passwordData.currentPassword}
+                                onChange={(e) => handlePasswordInputChange("currentPassword", e.target.value)}
+                                placeholder="Enter current password"
+                              />
+                              <button
+                                type="button"
+                                className="password-toggle-btn"
+                                onClick={() => togglePasswordVisibility("current")}
+                              >
+                                {showPasswords.current ? <FiEyeOff size={16} /> : <FiEye size={16} />}
+                              </button>
+                            </div>
+                            {passwordErrors.currentPassword && (
+                              <span className="error-text">{passwordErrors.currentPassword}</span>
+                            )}
+                          </div>
+
+                          {/* New Password */}
+                          <div className="form-group">
+                            <label className="form-label1">New Password</label>
+                            <div className="password-input-wrapper">
+                              <input
+                                type={showPasswords.new ? "text" : "password"}
+                                className={`form-input ${passwordErrors.newPassword ? "error" : ""}`}
+                                value={passwordData.newPassword}
+                                onChange={(e) => handlePasswordInputChange("newPassword", e.target.value)}
+                                placeholder="Enter new password"
+                              />
+                              <button
+                                type="button"
+                                className="password-toggle-btn"
+                                onClick={() => togglePasswordVisibility("new")}
+                              >
+                                {showPasswords.new ? <FiEyeOff size={16} /> : <FiEye size={16} />}
+                              </button>
+                            </div>
+                            {passwordErrors.newPassword && (
+                              <span className="error-text">{passwordErrors.newPassword}</span>
+                            )}
+                          </div>
+
+                          {/* Confirm Password */}
+                          <div className="form-group">
+                            <label className="form-label1">Confirm New Password</label>
+                            <div className="password-input-wrapper">
+                              <input
+                                type={showPasswords.confirm ? "text" : "password"}
+                                className={`form-input ${passwordErrors.confirmPassword ? "error" : ""}`}
+                                value={passwordData.confirmPassword}
+                                onChange={(e) => handlePasswordInputChange("confirmPassword", e.target.value)}
+                                placeholder="Confirm new password"
+                              />
+                              <button
+                                type="button"
+                                className="password-toggle-btn"
+                                onClick={() => togglePasswordVisibility("confirm")}
+                              >
+                                {showPasswords.confirm ? <FiEyeOff size={16} /> : <FiEye size={16} />}
+                              </button>
+                            </div>
+                            {passwordErrors.confirmPassword && (
+                              <span className="error-text">{passwordErrors.confirmPassword}</span>
+                            )}
+                          </div>
+                        </div>
+
+                        <div className="form-actions">
+                          <button className="save-button" onClick={handlePasswordSave}>
+                            <FiSave size={16} />
+                            <span>Save Password</span>
+                          </button>
+                          <button className="cancel-button" onClick={handlePasswordCancel}>
+                            Cancel
+                          </button>
+                        </div>
+                      </div>
+                    )}
+                  </div>
 
 
                   <div className="setting-item">
@@ -356,6 +612,7 @@ function Settings() {
           </div>
         </div>
         </div>
+
     </DashboardLayout>
   );
 }

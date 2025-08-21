@@ -17,7 +17,7 @@ Empower your team with a conversational AI assistant that answers questions in r
           </div>
           <div className="ai-chat-image">
             <img
-src="/icons/Rectangle 7670.png"              alt="AI Chat Assistant Interface"
+src="/icons/human4.jpg"              alt="AI Chat Assistant Interface"
               className="ai-chat-img"
             />
           </div>

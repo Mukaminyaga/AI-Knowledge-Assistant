@@ -221,6 +221,55 @@ function Chat() {
     }
   };
 
+  // Function to format text for better readability
+const formatMessageText = (text) => {
+  if (!text) return null;
+
+  // Step 1: Normalize separators and detect inline numbered/bullet lists
+  const normalizedText = text
+    .replace(/(\d+)\.\s+/g, '\n$1. ')       // Split inline numbered lists
+    .replace(/[-*•]\s+/g, '\n• ')           // Split inline bullets
+    .replace(/\([a-z]\)\s+/g, '\n$&');      // Split inline (a), (b), ...
+
+  // Step 2: Split into lines
+  const lines = normalizedText.split('\n').map(l => l.trim()).filter(Boolean);
+
+  // Step 3: Detect lists
+  const listLines = lines.filter(line =>
+    /^\d+\./.test(line) || /^•/.test(line) || /^\([a-z]\)/.test(line)
+  );
+
+  if (listLines.length > 0) {
+    const isNumbered = lines.some(line => /^\d+\./.test(line));
+
+    if (isNumbered) {
+      return (
+        <ol className="formatted-list numbered-list">
+          {lines.map((line, i) => {
+            const cleanLine = line.replace(/^\d+\.\s*/, '').trim();
+            return cleanLine ? <li key={i}>{cleanLine}</li> : null;
+          })}
+        </ol>
+      );
+    } else {
+      return (
+        <ul className="formatted-list bullet-list">
+          {lines.map((line, i) => {
+            const cleanLine = line.replace(/^•\s*/, '').replace(/^\([a-z]\)\s*/, '').trim();
+            return cleanLine ? <li key={i}>{cleanLine}</li> : null;
+          })}
+        </ul>
+      );
+    }
+  }
+
+  // Step 4: Fallback to paragraphs
+  const paragraphs = text.split(/\n\s*\n/).filter(p => p.trim());
+  return paragraphs.map((p, idx) => (
+    <div key={idx} className="formatted-paragraph">{p.trim()}</div>
+  ));
+};
+
   return (
     <DashboardLayout>
       <div className="new-chat-container">
@@ -354,7 +403,9 @@ function Chat() {
                       </div>
                     ) : (
                       <div className="assistant-message-content">
-                        <div className="message-text">{msg.text}</div>
+                        <div className="formatted-message-text">
+                          {formatMessageText(msg.text)}
+                        </div>
                         {msg.results?.length > 0 && (
                           <div className="message-sources">
                             <ul>

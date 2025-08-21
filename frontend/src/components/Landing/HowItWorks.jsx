@@ -5,15 +5,23 @@ function HowItWorks() {
   return (
     <section className="how-it-works">
       <div className="how-it-works-container">
-<div className="how-it-works-intro">
-      <p>
-        Vala.ai simplifies knowledge management into three simple steps. 
-        Instead of juggling scattered files and endless searches, 
-        we help you capture, organize, and empower your teams 
-        with instant access to the information they need .
-      </p>
-    </div>
+        <div className="about-header">
+                <h1 className="how-it-works-title">About Vala</h1>
+          
+              </div>
 
+              <div className="about-description">
+              <div className="how-it-works-intro">
+  <p>
+    Vala is an AI-powered knowledge assistant that makes information easy to access, share, and use across teams. 
+    It processes documents, enables smart search, and delivers instant, accurate answers from your knowledge base.
+  </p>
+  <p>
+    With Vala.ai, knowledge management is simple: capture, organize, and give your team quick access to the 
+    information they need—anytime.
+  </p>
+</div>
+</div>
     <h2 className="how-it-works-title">How it Works</h2>        
         <div className="how-it-works-visual">
           <svg className="how-it-works-graphic" viewBox="0 0 1585 348" fill="none" xmlns="http://www.w3.org/2000/svg">

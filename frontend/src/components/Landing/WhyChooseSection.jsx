@@ -11,8 +11,8 @@ function WhyChooseSection() {
 
   const stats = [
     {
-      number: "98%",
-      label: "Accuracy",
+      number: "95%",
+      label: " Query Accuracy",
       bgColor: "#FAF2FE"
     },
     {
@@ -21,10 +21,11 @@ function WhyChooseSection() {
       bgColor: "#E8F9FF"
     },
     {
-      number: "10GB+",
-      label: "Storage Space",
+      number: "24/7",
+      label: "Availability",
       bgColor: "rgba(254, 214, 170, 0.70)"
     }
+    
   ];
 
   return (

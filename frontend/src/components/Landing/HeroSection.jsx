@@ -52,13 +52,21 @@ function HeroSection() {
             </div>
 
             <div className="hero-stats">
-              <div className="stat-item1">
-                <div className="stat-number1">10GB+</div>
-                <div className="stat-label1">Secure File Storage Per User</div>
+               <div className="stat-item1">
+                <div className="stat-number1">1000+</div>
+                <div className="stat-label1">Documents Processed</div>
+              </div>
+                <div className="stat-item1">
+                <div className="stat-number1">95%</div>
+                <div className="stat-label1">Query Accuracy</div>
               </div>
               <div className="stat-item1">
-                <div className="stat-number1">98%</div>
-                <div className="stat-label1">Positive Feedback</div>
+                <div className="stat-number1">10GB+</div>
+                <div className="stat-label1">Secure File Storage<br></br>  Per User</div>
+              </div>
+              <div className="stat-item1">
+                <div className="stat-number1">5x</div>
+                <div className="stat-label1">Faster Information<br></br> Retrival</div>
               </div>
             </div>
 

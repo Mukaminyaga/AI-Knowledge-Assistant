@@ -46,3 +46,138 @@ html {
   background-color: rgba(11, 58, 96, 0.2);
   color: inherit;
 }
+
+/* Remove default button borders and focus outlines */
+button,
+input[type="button"],
+input[type="submit"],
+input[type="reset"],
+a {
+  outline: none !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+button:focus,
+input[type="button"]:focus,
+input[type="submit"]:focus,
+input[type="reset"]:focus,
+a:focus {
+  outline: none !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+button:active,
+input[type="button"]:active,
+input[type="submit"]:active,
+input[type="reset"]:active,
+a:active {
+  outline: none !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+/* Remove black borders on click/focus for all interactive elements */
+*:focus {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+*:active {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+/* Ensure input fields don't get black borders */
+input,
+textarea,
+select {
+  outline: none !important;
+  border: 1px solid #e2e8f0 !important;
+}
+
+/* Remove all borders when focusing/entering input fields */
+input:focus,
+input:active,
+input:focus-within,
+textarea:focus,
+textarea:active,
+textarea:focus-within,
+select:focus,
+select:active,
+select:focus-within {
+  outline: none !important;
+  border: 1px solid #32137F !important;
+  box-shadow: 0 0 0 2px rgba(50, 19, 127, 0.2) !important;
+}
+
+/* Remove any webkit input styling */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Remove borders on input entry/typing */
+input[type="text"]:focus,
+input[type="email"]:focus,
+input[type="password"]:focus,
+input[type="number"]:focus,
+input[type="search"]:focus,
+input[type="tel"]:focus,
+input[type="url"]:focus {
+  border: 1px solid #32137F !important;
+  outline: none !important;
+  box-shadow: 0 0 0 2px rgba(50, 19, 127, 0.1) !important;
+}
+
+/* Remove any default browser input styling */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+  -webkit-box-shadow: 0 0 0 30px white inset !important;
+  border: 1px solid #32137F !important;
+}
+
+/* Remove webkit appearance for better cross-browser consistency */
+button,
+input,
+select,
+textarea {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+}
+
+/* Accessibility: Add focus indicators for keyboard navigation */
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+a:focus-visible {
+  outline: 2px solid #32137F !important;
+  outline-offset: 2px !important;
+  box-shadow: none !important;
+}
+
+/* Ensure tap highlights are removed on mobile */
+* {
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+/* Allow text selection for specific elements */
+p, span, h1, h2, h3, h4, h5, h6, li, td, th, input, textarea {
+  -webkit-user-select: text;
+  -khtml-user-select: text;
+  -moz-user-select: text;
+  -ms-user-select: text;
+  user-select: text;
+}
