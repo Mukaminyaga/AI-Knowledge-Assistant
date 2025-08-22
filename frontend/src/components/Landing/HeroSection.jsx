@@ -60,10 +60,10 @@ function HeroSection() {
                 <div className="stat-number1">95%</div>
                 <div className="stat-label1">Query Accuracy</div>
               </div>
-              <div className="stat-item1">
+              {/* <div className="stat-item1">
                 <div className="stat-number1">10GB+</div>
                 <div className="stat-label1">Secure File Storage<br></br>  Per User</div>
-              </div>
+              </div> */}
               <div className="stat-item1">
                 <div className="stat-number1">5x</div>
                 <div className="stat-label1">Faster Information<br></br> Retrival</div>

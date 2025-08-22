@@ -102,6 +102,7 @@ function Chat() {
       };
       const updatedChat = [...newChat, assistantMessage];
       setChatHistory(updatedChat);
+      
       return;
     }
 
@@ -112,7 +113,7 @@ function Chat() {
         `${process.env.REACT_APP_API_URL}/search/search`,
         {
           query: userQuery,
-          top_k: 10,
+          top_k: 15,
           summarize: true
         },
         {
@@ -225,50 +226,67 @@ function Chat() {
 const formatMessageText = (text) => {
   if (!text) return null;
 
-  // Step 1: Normalize separators and detect inline numbered/bullet lists
-  const normalizedText = text
-    .replace(/(\d+)\.\s+/g, '\n$1. ')       // Split inline numbered lists
-    .replace(/[-*•]\s+/g, '\n• ')           // Split inline bullets
-    .replace(/\([a-z]\)\s+/g, '\n$&');      // Split inline (a), (b), ...
+  // Split text into blocks separated by double newlines
+  const blocks = text.split(/\n\s*\n/).map(b => b.trim()).filter(Boolean);
 
-  // Step 2: Split into lines
-  const lines = normalizedText.split('\n').map(l => l.trim()).filter(Boolean);
+  return blocks.map((block, blockIdx) => {
+    const lines = block.split("\n").map(l => l.trim()).filter(Boolean);
 
-  // Step 3: Detect lists
-  const listLines = lines.filter(line =>
-    /^\d+\./.test(line) || /^•/.test(line) || /^\([a-z]\)/.test(line)
-  );
+    // --- Detect numbered or bullet list ---
+    const isList = lines.every(line =>
+      /^\d+\./.test(line) || /^[-*•]/.test(line) || /^\([a-z]\)/.test(line)
+    );
 
-  if (listLines.length > 0) {
-    const isNumbered = lines.some(line => /^\d+\./.test(line));
-
-    if (isNumbered) {
-      return (
-        <ol className="formatted-list numbered-list">
+    if (isList) {
+      const isNumbered = lines.some(line => /^\d+\./.test(line));
+      return isNumbered ? (
+        <ol key={blockIdx} className="formatted-list numbered-list">
           {lines.map((line, i) => {
-            const cleanLine = line.replace(/^\d+\.\s*/, '').trim();
-            return cleanLine ? <li key={i}>{cleanLine}</li> : null;
+            const clean = line.replace(/^\d+\.\s*/, '').replace(/^[-*•]\s*/, '').replace(/^\([a-z]\)\s*/, '').trim();
+            return <li key={i}>{clean}</li>;
           })}
         </ol>
-      );
-    } else {
-      return (
-        <ul className="formatted-list bullet-list">
+      ) : (
+        <ul key={blockIdx} className="formatted-list bullet-list">
           {lines.map((line, i) => {
-            const cleanLine = line.replace(/^•\s*/, '').replace(/^\([a-z]\)\s*/, '').trim();
-            return cleanLine ? <li key={i}>{cleanLine}</li> : null;
+            const clean = line.replace(/^[-*•]\s*/, '').replace(/^\([a-z]\)\s*/, '').trim();
+            return <li key={i}>{clean}</li>;
           })}
         </ul>
       );
     }
-  }
 
-  // Step 4: Fallback to paragraphs
-  const paragraphs = text.split(/\n\s*\n/).filter(p => p.trim());
-  return paragraphs.map((p, idx) => (
-    <div key={idx} className="formatted-paragraph">{p.trim()}</div>
-  ));
+    // --- Detect table block ---
+    const tableLike = lines.some(line => /\|/.test(line) || /\t/.test(line));
+    if (tableLike) {
+      const rows = lines.map(l => l.split(/\s*\|\s*|\t/).filter(Boolean));
+      return (
+        <table key={blockIdx} className="formatted-table">
+          <tbody>
+            {rows.map((row, rIdx) => (
+              <tr key={rIdx}>
+                {row.map((cell, cIdx) => (
+                  <td key={cIdx}>{cell.trim()}</td>
+                ))}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      );
+    }
+
+    // --- Detect heading ---
+    if (/^#{1,6}\s/.test(block)) {
+      const level = block.match(/^#{1,6}/)[0].length;
+      const HeadingTag = `h${level}`;
+      return <HeadingTag key={blockIdx} className="formatted-heading">{block.replace(/^#{1,6}\s*/, '')}</HeadingTag>;
+    }
+
+    // --- Default to paragraph ---
+    return <p key={blockIdx} className="formatted-paragraph">{block}</p>;
+  });
 };
+
 
   return (
     <DashboardLayout>

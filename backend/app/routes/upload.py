@@ -4,7 +4,7 @@ from fastapi import Path
 from sqlalchemy.orm import Session
 import os
 import shutil
-
+import requests
 from app.utils import indexing_utils
 from app.database import get_db
 from app.models.document import Document
@@ -33,12 +33,41 @@ class DepartmentAssignmentRequest(BaseModel):
     document_ids: List[int]
     department_id: Optional[int]
 
-# --- Helper ---
+POD_SHARED_SECRET = os.environ.get("POD_SHARED_SECRET")
+RUNPOD_WORKER_URL = os.environ.get("RUNPOD_WORKER_URL")
+
+# RUNPOD_WORKER_URL = os.environ.get(
+#     "RUNPOD_WORKER_URL",
+#     "https://o211rs01tttfhp-8000.proxy.runpod.net"
+# )
+
 def ensure_permission(user: User, allowed_roles: List[str]):
     if user.role.lower() not in [role.lower() for role in allowed_roles]:
         raise HTTPException(status_code=403, detail="You do not have permission to perform this action.")
 
-# Upload (Editor/Admin only)
+
+def call_worker_indexing(document_id: int, tenant_id: int):
+    """Call RunPod worker to trigger indexing"""
+    worker_url = f"{RUNPOD_WORKER_URL}/index"
+    payload = {"document_id": document_id, "tenant_id": tenant_id}
+    headers = {}
+    if POD_SHARED_SECRET:
+        headers["Authorization"] = f"Bearer {POD_SHARED_SECRET}"
+
+    try:
+        resp = requests.post(worker_url, json=payload, headers=headers, timeout=120)
+    except Exception as e:
+        logger.error(f"Failed to call worker: {e}")
+        return False
+
+    if resp.status_code != 200:
+        logger.error(f"Worker indexing error: {resp.status_code} {resp.text}")
+        return False
+
+    logger.info(f"Worker indexing started for document {document_id}")
+    return True
+
+
 @router.post("/upload")
 async def upload_documents(
     background_tasks: BackgroundTasks,
@@ -47,34 +76,22 @@ async def upload_documents(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
-    # Only admin or editor can upload
     ensure_permission(current_user, ["admin", "editor"])
-
     logger.info("=== UPLOAD DOCUMENT CALLED ===")
+
     uploaded_docs = []
 
     for file in files:
-       
         filename = os.path.basename(file.filename.replace("\\", "/"))
-        file_path = os.path.join(UPLOAD_DIR, filename)
         ext = filename.split(".")[-1].lower()
-        logger.info(f"Uploading file: {filename} (type: {ext})")
-
         if ext not in ("pdf", "docx", "txt"):
-            logger.warning(f"{filename}: unsupported file type {ext}")
             raise HTTPException(status_code=400, detail=f"{filename}: unsupported file type {ext}")
 
-        
         dest = os.path.normpath(os.path.join(UPLOAD_DIR, filename))
         with open(dest, "wb") as buffer:
             shutil.copyfileobj(file.file, buffer)
-        logger.info(f"Saved file to: {dest}")
 
-        # Only Admin uploads are auto-approved
-      
         status = "processing" if current_user.role.lower() == "admin" else "pending"
-
-
 
         document = Document(
             filename=filename,
@@ -83,24 +100,22 @@ async def upload_documents(
             tenant_id=current_user.tenant_id,
             num_chunks=0,
             status=status,
-            department_id=department_id 
+            department_id=department_id
         )
         db.add(document)
         db.commit()
         db.refresh(document)
-        logger.info(f"Document saved to DB with id: {document.id}")
 
-        # Log upload
-        db.add(DocumentInteraction(user_id=current_user.id, document_id=document.id, tenant_id=current_user.tenant_id, action="upload"))
+        db.add(DocumentInteraction(
+            user_id=current_user.id,
+            document_id=document.id,
+            tenant_id=current_user.tenant_id,
+            action="upload"
+        ))
         db.commit()
-        logger.info(f"Logged upload interaction for user {current_user.id}, document {document.id}")
 
-        # Only index approved documents
         if status == "processing":
-            background_tasks.add_task(indexing_utils.index_and_update, file_path=dest, document_id=document.id)
-            logger.info("Indexing scheduled.")
-        else:
-            logger.info("Document pending approval — indexing skipped.")
+            background_tasks.add_task(call_worker_indexing, document.id, current_user.tenant_id)
 
         uploaded_docs.append({
             "id": document.id,
@@ -115,8 +130,6 @@ async def upload_documents(
         "message": f"{len(uploaded_docs)} file(s) uploaded successfully.",
         "documents": uploaded_docs
     }
-
-
 
 @router.post("/documents/assign-department")
 def assign_documents_to_department(

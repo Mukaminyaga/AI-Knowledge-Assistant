@@ -43,7 +43,7 @@
   transition: all 0.2s;
 }
 .dark-theme .auth-box input  {
-  background-color: #000000 !important;
+  background-color: #ffffff !important;
   color: var(--text-dark) !important;
 }
 
