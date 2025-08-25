@@ -126,7 +126,7 @@ function Sidebar({ isOpen = false, onClose, isMobile = false }) {
       alt="Vala AI Logo"
       className="brand-logo"
     />
-    <h3 className="brand-title">Vala AI</h3>
+    <h3 className="brand-title2">vala ai</h3>
   </Link>
 
                 {/* <button

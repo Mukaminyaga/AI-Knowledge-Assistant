@@ -113,7 +113,12 @@ function UploadDocumentsContent() {
       );
 
       // Success message
-      setUploadMessage("Documents uploaded successfully and are now being processed...");
+      setUploadMessage("Document(s) uploaded successfully and are now being processed...");
+
+setTimeout(() => {
+  setUploadMessage(""); // clear the message after 3 seconds
+}, 3000);
+
     } catch (err) {
       console.error(err);
       setUploadedFiles((prev) =>

@@ -177,7 +177,7 @@ function Contact() {
                     </clipPath>
                   </defs>
                 </svg>
-                <span className="contact-detail-text">info@goodpartnerske.org</span>
+                <span className="contact-detail-text">vala.ai@vala.ke</span>
               </div>
 
               <div className="contact-detail-item">

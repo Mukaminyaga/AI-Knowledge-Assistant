@@ -351,7 +351,7 @@ const handleSubmit = async (e) => {
         <div className="auth-visual">
           <div className="visual-content">
             <div className="feature-highlight">
-              {/* <div className="feature-icon">🤖</div> */}
+              
               <h3 className="feature-title">AI-Powered Knowledge</h3>
               <p className="feature-description">
                 Get instant answers from your organization's knowledge base with
@@ -368,26 +368,9 @@ const handleSubmit = async (e) => {
                 <div className="stat-number">2.5s</div>
                 <div className="stat-label">Avg Response</div>
               </div>
-              {/* <div className="stat-item">
-                <div className="stat-number">10k+</div>
-                <div className="stat-label">Happy Users</div>
-              </div> */}
             </div>
 
-            {/* <div className="testimonial">
-              <blockquote className="testimonial-text">
-                "This AI assistant has transformed how our team finds
-                information. We save hours every week!"
-              </blockquote>
-              <div className="testimonial-author">
-                <div className="author-info">
-                  <div className="author-name">Sarah Chen</div>
-                  <div className="author-role">
-                    Head of Operations, TechCorp
-                  </div> */}
-                {/* </div>
-              </div>
-            </div> */}
+  
           </div>
         </div>
       </div>
