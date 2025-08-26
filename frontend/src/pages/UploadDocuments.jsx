@@ -117,7 +117,7 @@ function UploadDocumentsContent() {
 
 setTimeout(() => {
   setUploadMessage(""); // clear the message after 3 seconds
-}, 3000);
+}, 6000);
 
     } catch (err) {
       console.error(err);

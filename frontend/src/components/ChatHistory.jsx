@@ -167,8 +167,18 @@ const ChatHistory = ({ isOpen, onClose, chatSessions = [], onSelectSession }) =>
 
   const HistoryItem = ({ item, section, isHighlighted = false }) => {
     const handleItemClick = () => {
-      if (onSelectSession && !item.id.startsWith('sample')) {
-        onSelectSession(item.id);
+      if (onSelectSession) {
+        if (item.id.startsWith('sample')) {
+          // For sample data, create a mock chat history
+          const sampleHistory = [
+            { role: "user", text: "Tell me about " + item.title },
+            { role: "assistant", text: `Here's information about ${item.title}: This is a sample response showing how the chat history feature works. In a real scenario, this would load the actual conversation history stored in your browser's local storage.`, results: [] }
+          ];
+          // Call onSelectSession with the sample data
+          onSelectSession(item.id, sampleHistory);
+        } else {
+          onSelectSession(item.id);
+        }
         onClose();
       }
     };
@@ -177,7 +187,7 @@ const ChatHistory = ({ isOpen, onClose, chatSessions = [], onSelectSession }) =>
       <div
         className={`history-item ${isHighlighted ? 'highlighted' : ''}`}
         onClick={handleItemClick}
-        style={{ cursor: onSelectSession && !item.id.startsWith('sample') ? 'pointer' : 'default' }}
+        style={{ cursor: onSelectSession ? 'pointer' : 'default' }}
       >
         <div className="history-item-content">
           <span className="history-item-title">{item.title}</span>

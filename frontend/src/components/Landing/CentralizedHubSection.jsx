@@ -10,8 +10,7 @@ function CentralizedHubSection() {
           <div className="centralized-hub-text">
             <h2 className="centralized-hub-title">Centralized Knowledge Hub</h2>
             <p className="centralized-hub-description">
-Say goodbye to scattered documents and lost information. vala.ai centralizes your organizational knowledge into a single, searchable hub eliminating silos and creating a shared source of truth for all departments. Whether it’s SOPs, reports, policies, or training materials, everything is accessible from one intuitive platform.
-
+No more scattered files or missing information. Vala.ai brings all your organizational knowledge into one secure, searchable hub; eliminating silos and creating a single source of truth for every team. From SOPs and policies to reports and training materials, everything your organization needs is accessible in one intuitive platform.
             </p>
             <Link to="/features" className="centralized-hub-btn">
               Learn More

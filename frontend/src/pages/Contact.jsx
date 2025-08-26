@@ -99,7 +99,9 @@ function Contact() {
       className="form-input select-input"
       required
     >
+
 <option value="General Inquiry">General Inquiry</option>
+<option value="Schedule a Demo">Schedule a Demo</option>
 <option value="Customer Support">Customer Support</option>
 <option value="Feedback">Feedback</option>
 <option value="Partnership">Partnership</option>
@@ -115,14 +117,14 @@ function Contact() {
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
     >
-      {/* <path
+      <path
         d="M19.9181 8.94995L13.3981 15.47C12.6281 16.24 11.3681 16.24 10.5981 15.47L4.07812 8.94995"
         stroke="#585857"
         strokeWidth="1.5"
         strokeMiterlimit="10"
         strokeLinecap="round"
         strokeLinejoin="round"
-      /> */}
+      />
     </svg>
   </div>
 </div>
@@ -159,8 +161,7 @@ function Contact() {
             <div className="contact-info-content">
               <h2 className="contact-info-title">Get in Touch</h2>
               <p className="contact-info-description">
-                We're here to answer your questions and discuss how our solutions can address your needs. Reach out to us through any of the channels below.
-              </p>
+Want to explore how Vala.ai can support your organization? Reach out to us through any of the channels below.              </p>
             </div>
 
             <div className="contact-details">

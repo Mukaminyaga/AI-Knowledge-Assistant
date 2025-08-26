@@ -10,8 +10,7 @@ function SecureCompliantSection() {
           <div className="secure-compliant-text">
             <h2 className="secure-compliant-title">Secure & Compliant</h2>
             <p className="secure-compliant-description">
-Built with enterprise-grade security protocols, vala.ai protects your data with encryption, role-based access control, and compliance with global standards. Whether you're handling sensitive HR records or critical operational data, rest assured that your knowledge is stored safely, with full visibility and control over who accesses what.
-            </p>
+Vala.ai safeguards your data with enterprise-grade security, including encryption, role-based access, and compliance with global standards. Whether managing sensitive documents or critical operational information, your knowledge remains protected, with full control and visibility over who can access it.            </p>
             <Link to="/features" className="secure-compliant-btn">
               Learn More
             </Link>

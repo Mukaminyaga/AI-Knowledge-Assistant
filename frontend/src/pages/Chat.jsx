@@ -174,9 +174,15 @@ function Chat() {
     }
   };
 
-  const handleSelectChat = (sessionId) => {
-    const history = JSON.parse(localStorage.getItem(`chat_${userId}_${sessionId}`)) || [];
-    setChatHistory(history);
+  const handleSelectChat = (sessionId, sampleHistory = null) => {
+    if (sampleHistory) {
+      // Use provided sample history
+      setChatHistory(sampleHistory);
+    } else {
+      // Load from localStorage for real sessions
+      const history = JSON.parse(localStorage.getItem(`chat_${userId}_${sessionId}`)) || [];
+      setChatHistory(history);
+    }
     setCurrentSessionId(sessionId);
     setInputValue("");
   };
@@ -220,6 +226,21 @@ function Chat() {
     } catch (err) {
       console.error('Failed to copy text: ', err);
     }
+  };
+
+  const handleEditMessage = (messageIndex, currentText) => {
+    // Set the input value to the current message text for editing
+    setInputValue(currentText);
+
+    // Remove all messages after the selected message for re-generation
+    const updatedHistory = chatHistory.slice(0, messageIndex);
+    setChatHistory(updatedHistory);
+
+    // Update localStorage
+    localStorage.setItem(
+      `chat_${userId}_${currentSessionId}`,
+      JSON.stringify(updatedHistory)
+    );
   };
 
   // Function to format text for better readability
@@ -416,9 +437,29 @@ const formatMessageText = (text) => {
                   <div key={idx} className={`message ${msg.role}-msg`}>
                     <div className="message-header">{msg.role === "user" ? "YOU" : "AI ASSISTANT"}</div>
                     {msg.role === "user" ? (
-                      <div className="message-body">
-                        <div className="message-text">{msg.text}</div>
-                      </div>
+                      <>
+                        <div className="message-body">
+                          <div className="message-text">{msg.text}</div>
+                        </div>
+                        <div className="user-message-actions">
+                          <button
+                            className="user-action-btn"
+                            onClick={() => copyToClipboard(msg.text)}
+                            title="Copy message"
+                          >
+                            <FiCopy />
+                          </button>
+                          <button
+                            className="user-action-btn"
+                            onClick={() => handleEditMessage(idx, msg.text)}
+                            title="Edit message"
+                          >
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                              <path d="M3 17.25V21H6.75L17.81 9.94L14.06 6.19L3 17.25ZM20.71 7.04C21.1 6.65 21.1 6.02 20.71 5.63L18.37 3.29C17.98 2.9 17.35 2.9 16.96 3.29L15.13 5.12L18.88 8.87L20.71 7.04Z" fill="currentColor"/>
+                            </svg>
+                          </button>
+                        </div>
+                      </>
                     ) : (
                       <div className="assistant-message-content">
                         <div className="formatted-message-text">

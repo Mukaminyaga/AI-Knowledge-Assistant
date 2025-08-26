@@ -538,6 +538,50 @@
   background: rgba(245, 158, 11, 0.1);
 }
 
+/* User message actions (positioned outside message container) */
+.user-message-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+  margin-left: 0;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  justify-content: flex-end;
+  padding-right: 0;
+}
+
+.message.user-msg:hover .user-message-actions {
+  opacity: 1;
+}
+
+.user-action-btn {
+  width: 28px;
+  height: 28px;
+  border: 1px solid #E5E7EB;
+  background: var(--card-background);
+  border-radius: 6px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #6B7280;
+  transition: all 0.2s ease;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.user-action-btn:hover {
+  background: var(--hover-background);
+  color: #374151;
+  border-color: #D1D5DB;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+.user-action-btn svg {
+  width: 14px;
+  height: 14px;
+}
+
 /* Typing indicator */
 .typing-dots {
   display: flex;

@@ -8,6 +8,7 @@ import {
   FiCreditCard,
   FiBarChart2,
   FiActivity,
+  FiTrendingUp,
 } from "react-icons/fi";
 import "../../styles/SuperAdminSidebar.css";
 import { logout } from "../../utils/auth"; 
@@ -25,6 +26,12 @@ const SuperAdminSidebar = ({ activePage }) => {
       path: "/super-admin/tenants",
       icon: FiUsers,
       key: "tenants",
+    },
+    {
+      name: "Metrics",
+      path: "/super-admin/metrics",
+      icon: FiTrendingUp,
+      key: "metrics",
     },
     {
       name: "Payments",

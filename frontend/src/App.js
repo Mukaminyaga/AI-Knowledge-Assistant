@@ -31,6 +31,7 @@ import { ThemeProvider } from "./context/ThemeContext";
 import Overview from "./pages/SuperAdmin/Overview";
 import Tenants from "./pages/SuperAdmin/Tenants";
 import TenantDetails from "./pages/SuperAdmin/TenantDetails";
+import Metrics from "./pages/SuperAdmin/Metrics";
 import Payments from "./pages/SuperAdmin/Payments";
 import Analytics from "./pages/SuperAdmin/Analytics";
 
@@ -162,6 +163,14 @@ function App() {
           element={
             <PrivateRoute>
               <TenantDetails />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/super-admin/metrics"
+          element={
+            <PrivateRoute>
+              <Metrics />
             </PrivateRoute>
           }
         />

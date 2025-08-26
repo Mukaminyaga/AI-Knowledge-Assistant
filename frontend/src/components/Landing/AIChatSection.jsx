@@ -10,7 +10,7 @@ function AIChatSection() {
           <div className="ai-chat-text">
             <h2 className="ai-chat-title">AI Chat Assistant</h2>
             <p className="ai-chat-description">
-Empower your team with a conversational AI assistant that answers questions in real time using your uploaded documents. Vala understands natural language, refines its responses through continuous learning, and evolves with your content providing quick, precise, and context-aware answers that reduce back-and-forth and streamline knowledge access.            </p>
+Empower your team with a conversational AI that delivers real-time answers directly from your organization’s documents. Vala.ai refines  its responses through continuous learning and evolves with your content, providing quick, precise, and context-aware answers that reduce back-and-forth and streamline knowledge access. </p>
             <Link to="/features" className="ai-chat-btn">
               Learn More
             </Link>

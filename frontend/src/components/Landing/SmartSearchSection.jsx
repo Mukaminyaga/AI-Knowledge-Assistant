@@ -10,8 +10,7 @@ function SmartSearchSection() {
           <div className="smart-search-text">
             <h2 className="smart-search-title">Smart Search</h2>
             <p className="smart-search-description">
-              Find information instantly with our advanced AI-powered search engine that goes beyond simple keyword matching by deeply understanding user intent, context, and semantic meaning. It intelligently analyzes queries to deliver highly accurate, relevant, and actionable results empowering your team to save time, make faster decisions, and unlock the full potential of your organization's knowledge.
-            </p>
+Discover information in seconds with our AI-driven search engine that goes beyond simple keyword matching by deeply understanding user intent, context, and meaning. Vala.ai intelligently interprets queries to deliver precise, relevant, and actionable results, helping your team save time, make better decisions, and fully unlock your organization’s knowledge.            </p>
             <Link to="/features" className="smart-search-btn">
               Learn More
             </Link>

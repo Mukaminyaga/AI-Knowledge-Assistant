@@ -11,42 +11,83 @@
 }
 
 .why-choose-title {
-  font-family: Inter, -apple-system, Roboto, Helvetica, sans-serif;
-  font-size: 2.3rem;
+   font-family: Inter, -apple-system, Roboto, Helvetica, sans-serif;
+  font-size: 2rem;
   font-weight: 700;
   color: #080808 !important;
   text-align: center;
-  margin: 0 0 3rem 0;
-  margin-bottom: 2rem !important;
+  margin-bottom: 1rem !important;
 }
 
 /* Benefits List */
 .benefits-list {
-  display: flex;
-  flex-direction: column;
-  align-items: center;   
-  gap: 1.5rem;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 2rem;
   margin-bottom: 3rem;
+  max-width: 1000px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .benefit-item {
   display: flex;
-  align-items: center;
-  gap: 1.5rem;
-  width: 100%;           
-  max-width: 600px;      
+  align-items: flex-start;
+  gap: 1rem;
+  width: 100%;
+  padding: 1rem;
+  background: rgba(255, 255, 255, 0.6);
+  border-radius: 0.75rem;
+  border: 1px solid rgba(240, 242, 245, 0.8);
+  transition: all 0.3s ease;
+}
+
+.benefit-item:hover {
+  background: rgba(255, 255, 255, 0.9);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
 }
 
 
 .check-icon {
   flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+  padding: 8px;
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
+
+.check-icon path {
+  fill: #000000;
+}
+
 .benefit-text {
   font-family: Inter, -apple-system, Roboto, Helvetica, sans-serif;
+  font-size: 0.95rem;
+  color: #4a5568 !important;
+  line-height: 1.6;
+  margin: 0;
+}
+
+/* Summary Section */
+.why-choose-summary {
+  text-align: center;
+  margin-bottom: 3rem;
+  max-width: 800px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.why-choose-summary p {
+  font-family: Inter, -apple-system, Roboto, Helvetica, sans-serif;
   font-size: 1.125rem;
-  font-weight: 500;
-  color: #080808 !important;
-  line-height: 1.4;
+  color: #4a5568;
+  line-height: 1.7;
+  margin: 0;
 }
 
 /* Stats Cards */
@@ -125,7 +166,13 @@
   }
 
   .benefits-list {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
     margin-bottom: 3rem;
+  }
+
+  .benefit-item {
+    padding: 0.75rem;
   }
 
   .benefit-text {

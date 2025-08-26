@@ -27,28 +27,24 @@ function HeroSection() {
         <div className="hero-content">
           <div className="hero-text">
             <h1 className="hero-title">
-              Unlock your 
-              <span className="hero-title-gradient"> Organization's<br></br>
+              
+              <span className="hero-title-gradient">Turning Organizational<br></br>
               Knowledge </span>
-              Instantly.
+              into Actionable Insights
             </h1>
 
             <p className="hero-description">
-              Empower your teams with fast, secure, and 
-              AI-powered access to critical organization
-              knowledge when and where they need it.
+             Your knowledge, made accessible.
             </p>
 
             <div className="hero-buttons">
-              <Link to="/signup" className="hero-btn-primary">
-                Get Started
-              </Link>
-              <Link to="/contact" className="hero-btn-secondary">
+              <Link to="/contact" className="hero-btn-primary">
                 Request a Demo
               </Link>
-              <Link to="/login" className="hero-btn-tertiary">
-                Login
-              </Link>
+              {/* <Link to="/contact" className="hero-btn-secondary">
+                Request a Demo
+              </Link> */}
+              
             </div>
 
             <div className="hero-stats">

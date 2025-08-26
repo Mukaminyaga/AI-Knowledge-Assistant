@@ -34,12 +34,12 @@ class DepartmentAssignmentRequest(BaseModel):
     department_id: Optional[int]
 
 POD_SHARED_SECRET = os.environ.get("POD_SHARED_SECRET")
-RUNPOD_WORKER_URL = os.environ.get("RUNPOD_WORKER_URL")
+# RUNPOD_WORKER_URL = os.environ.get("RUNPOD_WORKER_URL")
 
-# RUNPOD_WORKER_URL = os.environ.get(
-#     "RUNPOD_WORKER_URL",
-#     "https://o211rs01tttfhp-8000.proxy.runpod.net"
-# )
+RUNPOD_WORKER_URL = os.environ.get(
+    "RUNPOD_WORKER_URL",
+    "https://y9vojbbw31blbg-8000.proxy.runpod.net"
+)
 
 def ensure_permission(user: User, allowed_roles: List[str]):
     if user.role.lower() not in [role.lower() for role in allowed_roles]:

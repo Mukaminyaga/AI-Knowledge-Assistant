@@ -12,8 +12,8 @@ function LandingFooter() {
       <span className="vala">vala</span>
       <span className="dot-ai">.ai</span>
     </div>            <p className="landing-footer-description">
-              We are experts in knowledge management software. We help companies enable their employees to work more efficiently, align teams, and achieve better results.
-            </p>
+An AI-powered knowledge management platform that transforms reports, policy briefs, publications, and technical documents into clear, searchable, and actionable insights.             </p>
+
           </div>
 
           <div className="landing-footer-links">
@@ -21,13 +21,14 @@ function LandingFooter() {
               <h4 className="footer-link-title">Product</h4>
               <ul className="footer-link-list">
                 <li><Link to="/" className="footer-link">Home</Link></li>
-                <li><Link to="/features" className="footer-link">Features</Link></li>
+        
                 <li><Link to="/about" className="footer-link">How it Works</Link></li>
+                <li><Link to="/whouses" className="footer-link">Who Uses Vala.ai</Link></li>
                 <li><Link to="/contact" className="footer-link">Schedule a demo</Link></li>
             </ul>
             </div>
 
-            <div className="footer-link-group">
+            {/* <div className="footer-link-group">
               <h4 className="footer-link-title">Company</h4>
               <ul className="footer-link-list">
 <a href="https://www.goodpartnerske.org" target="_blank" rel="noopener noreferrer" className="footer-link">
@@ -36,7 +37,7 @@ function LandingFooter() {
                 <li><span className="footer-link">Domains</span></li>
                 <li><Link to="/contact" className="footer-link">Contact Us</Link></li>
               </ul>
-            </div>
+            </div> */}
 
             <div className="footer-link-group">
               <h4 className="footer-link-title">Contact Us</h4>
@@ -57,7 +58,7 @@ function LandingFooter() {
                   <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M12 2C8.13 2 5 5.13 5 9C5 14.25 12 22 12 22C12 22 19 14.25 19 9C19 5.13 15.87 2 12 2ZM12 11.5C10.62 11.5 9.5 10.38 9.5 9C9.5 7.62 10.62 6.5 12 6.5C13.38 6.5 14.5 7.62 14.5 9C14.5 10.38 13.38 11.5 12 11.5Z" fill="#080808"/>
                   </svg>
-                  <span>Nairobi, Kenya</span>
+                  <span>Marsabit Plaza, Ngong Road, Nairobi, Kenya</span>
                 </div>
               </div>
             </div>
@@ -66,7 +67,7 @@ function LandingFooter() {
 
         <div className="landing-footer-divider"></div>
 
-        <div className="landing-footer-bottom">
+        {/* <div className="landing-footer-bottom">
           <div className="landing-footer-cta">
             <h3 className="footer-cta-title">Unlock Knowledge Power</h3>
             <p className="footer-cta-description">
@@ -109,13 +110,13 @@ function LandingFooter() {
             <div className="footer-legal-links">
               <Link to="/privacy" className="footer-legal-link">Privacy Policy</Link>
               <Link to="/terms" className="footer-legal-link">Terms of Use</Link>
-            </div>
+            </div> */}
             
             <p className="footer-copyright">
               © 2025 vala.ai under Good Partners. All rights reserved.
             </p>
-          </div>
-        </div>
+          {/* </div>
+        </div> */}
       </div>
     </footer>
   );

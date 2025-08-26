@@ -486,6 +486,260 @@ body {
   background-color: var(--action-delete-bg);
   color: var(--action-delete-color);
 }
+/* Enhanced Dashboard Components Dark Theme */
+
+/* Tenant Metrics Table */
+.dark-theme .tenant-metrics-section {
+  background-color: var(--card-background);
+  border-color: var(--border-color);
+}
+
+.dark-theme .tenant-avatar {
+  background-color: var(--active-background);
+  color: var(--primary-bg);
+}
+
+.dark-theme .tenant-id {
+  color: var(--text-tertiary);
+}
+
+.dark-theme .status-since {
+  color: var(--text-tertiary);
+}
+
+.dark-theme .activity-dot.high,
+.dark-theme .activity-dot.medium,
+.dark-theme .activity-dot.low {
+  /* Keep original colors for status indication */
+}
+
+.dark-theme .users-trend {
+  background-color: var(--border-color);
+}
+
+.dark-theme .uploads-change {
+  color: #4CAF50;
+}
+
+.dark-theme .storage-percentage {
+  color: var(--text-tertiary);
+}
+
+.dark-theme .error-count.no-errors {
+  background-color: rgba(76, 175, 80, 0.15);
+  color: #4CAF50;
+}
+
+.dark-theme .error-count.has-errors {
+  background-color: rgba(244, 67, 54, 0.15);
+  color: #F44336;
+}
+
+.dark-theme .error-type {
+  background-color: rgba(244, 67, 54, 0.15);
+  color: #F44336;
+}
+
+.dark-theme .revenue-period {
+  color: var(--text-tertiary);
+}
+
+.dark-theme .plan-badge {
+  background-color: var(--active-background);
+  color: var(--primary-bg);
+}
+
+.dark-theme .table-footer-enhanced {
+  background-color: var(--hover-background);
+  border-color: var(--border-color);
+}
+
+.dark-theme .table-stats .stat-item {
+  background-color: var(--card-background);
+  border-color: var(--border-color);
+}
+
+/* Health Metrics */
+.dark-theme .health-metric {
+  background-color: var(--hover-background);
+  border-color: var(--border-color);
+}
+
+.dark-theme .health-icon {
+  background-color: var(--active-background);
+  color: var(--primary-bg);
+}
+
+.dark-theme .health-status.success {
+  background-color: rgba(76, 175, 80, 0.15);
+  color: #4CAF50;
+}
+
+.dark-theme .health-status.warning {
+  background-color: rgba(255, 152, 0, 0.15);
+  color: #FF9800;
+}
+
+.dark-theme .health-status.danger {
+  background-color: rgba(244, 67, 54, 0.15);
+  color: #F44336;
+}
+
+/* Chart Components */
+.dark-theme .chart-card {
+  background-color: var(--card-background);
+  border-color: var(--border-color);
+}
+
+.dark-theme .chart-header {
+  border-color: var(--border-color);
+}
+
+.dark-theme .chart-title {
+  color: var(--text-primary);
+}
+
+.dark-theme .chart-controls select {
+  background-color: var(--secondary-bg);
+  border-color: var(--border-color);
+  color: var(--text-primary);
+}
+
+/* Recharts tooltip styling for dark theme */
+.dark-theme .recharts-tooltip-wrapper .recharts-default-tooltip {
+  background-color: var(--card-background) !important;
+  border: 1px solid var(--border-color) !important;
+  border-radius: 8px !important;
+  color: var(--text-primary) !important;
+}
+
+.dark-theme .recharts-tooltip-item {
+  color: var(--text-primary) !important;
+}
+
+.dark-theme .recharts-tooltip-label {
+  color: var(--text-secondary) !important;
+}
+
+/* Loading States */
+.dark-theme .loading-cell {
+  color: var(--text-secondary);
+}
+
+.dark-theme .loading-spinner {
+  border-color: var(--border-color);
+  border-top-color: var(--active-background);
+}
+
+/* Enhanced Action Buttons */
+.dark-theme .action-btn {
+  background-color: var(--secondary-bg);
+  border-color: var(--border-color);
+  color: var(--text-secondary);
+}
+
+.dark-theme .action-btn:hover {
+  background-color: var(--hover-background);
+  border-color: var(--text-secondary);
+  color: var(--text-primary);
+}
+
+.dark-theme .view-btn:hover {
+  background-color: rgba(37, 99, 235, 0.15);
+  border-color: #2563EB;
+  color: #2563EB;
+}
+
+.dark-theme .activity-btn:hover {
+  background-color: rgba(76, 175, 80, 0.15);
+  border-color: #4CAF50;
+  color: #4CAF50;
+}
+
+.dark-theme .error-btn:hover {
+  background-color: rgba(244, 67, 54, 0.15);
+  border-color: #F44336;
+  color: #F44336;
+}
+
+/* Metric Highlights */
+.dark-theme .metric-highlight {
+  background-color: var(--hover-background);
+  color: var(--text-primary);
+}
+
+/* Storage Bar */
+.dark-theme .storage-bar {
+  background-color: var(--border-color);
+}
+
+/* Tenant Row Hover Effect */
+.dark-theme .tenant-row:hover {
+  background-color: var(--hover-background);
+  box-shadow: 0 2px 4px rgba(255, 255, 255, 0.05);
+}
+
+/* Section Subtitles */
+.dark-theme .section-subtitle {
+  color: var(--text-secondary);
+}
+
+/* Table Header Icons */
+.dark-theme .th-icon {
+  color: var(--text-secondary);
+}
+
+/* Filter Group Styling */
+.dark-theme .filter-group {
+  color: var(--text-primary);
+}
+
+.dark-theme .filter-icon {
+  color: var(--text-secondary);
+}
+
+.dark-theme .filter-label {
+  color: var(--text-primary);
+}
+
+/* Export Group */
+.dark-theme .export-group .btn {
+  background-color: var(--secondary-bg);
+  border-color: var(--border-color);
+  color: var(--text-primary);
+}
+
+.dark-theme .export-group .btn:hover {
+  background-color: var(--hover-background);
+  border-color: var(--text-secondary);
+}
+
+/* Ensure all chart elements are visible in dark theme */
+.dark-theme .recharts-cartesian-axis-line {
+  stroke: var(--border-color);
+}
+
+.dark-theme .recharts-cartesian-axis-tick-value {
+  fill: var(--text-secondary);
+}
+
+.dark-theme .recharts-cartesian-grid-horizontal line,
+.dark-theme .recharts-cartesian-grid-vertical line {
+  stroke: var(--border-color);
+  opacity: 0.5;
+}
+
+.dark-theme .recharts-legend-item-text {
+  color: var(--text-primary) !important;
+}
+
+/* Override any remaining white backgrounds in dashboard */
+.dark-theme .recent-activity-summary,
+.dark-theme .tenant-metrics-section,
+.dark-theme .overview-page > div {
+  background-color: var(--card-background) !important;
+}
+
 /* .dark-theme .form-input {
   background-color: #ffffff !important;
   color: var(--text-dark) !important;

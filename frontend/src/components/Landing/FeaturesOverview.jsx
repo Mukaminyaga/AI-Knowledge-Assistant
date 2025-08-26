@@ -1,39 +1,50 @@
-import React, { useState } from "react";
-import SmartSearchSection from "./SmartSearchSection";
-import AIChatSection from "./AIChatSection";
-import CentralizedHubSection from "./CentralizedHubSection";
-import SecureCompliantSection from "./SecureCompliantSection";
+import React from "react";
+import FeatureCard from "./FeatureCard";
 import "../../styles/FeaturesOverview.css";
 
 function FeaturesOverview() {
-  const [activeFeature, setActiveFeature] = useState("smart-search");
-
   const features = [
-    { id: "smart-search", name: "Smart Search" },
-    { id: "ai-chat", name: "AI Chat Assistant" },
-    { id: "centralized-hub", name: "Centralized Knowledge Hub" },
-    { id: "secure-compliant", name: "Secure & Compliant" }
-  ];
-
-  const renderActiveFeature = () => {
-    switch (activeFeature) {
-      case "smart-search":
-        return <SmartSearchSection />;
-      case "ai-chat":
-        return <AIChatSection />;
-      case "centralized-hub":
-        return <CentralizedHubSection />;
-      case "secure-compliant":
-        return <SecureCompliantSection />;
-      default:
-        return <SmartSearchSection />;
+    {
+      id: "smart-search",
+      title: "Smart Search",
+      description: "Discover information in seconds with our AI-driven search engine that goes beyond simple keyword matching by deeply understanding user intent, context, and meaning.",
+      imageSrc: "/icons/Rectangle 7671.png",
+      imageAlt: "Smart Search Interface",
+      backgroundColor: "#E8F9FF",
+      buttonColor: "#31617B",
+      buttonHoverColor: "#2a4f63"
+    },
+    {
+      id: "ai-chat",
+      title: "AI Chat Assistant",
+      description: "Empower your team with a conversational AI that delivers real-time answers directly from your organization's documents with continuous learning.",
+      imageSrc: "/icons/human4.jpg",
+      imageAlt: "AI Chat Assistant Interface",
+      backgroundColor: "#FAF2FE",
+      buttonColor: "#D277FF",
+      buttonHoverColor: "#c25aff"
+    },
+    {
+      id: "centralized-hub",
+      title: "Centralized Knowledge Hub",
+      description: "Create a unified repository where all your organizational knowledge lives, making information easily accessible and manageable for your entire team.",
+      imageSrc: "/icons/human2.jpg",
+      imageAlt: "Centralized Knowledge Hub",
+      backgroundColor: "#E3FCFC",
+      buttonColor: "#55C9C9",
+      buttonHoverColor: "#45b8b8"
+    },
+    {
+      id: "secure-compliant",
+      title: "Secure & Compliant",
+      description: "Enterprise-grade security with full compliance standards, ensuring your sensitive organizational data remains protected and meets regulatory requirements.",
+      imageSrc: "/icons/human.jpg",
+      imageAlt: "Secure & Compliant Platform",
+      backgroundColor: "#FDE1C3",
+      buttonColor: "#FC9546",
+      buttonHoverColor: "#fa8530"
     }
-  };
-
-  const getActiveLinePosition = () => {
-    const index = features.findIndex(feature => feature.id === activeFeature);
-    return index * 25; // 25% for each tab
-  };
+  ];
 
   return (
     <>
@@ -44,33 +55,25 @@ function FeaturesOverview() {
               Embracing AI-Powered Knowledge Management
             </h2>
             <p className="features-overview-description">
-              Vala.ai is an intelligent knowledge management platform that helps teams find, share, and act on information with ease. Whether it's employee onboarding, customer support, or internal documentation, Vala.ai ensures your organization's knowledge is always accessible and never siloed.
-            </p>
+Vala.ai is an AI-powered knowledge management platform that transforms reports, policy briefs, publications, and technical documents into clear, searchable, and actionable insights. Whether it's employee onboarding, customer support, or navigating internal documentation, Vala.ai makes your organization’s knowledge instantly accessible whenever it’s needed            </p>
           </div>
 
-          <div className="features-tabs">
+          <div className="features-grid">
             {features.map((feature) => (
-              <div
+              <FeatureCard
                 key={feature.id}
-                className={`feature-tab ${activeFeature === feature.id ? 'active' : ''}`}
-                onClick={() => setActiveFeature(feature.id)}
-              >
-                {feature.name}
-              </div>
+                title={feature.title}
+                description={feature.description}
+                imageSrc={feature.imageSrc}
+                imageAlt={feature.imageAlt}
+                backgroundColor={feature.backgroundColor}
+                buttonColor={feature.buttonColor}
+                buttonHoverColor={feature.buttonHoverColor}
+              />
             ))}
-          </div>
-
-          <div className="features-divider">
-            <div className="features-line"></div>
-            <div
-              className="features-active-line"
-              style={{ left: `${getActiveLinePosition()}%` }}
-            ></div>
           </div>
         </div>
       </section>
-
-      {renderActiveFeature()}
     </>
   );
 }

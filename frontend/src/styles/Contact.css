@@ -95,6 +95,11 @@
 
 .select-input {
   background: #fff;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  cursor: pointer;
+  padding-right: 3rem;
 }
 
 .select-input::placeholder {
@@ -104,12 +109,19 @@
   font-weight: 400;
 }
 
+.select-input option {
+  color: #2E2E2D;
+  background: #fff;
+  padding: 0.5rem;
+}
+
 .select-icon {
   position: absolute;
-  right: 1.8rem;
+  right: 1rem;
   top: 50%;
   transform: translateY(-50%);
   pointer-events: none;
+  z-index: 1;
 }
 
 .form-textarea {
@@ -188,7 +200,7 @@
 
 .contact-info-title {
   font-family: Inter, -apple-system, Roboto, Helvetica, sans-serif;
-  font-size: clamp(1.75rem, 4vw, 2.5rem);
+  font-size: 1.85rem;
   font-weight: 700;
   color: #2E2E2D !important;
   margin: 0 0 clamp(0.5rem, 1vw, 1rem) 0;
