@@ -18,6 +18,7 @@ function HowItWorks() {
         </div>
         
         <h2 className="how-it-works-title">How it Works</h2>  
+        
               
         
         <div className="steps-grid">

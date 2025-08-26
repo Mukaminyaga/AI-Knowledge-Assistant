@@ -147,8 +147,7 @@ const ChatHistory = ({ isOpen, onClose, chatSessions = [], onSelectSession }) =>
 
   const tabs = [
     { id: 'chat', label: 'Chat', active: true },
-    { id: 'bookmarks', label: 'Bookmarks', active: false },
-    { id: 'files', label: 'Files', active: false }
+    { id: 'bookmarks', label: 'Bookmarks', active: false }
   ];
 
   const handleTabClick = (tabId) => {
@@ -274,7 +273,7 @@ const ChatHistory = ({ isOpen, onClose, chatSessions = [], onSelectSession }) =>
         <div className="history-content">
           <div className="search-section">
             <div className="search-container">
-              <FiSearch className="search-icon" />
+             
               <input
                 type="text"
                 placeholder="Search Vala History"
@@ -335,11 +334,7 @@ const ChatHistory = ({ isOpen, onClose, chatSessions = [], onSelectSession }) =>
               </div>
             )}
 
-            {activeTab === 'files' && (
-              <div className="empty-state">
-                <p>No files yet</p>
-              </div>
-            )}
+            
           </div>
         </div>
       </div>

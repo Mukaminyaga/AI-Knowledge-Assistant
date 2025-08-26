@@ -260,6 +260,10 @@
 
 /* Responsive Design */
 @media (max-width: 1200px) {
+  .hero-section{
+  max-height: 65vh !important;
+  min-height: 50vh;
+  }
   .hero-container {
     padding: 0 2rem;
   }
@@ -278,6 +282,13 @@
   }
 }
 
+@media (min-width: 991px) {
+  .hero-section{
+  max-height: 65vh !important;
+  min-height: 50vh;
+  }
+
+}
 @media (max-width: 991px) {
   .hero-content {
     grid-template-columns: 1fr 1fr !important; 

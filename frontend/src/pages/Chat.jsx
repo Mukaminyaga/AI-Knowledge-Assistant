@@ -315,7 +315,7 @@ const formatMessageText = (text) => {
         {/* Compact Header */}
         <div className="chat-compact-header">
           <div className="search-wrapper">
-            <FiSearch className="search-icon" />
+            {/* <FiSearch className="search-icon" /> */}
             <input
               type="text"
               placeholder="Search..."
