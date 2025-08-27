@@ -449,7 +449,7 @@ const formatMessageText = (text) => {
                   <div className="input-wrapper">
                     <input
                       type="text"
-                      placeholder="what do you want to know?"
+                      placeholder="What do you want to know?"
                       value={inputValue}
                       onChange={(e) => setInputValue(e.target.value)}
                       className="chat-input"
@@ -572,7 +572,7 @@ const formatMessageText = (text) => {
                   <div className="input-wrapper">
                     <input
                       type="text"
-                      placeholder="what do you want to know?"
+                      placeholder="What do you want to know?"
                       value={inputValue}
                       onChange={(e) => setInputValue(e.target.value)}
                       className="chat-input"

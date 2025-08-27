@@ -507,11 +507,11 @@ body {
   color: var(--text-tertiary);
 }
 
-.dark-theme .activity-dot.high,
+/* .dark-theme .activity-dot.high,
 .dark-theme .activity-dot.medium,
 .dark-theme .activity-dot.low {
-  /* Keep original colors for status indication */
-}
+  
+} */
 
 .dark-theme .users-trend {
   background-color: var(--border-color);

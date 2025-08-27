@@ -453,7 +453,7 @@ function Settings() {
                     </div>
                     {!isChangingPassword ? (
                       <button
-                        className="setting-action"
+                        className="setting-action4"
                         onClick={handlePasswordEdit}
                       >
                         <FiEdit3 size={16} />

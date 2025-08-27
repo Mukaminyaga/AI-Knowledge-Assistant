@@ -361,6 +361,22 @@
   border: none;
   border-radius: 12px;
   padding: 13px 14px;
+  /* width: 140px !important; */
+  font-size: 14px;
+  font-family: var(--font-inter);
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.setting-action4 {
+   display: flex;
+  align-items: center;
+  gap: 6px;
+  background-color: var(--primary-color);
+  color: var(--white);
+  border: none;
+  border-radius: 12px;
+  padding: 13px 14px;
   width: 140px !important;
   font-size: 14px;
   font-family: var(--font-inter);
@@ -368,6 +384,7 @@
   cursor: pointer;
   transition: all 0.2s ease;
 }
+
 
 .setting-action {
   display: flex;
@@ -546,6 +563,40 @@ input:focus + .toggle-slider {
   box-shadow: 0 0 1px var(--primary-color);
 }
 
+@media (min-width: 768px) {
+  .setting-action{
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background-color: var(--primary-color);
+  color: var(--white);
+  border: none;
+  border-radius: 12px;
+  padding: 13px 14px;
+  width: 140px !important;
+  font-size: 14px;
+  font-family: var(--font-inter);
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  }
+   .setting-action4{
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background-color: var(--primary-color);
+  color: var(--white);
+  border: none;
+  border-radius: 12px;
+  padding: 13px 14px;
+  width: 140px !important;
+  font-size: 14px;
+  font-family: var(--font-inter);
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  }
+}
 /* Responsive Adjustments */
 @media (max-width: 768px) {
   .setting-item {

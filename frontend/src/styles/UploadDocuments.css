@@ -529,14 +529,14 @@
   background-color: var(--background-light);
   border-radius: 12px;
   transition: all 0.2s ease;
-  border: 1px solid var(--border-color);
+  border: 1px solid var(--border-light);
 }
 
 .file-item:hover {
   background-color: var(--hover-background);
   box-shadow: var(--shadow);
   transform: translateX(4px);
-  border-color: var(--text-secondary);
+  /* border-color: var(--text-secondary); */
 }
 
 .file-info {
@@ -586,7 +586,7 @@
 
 .progress-fill {
   height: 100%;
-  background: linear-gradient(90deg, var(--primary-color), var(--primary-dark));
+  background: #28a745;
   transition: width 0.3s ease;
   border-radius: 3px;
 }

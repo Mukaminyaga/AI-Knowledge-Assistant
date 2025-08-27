@@ -66,7 +66,7 @@
   align-items: center;
   gap: 6px;
   padding: 10px 14px;
-  border: 1px solid var(--border-color);
+  border: 1px solid var(--border-color) !important;
   background: var(--card-background);
   border-radius: 8px;
   cursor: pointer;
@@ -656,8 +656,10 @@
 .chat-input {
   border: none !important;
   background: transparent;
-  font-size: 18px;
-  color: #111827;
+  font-size: 15px;
+   font-family: Inter, -apple-system, Roboto, Helvetica, sans-serif;
+
+  /* color: #111827; */
   outline: none;
   width: 100%;
   min-height: 20px;
@@ -680,6 +682,24 @@
   gap: 12px;
 
 }
+.formatted-list {
+  list-style: none;
+  counter-reset: item;
+}
+
+.formatted-list li {
+  counter-increment: item;
+  position: relative;
+  padding-left: 2em;
+
+}
+
+.formatted-list li::before {
+  content: counter(item, lower-alpha) ". ";
+  position: absolute;
+  left: 0;
+}
+
 
 .input-controls .attach-btn {
   flex-shrink: 0;
