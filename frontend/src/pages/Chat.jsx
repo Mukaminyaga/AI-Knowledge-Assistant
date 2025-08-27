@@ -243,70 +243,114 @@ function Chat() {
     );
   };
 
-  // Function to format text for better readability
+// --- Preprocess raw text ---
+const preprocessText = (text) => {
+  if (!text) return "";
+
+  return text
+    // Put inline numbered items (1., 2., 3.)
+    .replace(/(\d+\.\s+)/g, "\n$1")
+    // Put roman numerals (i., ii., iii.)
+    .replace(/(\b[ivxlcdm]+\.\s+)/gi, "\n$1")
+    // Put lettered sublists (a), b), c))
+    .replace(/(\([a-z]\)\s+)/gi, "\n$1")
+    // Handle inline "a) ...; b) ...;" cases by splitting on semicolons before next letter
+    .replace(/;\s*(\([a-z]\)\s+)/gi, "\n$1")
+    // Clean extra spaces
+    .replace(/\n{2,}/g, "\n\n")
+    .trim();
+};
+
+// --- Identify line type ---
+const getLineType = (line) => {
+  if (/^\d+\./.test(line)) return "number";
+  if (/^[ivxlcdm]+\./i.test(line)) return "roman";
+  if (/^\([a-z]\)/i.test(line)) return "letter";
+  return "text";
+};
+
+// --- Build a tree structure ---
+const buildListTree = (lines) => {
+  const items = [];
+  let current = null;
+
+  lines.forEach((line) => {
+    const type = getLineType(line);
+
+    if (type === "number" || type === "letter") {
+      if (current) items.push(current);
+      current = {
+        type,
+        text:
+          type === "number"
+            ? line.replace(/^\d+\.\s*/, "")
+            : line.replace(/^\([a-z]\)\s*/i, ""),
+        children: [],
+      };
+    } else if (type === "roman") {
+      if (!current) {
+        current = { type: "letter", text: "", children: [] };
+      }
+      current.children.push({
+        type,
+        text: line.replace(/^[ivxlcdm]+\.\s*/i, ""),
+        children: [],
+      });
+    } else {
+      if (current) {
+        current.text += " " + line;
+      }
+    }
+  });
+
+  if (current) items.push(current);
+  return items;
+};
+
+// --- Render the tree ---
+const renderList = (items, depth = 0) => {
+  let listType = "a"; // default top-level → a), b), c)
+  if (depth === 1) listType = "i"; // second-level → i., ii., iii.
+  if (depth === 2) listType = "1"; // third-level → 1., 2., 3.
+
+  return (
+    <ol type={listType} className="formatted-list" key={depth}>
+      {items.map((item, idx) => (
+        <li key={idx}>
+          {item.text}
+          {item.children.length > 0 && renderList(item.children, depth + 1)}
+        </li>
+      ))}
+    </ol>
+  );
+};
+
+// --- Main formatter ---
 const formatMessageText = (text) => {
   if (!text) return null;
 
-  // Split text into blocks separated by double newlines
-  const blocks = text.split(/\n\s*\n/).map(b => b.trim()).filter(Boolean);
+  const cleanText = preprocessText(text);
+  const blocks = cleanText
+    .split(/\n\s*\n/)
+    .map((b) => b.trim())
+    .filter(Boolean);
 
   return blocks.map((block, blockIdx) => {
-    const lines = block.split("\n").map(l => l.trim()).filter(Boolean);
+    const lines = block.split("\n").map((l) => l.trim()).filter(Boolean);
 
-    // --- Detect numbered or bullet list ---
-    const isList = lines.every(line =>
-      /^\d+\./.test(line) || /^[-*•]/.test(line) || /^\([a-z]\)/.test(line)
+    if (lines.every((line) => getLineType(line) !== "text")) {
+      const tree = buildListTree(lines);
+      return <div key={blockIdx}>{renderList(tree)}</div>;
+    }
+
+    return (
+      <p key={blockIdx} className="formatted-paragraph">
+        {block}
+      </p>
     );
-
-    if (isList) {
-      const isNumbered = lines.some(line => /^\d+\./.test(line));
-      return isNumbered ? (
-        <ol key={blockIdx} className="formatted-list numbered-list">
-          {lines.map((line, i) => {
-            const clean = line.replace(/^\d+\.\s*/, '').replace(/^[-*•]\s*/, '').replace(/^\([a-z]\)\s*/, '').trim();
-            return <li key={i}>{clean}</li>;
-          })}
-        </ol>
-      ) : (
-        <ul key={blockIdx} className="formatted-list bullet-list">
-          {lines.map((line, i) => {
-            const clean = line.replace(/^[-*•]\s*/, '').replace(/^\([a-z]\)\s*/, '').trim();
-            return <li key={i}>{clean}</li>;
-          })}
-        </ul>
-      );
-    }
-
-    // --- Detect table block ---
-    const tableLike = lines.some(line => /\|/.test(line) || /\t/.test(line));
-    if (tableLike) {
-      const rows = lines.map(l => l.split(/\s*\|\s*|\t/).filter(Boolean));
-      return (
-        <table key={blockIdx} className="formatted-table">
-          <tbody>
-            {rows.map((row, rIdx) => (
-              <tr key={rIdx}>
-                {row.map((cell, cIdx) => (
-                  <td key={cIdx}>{cell.trim()}</td>
-                ))}
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      );
-    }
-
-    // --- Detect heading ---
-    if (/^#{1,6}\s/.test(block)) {
-      const level = block.match(/^#{1,6}/)[0].length;
-      const HeadingTag = `h${level}`;
-      return <HeadingTag key={blockIdx} className="formatted-heading">{block.replace(/^#{1,6}\s*/, '')}</HeadingTag>;
-    }
-
-    // --- Default to paragraph ---
-    return <p key={blockIdx} className="formatted-paragraph">{block}</p>;
   });
 };
+
 
 
   return (
@@ -405,7 +449,7 @@ const formatMessageText = (text) => {
                   <div className="input-wrapper">
                     <input
                       type="text"
-                      placeholder="What do you want to know?"
+                      placeholder="what do you want to know?"
                       value={inputValue}
                       onChange={(e) => setInputValue(e.target.value)}
                       className="chat-input"
@@ -528,7 +572,7 @@ const formatMessageText = (text) => {
                   <div className="input-wrapper">
                     <input
                       type="text"
-                      placeholder="What do you want to know?"
+                      placeholder="what do you want to know?"
                       value={inputValue}
                       onChange={(e) => setInputValue(e.target.value)}
                       className="chat-input"

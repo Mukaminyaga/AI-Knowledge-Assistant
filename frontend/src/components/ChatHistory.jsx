@@ -9,6 +9,8 @@ import {
   FiThumbsDown
 } from 'react-icons/fi';
 import '../styles/ChatHistory.css';
+import axios from "axios";
+
 
 const ChatHistory = ({ isOpen, onClose, chatSessions = [], onSelectSession }) => {
   const [activeTab, setActiveTab] = useState('chat');
@@ -120,6 +122,34 @@ const ChatHistory = ({ isOpen, onClose, chatSessions = [], onSelectSession }) =>
   };
 
   const filteredHistoryData = filterHistoryData(historyData);
+  const [bookmarkedSessions, setBookmarkedSessions] = useState([]);
+
+useEffect(() => {
+  if (activeTab === "bookmarks") {
+    const fetchBookmarks = async () => {
+      try {
+        const res = await fetch(
+          `${process.env.REACT_APP_API_URL}/bookmarks?user_id=1&tenant_id=1`
+        );
+        if (res.ok) {
+          const data = await res.json();
+          setBookmarkedSessions(
+            data.map(s => ({
+              id: s.id,
+              title: s.title,
+              isBookmarked: true,
+              isHighlighted: false,
+            }))
+          );
+        }
+      } catch (err) {
+        console.error("Failed to fetch bookmarks:", err);
+      }
+    };
+    fetchBookmarks();
+  }
+}, [activeTab]);
+
 
   // Keyboard event handling
   useEffect(() => {
@@ -154,10 +184,33 @@ const ChatHistory = ({ isOpen, onClose, chatSessions = [], onSelectSession }) =>
     setActiveTab(tabId);
   };
 
-  const toggleBookmark = (itemId, section) => {
-    // This would typically update state or call an API
-    console.log('Toggle bookmark for item:', itemId, 'in section:', section);
-  };
+const toggleBookmark = async (itemId, section) => {
+  try {
+    // Find the session being toggled
+    const allSessions = [
+      ...historyData.today,
+      ...historyData.yesterday,
+      ...Object.values(historyData.older).flat(),
+    ];
+    const session = allSessions.find(s => s.id === itemId);
+    if (!session) return;
+
+    const newStatus = !session.isBookmarked;
+
+    // Call backend API with axios
+    await axios.post(`${process.env.REACT_APP_API_URL}/chat/bookmark`, {
+      session_id: itemId,
+      bookmarked: newStatus,
+    });
+
+    // Update local state so UI reflects immediately
+    session.isBookmarked = newStatus;
+    setSearchQuery(q => q); // quick re-render trigger
+  } catch (error) {
+    console.error("Failed to toggle bookmark:", error);
+  }
+};
+
 
   const handleMoreOptions = (itemId) => {
     // This would typically show a dropdown menu
@@ -328,11 +381,22 @@ const ChatHistory = ({ isOpen, onClose, chatSessions = [], onSelectSession }) =>
               </>
             )}
 
-            {activeTab === 'bookmarks' && (
-              <div className="empty-state">
-                <p>No bookmarks yet</p>
-              </div>
-            )}
+         {activeTab === 'bookmarks' && (
+  <>
+    {bookmarkedSessions.length > 0 ? (
+      <HistorySection
+        title="Bookmarked Sessions"
+        items={bookmarkedSessions}
+        sectionKey="bookmarks"
+      />
+    ) : (
+      <div className="empty-state">
+        <p>No bookmarks yet</p>
+      </div>
+    )}
+  </>
+)}
+
 
             
           </div>

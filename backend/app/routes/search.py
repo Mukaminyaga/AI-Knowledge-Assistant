@@ -23,7 +23,7 @@ POD_SHARED_SECRET = os.environ.get("POD_SHARED_SECRET")
 RUNPOD_WORKER_URL = os.environ.get("RUNPOD_WORKER_URL")
 # RUNPOD_WORKER_URL = os.environ.get(
 #     "RUNPOD_WORKER_URL",
-#     "https://o211rs01tttfhp-8000.proxy.runpod.net"
+#     "https://rfbfbk2yv63scz-8000.proxy.runpod.net"
 # )
 
 def clean_text(text: str) -> str:

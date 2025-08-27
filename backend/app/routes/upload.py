@@ -1,55 +1,61 @@
-from typing import List
+from typing import List, Optional
 from fastapi import UploadFile, File, APIRouter, HTTPException, Depends, BackgroundTasks, Form
-from fastapi import Path
 from sqlalchemy.orm import Session
 import os
 import shutil
 import requests
+import boto3
 from app.utils import indexing_utils
 from app.database import get_db
 from app.models.document import Document
 from app.auth import get_current_user
 from app.models.users import User
-from fastapi.responses import FileResponse
-from urllib.parse import unquote
 from app.models.document_interaction import DocumentInteraction
-from sqlalchemy import extract, func
 from datetime import datetime
 from logging import getLogger
 from app.utils.permissions import ensure_permission
-from pathlib import Path
 from pydantic import BaseModel
-from typing import List, Optional
-
+from fastapi.responses import FileResponse
+from urllib.parse import unquote
+from sqlalchemy import extract, func
 
 router = APIRouter()
 logger = getLogger("uvicorn.error")
 UPLOAD_DIR = "/var/www/GPKnowledgeManagementAI/uploads"
-
 os.makedirs(UPLOAD_DIR, exist_ok=True)
+
+POD_SHARED_SECRET = os.environ.get("POD_SHARED_SECRET")
+# RUNPOD_WORKER_URL = os.environ.get("RUNPOD_WORKER_URL")
+RUNPOD_WORKER_URL = os.environ.get(
+    "RUNPOD_WORKER_URL",
+    "https://rfbfbk2yv63scz-8000.proxy.runpod.net"
+)
+
+# --- DigitalOcean Spaces client ---
+session = boto3.session.Session()
+s3 = session.client(
+    "s3",
+    region_name=os.getenv("DO_SPACES_REGION"),
+    endpoint_url=os.getenv("DO_SPACES_ENDPOINT"),
+    aws_access_key_id=os.getenv("DO_SPACES_KEY"),
+    aws_secret_access_key=os.getenv("DO_SPACES_SECRET"),
+)
 
 
 class DepartmentAssignmentRequest(BaseModel):
     document_ids: List[int]
     department_id: Optional[int]
 
-POD_SHARED_SECRET = os.environ.get("POD_SHARED_SECRET")
-# RUNPOD_WORKER_URL = os.environ.get("RUNPOD_WORKER_URL")
-
-RUNPOD_WORKER_URL = os.environ.get(
-    "RUNPOD_WORKER_URL",
-    "https://y9vojbbw31blbg-8000.proxy.runpod.net"
-)
 
 def ensure_permission(user: User, allowed_roles: List[str]):
     if user.role.lower() not in [role.lower() for role in allowed_roles]:
         raise HTTPException(status_code=403, detail="You do not have permission to perform this action.")
 
 
-def call_worker_indexing(document_id: int, tenant_id: int):
+def call_worker_indexing(document_id: int, tenant_id: int, filename: str):
     """Call RunPod worker to trigger indexing"""
     worker_url = f"{RUNPOD_WORKER_URL}/index"
-    payload = {"document_id": document_id, "tenant_id": tenant_id}
+    payload = {"document_id": document_id, "tenant_id": tenant_id, "filename": filename}
     headers = {}
     if POD_SHARED_SECRET:
         headers["Authorization"] = f"Bearer {POD_SHARED_SECRET}"
@@ -87,9 +93,19 @@ async def upload_documents(
         if ext not in ("pdf", "docx", "txt"):
             raise HTTPException(status_code=400, detail=f"{filename}: unsupported file type {ext}")
 
+        # Save locally
         dest = os.path.normpath(os.path.join(UPLOAD_DIR, filename))
         with open(dest, "wb") as buffer:
             shutil.copyfileobj(file.file, buffer)
+
+        # Upload to DO Spaces
+        spaces_key = f"uploads/{filename}"
+        try:
+            s3.upload_file(dest, os.getenv("DO_SPACES_BUCKET"), spaces_key)
+            logger.info(f"Uploaded {filename} to Spaces at {spaces_key}")
+        except Exception as e:
+            logger.error(f"Failed to upload {filename} to Spaces: {e}")
+            raise HTTPException(status_code=500, detail="Upload to Spaces failed")
 
         status = "processing" if current_user.role.lower() == "admin" else "pending"
 
@@ -115,7 +131,7 @@ async def upload_documents(
         db.commit()
 
         if status == "processing":
-            background_tasks.add_task(call_worker_indexing, document.id, current_user.tenant_id)
+            background_tasks.add_task(call_worker_indexing, document.id, current_user.tenant_id, filename)
 
         uploaded_docs.append({
             "id": document.id,
@@ -130,6 +146,7 @@ async def upload_documents(
         "message": f"{len(uploaded_docs)} file(s) uploaded successfully.",
         "documents": uploaded_docs
     }
+
 
 @router.post("/documents/assign-department")
 def assign_documents_to_department(

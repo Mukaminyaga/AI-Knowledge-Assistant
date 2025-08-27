@@ -62,7 +62,7 @@ function HeroSection() {
               </div> */}
               <div className="stat-item1">
                 <div className="stat-number1">5x</div>
-                <div className="stat-label1">Faster Information<br></br> Retrival</div>
+                <div className="stat-label1">Faster Information<br></br> Retrieval</div>
               </div>
             </div>
 
