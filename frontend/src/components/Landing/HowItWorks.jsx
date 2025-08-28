@@ -31,7 +31,7 @@ function HowItWorks() {
             </div>
             <h3 className="step-title">Capture</h3>
             <p className="step-description">
-              Easily upload documents into a single, secure knowledge hub
+              Easily upload documents into a single, secure knowledge hub.
             </p>
           </div>
           
