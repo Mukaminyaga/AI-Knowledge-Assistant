@@ -1,43 +1,38 @@
-# schemas/chat.py
-
 from pydantic import BaseModel
 from typing import List, Optional
 from datetime import datetime
-from uuid import UUID
 
-class MessageCreate(BaseModel):
+class MessageBase(BaseModel):
     role: str
     text: str
-    results: Optional[List[dict]] = []
 
-class ChatCreate(BaseModel):
+class MessageCreate(MessageBase):
+    pass
+
+class Message(MessageBase):
+    id: int
+
+    class Config:
+        orm_mode = True
+
+class MessageWithSession(BaseModel):
+    session_id: int
+    role: str
+    text: str
+
+
+class ChatSessionBase(BaseModel):
     user_id: int
-    tenant_id: int
-    title: str
-    messages: List[MessageCreate]
+    title: Optional[str] = "New Chat"
+    bookmarked: Optional[int] = 0
 
-class ChatOut(BaseModel):
-    id: UUID
-    title: str
-    created_at: datetime
-    bookmarked: bool
+class ChatSessionCreate(ChatSessionBase):
+    pass
 
-    class Config:
-        from_attributes = True
-
-class ChatMessageOut(BaseModel):
-    role: str
-    text: str
-    response: Optional[str] = None
-    results: Optional[List[dict]] = []
-    created_at: datetime
+class ChatSession(ChatSessionBase):
+    id: int
+    timestamp: datetime
+    messages: List[Message] = []
 
     class Config:
-        from_attributes = True
-
-class ChatSessionFull(ChatOut):
-    messages: List[ChatMessageOut]
-
-class BookmarkUpdate(BaseModel):
-    session_id: UUID
-    bookmarked: bool
+        orm_mode = True

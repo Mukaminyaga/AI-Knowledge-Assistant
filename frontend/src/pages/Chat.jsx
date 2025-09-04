@@ -15,7 +15,8 @@ import {
   FiCopy,
   FiThumbsUp,
   FiThumbsDown,
-  FiBookmark
+  FiEdit2,
+  FiCheck
 } from "react-icons/fi";
 import DashboardLayout from "../components/DashboardLayout";
 import ChatHistory from "../components/ChatHistory";
@@ -23,10 +24,10 @@ import ThemeToggle from "../components/ThemeToggle";
 import "../styles/Chat.css";
 import { Link } from "react-router-dom";
 
-
 function Chat() {
   const user = JSON.parse(localStorage.getItem("user"));
-  const userId = user?.email || "guest";
+  const userId = user?.id || 0; // default to 0 or handle guest properly
+
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
   const [inputValue, setInputValue] = useState("");
@@ -36,42 +37,33 @@ function Chat() {
   const [currentSessionId, setCurrentSessionId] = useState(null);
   const [isHistoryOpen, setIsHistoryOpen] = useState(false);
   const [messageActions, setMessageActions] = useState({});
-  const [inputPosition, setInputPosition] = useState('center'); // 'center' or 'bottom'
+  const [inputPosition, setInputPosition] = useState("center"); // 'center' or 'bottom'
+  const [copiedMessageIndex, setCopiedMessageIndex] = useState(null);
+  const [editingMessageIndex, setEditingMessageIndex] = useState(null);
+  
 
   // Update input position based on chat history
   useEffect(() => {
     if (chatHistory.length > 0) {
-      setInputPosition('bottom');
+      setInputPosition("bottom");
     } else {
-      setInputPosition('center');
+      setInputPosition("center");
     }
   }, [chatHistory]);
 
+  // Load user chat sessions from backend
   useEffect(() => {
-    const savedSessions = JSON.parse(localStorage.getItem(`chat_sessions_${userId}`)) || [];
-    const lastSession = savedSessions[savedSessions.length - 1];
-
-    // Move previous chat to recents only if user had sent a message
-    if (lastSession) {
-      const history = JSON.parse(localStorage.getItem(`chat_${userId}_${lastSession.id}`)) || [];
-      const hasUserMessage = history.some((msg) => msg.role === "user");
-
-      if (hasUserMessage) {
-        const exists = savedSessions.some((s) => s.id === lastSession.id);
-        if (!exists) {
-          savedSessions.push({
-            id: lastSession.id,
-            title: summarizeTitle(history.find((msg) => msg.role === "user")?.text || "Chat"),
-            timestamp: Date.now(),
-          });
-          localStorage.setItem(`chat_sessions_${userId}`, JSON.stringify(savedSessions));
-        }
+    const fetchSessions = async () => {
+      try {
+        const res = await axios.get(
+  `${process.env.REACT_APP_API_URL}/chat/history/${userId}`
+);
+        setChatSessions(res.data || []);
+      } catch (err) {
+        console.error("Failed to load sessions:", err);
       }
-      setChatSessions(savedSessions.sort((a, b) => b.timestamp - a.timestamp));
-    }
-
-    // Start fresh session
-    startNewChat();
+    };
+    fetchSessions();
   }, [userId]);
 
   const summarizeTitle = (text) => {
@@ -79,287 +71,238 @@ function Chat() {
     return clean.length > 35 ? clean.slice(0, 35) + "..." : clean;
   };
 
-  const startNewChat = () => {
-    const newId = `chat_${Date.now()}`;
-    setChatHistory([]);
-    setCurrentSessionId(newId);
-    setInputValue("");
-  };
-
-  const handleSend = async (userQuery) => {
-    if (!userQuery.trim()) return;
-    const normalizedQuery = userQuery.trim().toLowerCase();
-    const newChat = [...chatHistory, { role: "user", text: userQuery }];
-    setChatHistory(newChat);
-    setInputValue("");
-
-    const greetings = ["hello", "hi", "h", "goodmorning", "good morning", "hey"];
-    if (greetings.includes(normalizedQuery)) {
-      const assistantMessage = {
-        role: "assistant",
-        text: "Hello! I'm your Knowledge Assistant. How can I help you today?",
-        results: [],
-      };
-      const updatedChat = [...newChat, assistantMessage];
-      setChatHistory(updatedChat);
-      
-      return;
-    }
-
+  const startNewChat = async () => {
     try {
-      setLoading(true);
-
-      const response = await axios.post(
-        `${process.env.REACT_APP_API_URL}/search/search`,
-        {
-          query: userQuery,
-          top_k: 15,
-          summarize: true
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        }
+      const res = await axios.post(
+        `${process.env.REACT_APP_API_URL}/chat/start`,
+        { user_id: userId, title: "New Chat" }
       );
-
-      const assistantMessage = {
-        role: "assistant",
-        text: response.data.answer,
-        results: response.data.source_files?.map((src) => ({ chunk_text: src })) || [],
-      };
-
-      const updatedChat = [...newChat, assistantMessage];
-      setChatHistory(updatedChat);
-
-      localStorage.setItem(
-        `chat_${userId}_${currentSessionId}`,
-        JSON.stringify(updatedChat)
-      );
-
-      // Save to sessions if not already
-      const exists = chatSessions.some((s) => s.id === currentSessionId);
-      if (!exists) {
-        const newSession = {
-          id: currentSessionId,
-          title: summarizeTitle(userQuery),
-          timestamp: Date.now(),
-        };
-        const updatedSessions = [newSession, ...chatSessions];
-        setChatSessions(updatedSessions);
-        localStorage.setItem(
-          `chat_sessions_${userId}`,
-          JSON.stringify(updatedSessions)
-        );
-      }
-    } catch (error) {
-      console.error("Error:", error);
-      setChatHistory((prev) => [
-        ...prev,
-        {
-          role: "assistant",
-          text: "Sorry, I encountered an error while processing your request.",
-          results: [],
-        },
-      ]);
-    } finally {
-      setLoading(false);
+      setChatHistory([]);
+      setCurrentSessionId(res.data.id);
+      
+      setInputValue("");
+      setChatSessions((prev) => [res.data, ...prev]);
+    } catch (err) {
+      console.error("Failed to create new chat:", err);
     }
   };
+const handleSend = async (userQuery) => {
+  if (!userQuery.trim()) return;
+
+  // Always update chat history locally first
+  const newChat = [...chatHistory, { role: "user", text: userQuery }];
+  setChatHistory(newChat);
+  setInputValue("");
+
+  try {
+    setLoading(true);
+
+    let sessionId = currentSessionId;
+
+    // 🔹 If no session exists, create one before sending the first message
+    if (!sessionId) {
+      const startRes = await axios.post(
+        `${process.env.REACT_APP_API_URL}/chat/start`,
+        { user_id: userId, title: summarizeTitle(userQuery) }
+      );
+      sessionId = startRes.data.id;
+      setCurrentSessionId(sessionId);
+      setChatSessions((prev) => [startRes.data, ...prev]);
+    }
+
+    // 🔹 Store user message in backend
+    await axios.post(`${process.env.REACT_APP_API_URL}/chat/message`, {
+      session_id: Number(sessionId),
+      role: "user",
+      text: userQuery,
+    });
+
+    // 🔹 Call AI search endpoint
+    const response = await axios.post(
+      `${process.env.REACT_APP_API_URL}/search/search`,
+      { query: userQuery, top_k: 15, summarize: true },
+      { headers: { Authorization: `Bearer ${localStorage.getItem("token")}` } }
+    );
+
+    const assistantMessage = {
+      role: "assistant",
+      text: response.data.answer,
+      results:
+        response.data.source_files?.map((src) => ({ chunk_text: src })) || [],
+    };
+
+    setChatHistory((prev) => [...prev, assistantMessage]);
+
+    // 🔹 Store assistant message in backend
+    await axios.post(`${process.env.REACT_APP_API_URL}/chat/message`, {
+      session_id: Number(sessionId),
+      role: "assistant",
+      text: response.data.answer,
+    });
+  } catch (error) {
+    console.error("Error:", error);
+    setChatHistory((prev) => [
+      ...prev,
+      {
+        role: "assistant",
+        text: "Sorry, I encountered an error while processing your request.",
+        results: [],
+      },
+    ]);
+  } finally {
+    setLoading(false);
+  }
+};
+
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (inputValue.trim()) {
-      handleSend(inputValue);
+    handleSubmitEdit(e);
+  };
+
+const handleSelectChat = async (session) => {
+  if (session.messages) {
+    // Sample/demo messages
+    setChatHistory(session.messages);
+    setCurrentSessionId(null); // no real session
+  } else {
+    // Fetch messages from backend for real session
+    try {
+      const res = await axios.get(
+        `${process.env.REACT_APP_API_URL}/chat/messages/${session.id}`
+      );
+
+      
+    const normalized = (res.data || []).map(m => ({
+    role: m.role,
+    text: m.text || m.message || "",
+    results: m.results || []
+  }));
+
+
+      setChatHistory(normalized);
+      setCurrentSessionId(session.id);
+    } catch (err) {
+      console.error("Failed to load chat history:", err);
+      setChatHistory([]);
+    }
+  }
+  setInputValue("");
+};
+
+
+
+
+  const handleDeleteChat = async (sessionId) => {
+    try {
+      await axios.delete(
+        `${process.env.REACT_APP_API_URL}/chat/delete/${sessionId}`
+      );
+      setChatSessions((prev) => prev.filter((s) => s.id !== sessionId));
+      if (sessionId === currentSessionId) {
+        startNewChat();
+      }
+    } catch (err) {
+      console.error("Failed to delete session:", err);
     }
   };
 
-  const handleSelectChat = (sessionId, sampleHistory = null) => {
-    if (sampleHistory) {
-      // Use provided sample history
-      setChatHistory(sampleHistory);
-    } else {
-      // Load from localStorage for real sessions
-      const history = JSON.parse(localStorage.getItem(`chat_${userId}_${sessionId}`)) || [];
-      setChatHistory(history);
-    }
-    setCurrentSessionId(sessionId);
-    setInputValue("");
-  };
-
-  const handleDeleteChat = (sessionId) => {
-    const updatedSessions = chatSessions.filter((s) => s.id !== sessionId);
+ // 🔹 Accept optional updatedSessions array from ChatHistory
+const handleBookmarkUpdate = (sessionId, isBookmarked, updatedSessions) => {
+  if (updatedSessions) {
     setChatSessions(updatedSessions);
-    localStorage.setItem(`chat_sessions_${userId}`, JSON.stringify(updatedSessions));
-    localStorage.removeItem(`chat_${userId}_${sessionId}`);
+  } else {
+    setChatSessions((prev) =>
+      prev.map((session) =>
+        session.id === sessionId
+          ? { ...session, isBookmarked }
+          : session
+      )
+    );
+  }
+};
 
-    if (sessionId === currentSessionId) {
-      startNewChat();
-    }
-  };
-   const toggleProfileDropdown = () => {
+
+  const toggleProfileDropdown = () => {
     setProfileDropdownOpen(!profileDropdownOpen);
   };
 
-  const openHistory = () => {
-    setIsHistoryOpen(true);
-  };
-
-  const closeHistory = () => {
-    setIsHistoryOpen(false);
-  };
+  const openHistory = () => setIsHistoryOpen(true);
+  const closeHistory = () => setIsHistoryOpen(false);
 
   const handleMessageAction = (messageIndex, action) => {
-    setMessageActions(prev => ({
+    setMessageActions((prev) => ({
       ...prev,
       [messageIndex]: {
         ...prev[messageIndex],
-        [action]: !prev[messageIndex]?.[action]
-      }
+        [action]: !prev[messageIndex]?.[action],
+      },
     }));
   };
 
-  const copyToClipboard = async (text) => {
+  const copyToClipboard = async (text, messageIndex) => {
     try {
-      await navigator.clipboard.writeText(text);
-      // You could add a toast notification here
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        await navigator.clipboard.writeText(text);
+      } else {
+        // Fallback for older browsers
+        const textArea = document.createElement('textarea');
+        textArea.value = text;
+        textArea.style.position = 'fixed';
+        textArea.style.left = '-999999px';
+        textArea.style.top = '-999999px';
+        document.body.appendChild(textArea);
+        textArea.focus();
+        textArea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textArea);
+      }
+      setCopiedMessageIndex(messageIndex);
+      setTimeout(() => setCopiedMessageIndex(null), 2000);
     } catch (err) {
-      console.error('Failed to copy text: ', err);
+      console.error("Failed to copy text: ", err);
+      // Still show copied feedback even if there was an error
+      setCopiedMessageIndex(messageIndex);
+      setTimeout(() => setCopiedMessageIndex(null), 2000);
     }
   };
 
-  const handleEditMessage = (messageIndex, currentText) => {
-    // Set the input value to the current message text for editing
-    setInputValue(currentText);
-
-    // Remove all messages after the selected message for re-generation
-    const updatedHistory = chatHistory.slice(0, messageIndex);
-    setChatHistory(updatedHistory);
-
-    // Update localStorage
-    localStorage.setItem(
-      `chat_${userId}_${currentSessionId}`,
-      JSON.stringify(updatedHistory)
-    );
+  const handleEditMessage = (messageText, messageIndex) => {
+    setInputValue(messageText);
+    setEditingMessageIndex(messageIndex);
+    // Focus on input field
+    setTimeout(() => {
+      const inputElement = document.querySelector('.chat-input');
+      if (inputElement) {
+        inputElement.focus();
+      }
+    }, 100);
   };
 
-// --- Preprocess raw text ---
-const preprocessText = (text) => {
-  if (!text) return "";
-
-  return text
-    // Put inline numbered items (1., 2., 3.)
-    .replace(/(\d+\.\s+)/g, "\n$1")
-    // Put roman numerals (i., ii., iii.)
-    .replace(/(\b[ivxlcdm]+\.\s+)/gi, "\n$1")
-    // Put lettered sublists (a), b), c))
-    .replace(/(\([a-z]\)\s+)/gi, "\n$1")
-    // Handle inline "a) ...; b) ...;" cases by splitting on semicolons before next letter
-    .replace(/;\s*(\([a-z]\)\s+)/gi, "\n$1")
-    // Clean extra spaces
-    .replace(/\n{2,}/g, "\n\n")
-    .trim();
-};
-
-// --- Identify line type ---
-const getLineType = (line) => {
-  if (/^\d+\./.test(line)) return "number";
-  if (/^[ivxlcdm]+\./i.test(line)) return "roman";
-  if (/^\([a-z]\)/i.test(line)) return "letter";
-  return "text";
-};
-
-// --- Build a tree structure ---
-const buildListTree = (lines) => {
-  const items = [];
-  let current = null;
-
-  lines.forEach((line) => {
-    const type = getLineType(line);
-
-    if (type === "number" || type === "letter") {
-      if (current) items.push(current);
-      current = {
-        type,
-        text:
-          type === "number"
-            ? line.replace(/^\d+\.\s*/, "")
-            : line.replace(/^\([a-z]\)\s*/i, ""),
-        children: [],
-      };
-    } else if (type === "roman") {
-      if (!current) {
-        current = { type: "letter", text: "", children: [] };
-      }
-      current.children.push({
-        type,
-        text: line.replace(/^[ivxlcdm]+\.\s*/i, ""),
-        children: [],
-      });
-    } else {
-      if (current) {
-        current.text += " " + line;
+  const handleSubmitEdit = (e) => {
+    e.preventDefault();
+    if (inputValue.trim()) {
+      if (editingMessageIndex !== null) {
+        // Update the message in chat history
+        const updatedHistory = [...chatHistory];
+        updatedHistory[editingMessageIndex] = {
+          ...updatedHistory[editingMessageIndex],
+          text: inputValue
+        };
+        setChatHistory(updatedHistory);
+        setEditingMessageIndex(null);
+      } else {
+        handleSend(inputValue);
       }
     }
-  });
-
-  if (current) items.push(current);
-  return items;
-};
-
-// --- Render the tree ---
-const renderList = (items, depth = 0) => {
-  let listType = "a"; // default top-level → a), b), c)
-  if (depth === 1) listType = "i"; // second-level → i., ii., iii.
-  if (depth === 2) listType = "1"; // third-level → 1., 2., 3.
-
-  return (
-    <ol type={listType} className="formatted-list" key={depth}>
-      {items.map((item, idx) => (
-        <li key={idx}>
-          {item.text}
-          {item.children.length > 0 && renderList(item.children, depth + 1)}
-        </li>
-      ))}
-    </ol>
-  );
-};
-
-// --- Main formatter ---
-const formatMessageText = (text) => {
-  if (!text) return null;
-
-  const cleanText = preprocessText(text);
-  const blocks = cleanText
-    .split(/\n\s*\n/)
-    .map((b) => b.trim())
-    .filter(Boolean);
-
-  return blocks.map((block, blockIdx) => {
-    const lines = block.split("\n").map((l) => l.trim()).filter(Boolean);
-
-    if (lines.every((line) => getLineType(line) !== "text")) {
-      const tree = buildListTree(lines);
-      return <div key={blockIdx}>{renderList(tree)}</div>;
-    }
-
-    return (
-      <p key={blockIdx} className="formatted-paragraph">
-        {block}
-      </p>
-    );
-  });
-};
-
-
+  };
 
   return (
     <DashboardLayout>
       <div className="new-chat-container">
-        {/* Compact Header */}
+        {/* Header */}
         <div className="chat-compact-header">
           <div className="search-wrapper">
-            {/* <FiSearch className="search-icon" /> */}
             <input
               type="text"
               placeholder="Search..."
@@ -376,60 +319,62 @@ const formatMessageText = (text) => {
               <span>History</span>
             </button>
             <ThemeToggle className="control-btn" />
-             <div className="sidebar-top-profile">
-                    <div
-                      className={`profile-dropdown-trigger ${profileDropdownOpen ? 'active' : ''}`}
-                      onClick={toggleProfileDropdown}
-                    >
-                      <div className="profile-avatar-sidebar">
-                        <FiUser size={16} />
-                      </div>
-                      {!isCollapsed && (
-                        <>
-                          <div className="profile-info">
-                            <span className="profile-name">
-                              {user?.first_name
-                                ? `${user.first_name} ${user.last_name?.charAt(0) || ''}.`
-                                : "John D."}
-                            </span>
-                            {/* <span className="profile-role">Member</span> */}
-                          </div>
-                          <div className="dropdown-arrow">
-                            {profileDropdownOpen ? <FiChevronUp size={16} /> : <FiChevronDown size={16} />}
-                          </div>
-                        </>
+            <div className="sidebar-top-profile">
+              <div
+                className={`profile-dropdown-trigger ${
+                  profileDropdownOpen ? "active" : ""
+                }`}
+                onClick={toggleProfileDropdown}
+              >
+                <div className="profile-avatar-sidebar">
+                  <FiUser size={16} />
+                </div>
+                {!isCollapsed && (
+                  <>
+                    <div className="profile-info">
+                      <span className="profile-name">
+                        {user?.first_name
+                          ? `${user.first_name} ${user.last_name?.charAt(0) || ""}.`
+                          : "John D."}
+                      </span>
+                    </div>
+                    <div className="dropdown-arrow">
+                      {profileDropdownOpen ? (
+                        <FiChevronUp size={16} />
+                      ) : (
+                        <FiChevronDown size={16} />
                       )}
                     </div>
-
-                    {profileDropdownOpen && !isCollapsed && (
-                      <div className="profile-dropdown-menu">
-                        <div className="dropdown-item">
-                          <div className="user-details">
-                            {/* <strong>{user?.first_name || 'User'} {user?.last_name || ''}</strong> */}
-                            <span>{user?.email || 'user@example.com'}</span>
-                          </div>
-                        </div>
-                        <div className="dropdown-divider"></div>
-                        <div className="dropdown-item clickable">
-                          <FiUser size={14} />
-                          <Link to="/settings" className="dropdown-link">
-                          <span>View Profile</span>
-                          </Link>
-                        </div>
-                        <div className="dropdown-item clickable">
-                          <FiSettings size={14} />
-                                                    <Link to="/settings" className="dropdown-link">
-
-                          <span>Account Settings</span>
-                          </Link>
-                        </div>
-                      </div>
-                    )}
+                  </>
+                )}
+              </div>
+              {profileDropdownOpen && !isCollapsed && (
+                <div className="profile-dropdown-menu">
+                  <div className="dropdown-item">
+                    <div className="user-details">
+                      <span>{user?.email || "user@example.com"}</span>
+                    </div>
                   </div>
+                  <div className="dropdown-divider"></div>
+                  <div className="dropdown-item clickable">
+                    <FiUser size={14} />
+                    <Link to="/settings" className="dropdown-link">
+                      <span>View Profile</span>
+                    </Link>
+                  </div>
+                  <div className="dropdown-item clickable">
+                    <FiSettings size={14} />
+                    <Link to="/settings" className="dropdown-link">
+                      <span>Account Settings</span>
+                    </Link>
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
         </div>
 
-        {/* Main Content Area */}
+        {/* Chat area */}
         <div className={`chat-content-area ${inputPosition}`}>
           {chatHistory.length === 0 ? (
             <div className="welcome-container">
@@ -442,8 +387,6 @@ const formatMessageText = (text) => {
                 <h2>Hi, I'm Vala.</h2>
                 <p>How can I help you today?</p>
               </div>
-
-              {/* Centered Input when no chat history */}
               <div className="centered-input-area">
                 <form className="input-form" onSubmit={handleSubmit}>
                   <div className="input-wrapper">
@@ -479,42 +422,44 @@ const formatMessageText = (text) => {
               <div className="messages-area">
                 {chatHistory.map((msg, idx) => (
                   <div key={idx} className={`message ${msg.role}-msg`}>
-                    <div className="message-header">{msg.role === "user" ? "YOU" : "AI ASSISTANT"}</div>
+                    <div className="message-header">
+                      {msg.role === "user" ? "YOU" : "AI ASSISTANT"}
+                    </div>
                     {msg.role === "user" ? (
                       <>
                         <div className="message-body">
-                          <div className="message-text">{msg.text}</div>
+                          <div className="message-text selectable-text">{msg.text}</div>
                         </div>
-                        <div className="user-message-actions">
+                        <div className="user-message-actions-outside">
                           <button
                             className="user-action-btn"
-                            onClick={() => copyToClipboard(msg.text)}
+                            onClick={() => copyToClipboard(msg.text, idx)}
                             title="Copy message"
                           >
-                            <FiCopy />
+                            {copiedMessageIndex === idx ? <FiCheck /> : <FiCopy />}
                           </button>
                           <button
                             className="user-action-btn"
-                            onClick={() => handleEditMessage(idx, msg.text)}
+                            onClick={() => handleEditMessage(msg.text, idx)}
                             title="Edit message"
                           >
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                              <path d="M3 17.25V21H6.75L17.81 9.94L14.06 6.19L3 17.25ZM20.71 7.04C21.1 6.65 21.1 6.02 20.71 5.63L18.37 3.29C17.98 2.9 17.35 2.9 16.96 3.29L15.13 5.12L18.88 8.87L20.71 7.04Z" fill="currentColor"/>
-                            </svg>
+                            <FiEdit2 />
                           </button>
+                          {copiedMessageIndex === idx && (
+                            <span className="copied-feedback">Copied!</span>
+                          )}
                         </div>
                       </>
                     ) : (
                       <div className="assistant-message-content">
-                        <div className="formatted-message-text">
-                          {formatMessageText(msg.text)}
-                        </div>
+                        <div className="formatted-message-text">{msg.text}</div>
                         {msg.results?.length > 0 && (
                           <div className="message-sources">
                             <ul>
                               {msg.results.map((res, i) => (
                                 <li key={i} className="source-item">
-                                  <span className="source-bullet"></span> {res.chunk_text}
+                                  <span className="source-bullet"></span>{" "}
+                                  {res.chunk_text}
                                 </li>
                               ))}
                             </ul>
@@ -523,31 +468,31 @@ const formatMessageText = (text) => {
                         <div className="message-actions">
                           <button
                             className="message-action-btn"
-                            onClick={() => copyToClipboard(msg.text)}
+                            onClick={() => copyToClipboard(msg.text, idx)}
                             title="Copy message"
                           >
-                            <FiCopy />
+                            {copiedMessageIndex === idx ? <FiCheck /> : <FiCopy />}
                           </button>
+                          {/* {copiedMessageIndex === idx && (
+                            <span className="copied-feedback">Copied!</span>
+                          )} */}
                           <button
-                            className={`message-action-btn ${messageActions[idx]?.liked ? 'liked' : ''}`}
-                            onClick={() => handleMessageAction(idx, 'liked')}
+                            className={`message-action-btn ${
+                              messageActions[idx]?.liked ? "liked" : ""
+                            }`}
+                            onClick={() => handleMessageAction(idx, "liked")}
                             title="Like message"
                           >
                             <FiThumbsUp />
                           </button>
                           <button
-                            className={`message-action-btn ${messageActions[idx]?.disliked ? 'disliked' : ''}`}
-                            onClick={() => handleMessageAction(idx, 'disliked')}
+                            className={`message-action-btn ${
+                              messageActions[idx]?.disliked ? "disliked" : ""
+                            }`}
+                            onClick={() => handleMessageAction(idx, "disliked")}
                             title="Dislike message"
                           >
                             <FiThumbsDown />
-                          </button>
-                          <button
-                            className={`message-action-btn ${messageActions[idx]?.bookmarked ? 'bookmarked' : ''}`}
-                            onClick={() => handleMessageAction(idx, 'bookmarked')}
-                            title="Bookmark message"
-                          >
-                            <FiBookmark />
                           </button>
                         </div>
                       </div>
@@ -559,14 +504,15 @@ const formatMessageText = (text) => {
                     <div className="message-header">AI ASSISTANT</div>
                     <div className="assistant-message-content">
                       <div className="typing-dots">
-                        <span></span><span></span><span></span>
+                        <span></span>
+                        <span></span>
+                        <span></span>
                       </div>
                     </div>
                   </div>
                 )}
               </div>
 
-              {/* Bottom Input Area when chat history exists */}
               <div className="bottom-input-area">
                 <form className="input-form" onSubmit={handleSubmit}>
                   <div className="input-wrapper">
@@ -606,6 +552,7 @@ const formatMessageText = (text) => {
         onClose={closeHistory}
         chatSessions={chatSessions}
         onSelectSession={handleSelectChat}
+        onBookmarkUpdate={handleBookmarkUpdate}
       />
     </DashboardLayout>
   );

@@ -4,72 +4,64 @@ import {
   FiSearch,
   FiBookmark,
   FiMoreHorizontal,
-  FiCopy,
-  FiThumbsUp,
-  FiThumbsDown
+  FiEdit2,
+  FiTrash2,
 } from 'react-icons/fi';
 import '../styles/ChatHistory.css';
 import axios from "axios";
 
-
-const ChatHistory = ({ isOpen, onClose, chatSessions = [], onSelectSession }) => {
+const ChatHistory = ({ isOpen, onClose, chatSessions = [], onSelectSession, onBookmarkUpdate }) => {
+  const user = JSON.parse(localStorage.getItem("user"));
+  const userId = user?.id || 0; // default to 0 or handle guest properly
+  
   const [activeTab, setActiveTab] = useState('chat');
   const [searchQuery, setSearchQuery] = useState('');
+  const [bookmarkedSessions, setBookmarkedSessions] = useState([]);
+  const [dropdownOpen, setDropdownOpen] = useState(null); // track dropdown state
+  const [renamingId, setRenamingId] = useState(null);
+  const [renameValue, setRenameValue] = useState('');
+  
 
-  // Transform chat sessions into grouped history data
+
+  // Group chats by Today, Yesterday, Older
   const groupChatsByDate = () => {
     const today = new Date();
     const yesterday = new Date(today);
     yesterday.setDate(yesterday.getDate() - 1);
 
-    const groups = {
-      today: [],
-      yesterday: [],
-      older: {}
-    };
+    const groups = { today: [], yesterday: [], older: {} };
 
     chatSessions.forEach(session => {
+      if (!session.id || typeof session.id !== "number") return; 
       const sessionDate = new Date(session.timestamp);
       const isToday = sessionDate.toDateString() === today.toDateString();
       const isYesterday = sessionDate.toDateString() === yesterday.toDateString();
 
+      const entry = {
+        id: session.id,
+        title: session.title,
+        isBookmarked: session.isBookmarked || false,
+        isHighlighted: false,
+      };
+
       if (isToday) {
-        groups.today.push({
-          id: session.id,
-          title: session.title,
-          isBookmarked: session.isBookmarked || false,
-          isHighlighted: groups.today.length === 0 // Highlight first item of today
-        });
+        groups.today.push({ ...entry, isHighlighted: groups.today.length === 0 });
       } else if (isYesterday) {
-        groups.yesterday.push({
-          id: session.id,
-          title: session.title,
-          isBookmarked: session.isBookmarked || false,
-          isHighlighted: false
-        });
+        groups.yesterday.push(entry);
       } else {
         const dateKey = sessionDate.toLocaleDateString('en-US', {
           day: 'numeric',
           month: 'long',
-          year: 'numeric'
+          year: 'numeric',
         }).replace(/,/g, '');
-
-        if (!groups.older[dateKey]) {
-          groups.older[dateKey] = [];
-        }
-        groups.older[dateKey].push({
-          id: session.id,
-          title: session.title,
-          isBookmarked: session.isBookmarked || false,
-          isHighlighted: false
-        });
+        if (!groups.older[dateKey]) groups.older[dateKey] = [];
+        groups.older[dateKey].push(entry);
       }
     });
 
     return groups;
   };
 
-  // Sample history data for demo when no sessions available
   const sampleHistoryData = {
     today: [
       { id: 'sample1', title: 'Vala launch date', isBookmarked: false, isHighlighted: true }
@@ -79,67 +71,39 @@ const ChatHistory = ({ isOpen, onClose, chatSessions = [], onSelectSession }) =>
     ],
     older: {
       '20 July 2025': [
-        { id: 'sample3', title: 'Summary of meeting AOB', isBookmarked: false, isHighlighted: false },
-        { id: 'sample4', title: "Member's list", isBookmarked: false, isHighlighted: false },
-        { id: 'sample5', title: 'Company policies', isBookmarked: false, isHighlighted: false }
-      ],
-      '19 July 2025': [
-        { id: 'sample6', title: 'Attendance Records', isBookmarked: false, isHighlighted: false }
+        { id: 'sample3', title: 'Summary of meeting AOB', isBookmarked: false, isHighlighted: false }
       ]
     }
   };
 
   const historyData = chatSessions.length > 0 ? groupChatsByDate() : sampleHistoryData;
 
-  // Filter history based on search query
+  // Filter based on search
   const filterHistoryData = (data) => {
     if (!searchQuery.trim()) return data;
-
     const query = searchQuery.toLowerCase();
     const filtered = { today: [], yesterday: [], older: {} };
 
-    // Filter today's items
-    filtered.today = data.today.filter(item =>
-      item.title.toLowerCase().includes(query)
-    );
-
-    // Filter yesterday's items
-    filtered.yesterday = data.yesterday.filter(item =>
-      item.title.toLowerCase().includes(query)
-    );
-
-    // Filter older items
+    filtered.today = data.today.filter(i => i.title.toLowerCase().includes(query));
+    filtered.yesterday = data.yesterday.filter(i => i.title.toLowerCase().includes(query));
     Object.entries(data.older || {}).forEach(([date, items]) => {
-      const filteredItems = items.filter(item =>
-        item.title.toLowerCase().includes(query)
-      );
-      if (filteredItems.length > 0) {
-        filtered.older[date] = filteredItems;
-      }
+      const match = items.filter(i => i.title.toLowerCase().includes(query));
+      if (match.length) filtered.older[date] = match;
     });
-
     return filtered;
   };
-
   const filteredHistoryData = filterHistoryData(historyData);
-  const [bookmarkedSessions, setBookmarkedSessions] = useState([]);
 
-useEffect(() => {
+  // Fetch bookmarks
+ useEffect(() => {
   if (activeTab === "bookmarks") {
     const fetchBookmarks = async () => {
       try {
-        const res = await fetch(
-          `${process.env.REACT_APP_API_URL}/bookmarks?user_id=1&tenant_id=1`
-        );
+        const res = await fetch(`${process.env.REACT_APP_API_URL}/chat/bookmarks/${userId}`);
         if (res.ok) {
           const data = await res.json();
           setBookmarkedSessions(
-            data.map(s => ({
-              id: s.id,
-              title: s.title,
-              isBookmarked: true,
-              isHighlighted: false,
-            }))
+            data.map(s => ({ id: s.id, title: s.title, isBookmarked: true, isHighlighted: false }))
           );
         }
       } catch (err) {
@@ -151,173 +115,175 @@ useEffect(() => {
 }, [activeTab]);
 
 
-  // Keyboard event handling
+  // Keyboard + focus management
   useEffect(() => {
-    const handleKeyDown = (event) => {
-      if (!isOpen) return;
-
-      if (event.key === 'Escape') {
-        onClose();
-      }
-    };
-
+    const handleKeyDown = (e) => { if (isOpen && e.key === 'Escape') onClose(); };
     document.addEventListener('keydown', handleKeyDown);
     return () => document.removeEventListener('keydown', handleKeyDown);
   }, [isOpen, onClose]);
 
-  // Focus management
   useEffect(() => {
     if (isOpen) {
       const searchInput = document.querySelector('.search-input');
-      if (searchInput) {
-        setTimeout(() => searchInput.focus(), 100);
-      }
+      if (searchInput) setTimeout(() => searchInput.focus(), 100);
     }
   }, [isOpen]);
 
   const tabs = [
-    { id: 'chat', label: 'Chat', active: true },
-    { id: 'bookmarks', label: 'Bookmarks', active: false }
+    { id: 'chat', label: 'Chat' },
+    { id: 'bookmarks', label: 'Bookmarks' }
   ];
 
-  const handleTabClick = (tabId) => {
-    setActiveTab(tabId);
-  };
-
-const toggleBookmark = async (itemId, section) => {
+  const toggleBookmark = async (itemId) => {
   try {
-    // Find the session being toggled
-    const allSessions = [
-      ...historyData.today,
-      ...historyData.yesterday,
-      ...Object.values(historyData.older).flat(),
-    ];
-    const session = allSessions.find(s => s.id === itemId);
-    if (!session) return;
+    const res = await axios.put(
+      `${process.env.REACT_APP_API_URL}/chat/bookmark/${itemId}`
+    );
 
-    const newStatus = !session.isBookmarked;
+    const newStatus = res.data?.isBookmarked;
 
-    // Call backend API with axios
-    await axios.post(`${process.env.REACT_APP_API_URL}/chat/bookmark`, {
-      session_id: itemId,
-      bookmarked: newStatus,
+    if (newStatus === undefined) return;
+
+    // 🔹 Update local bookmarked sessions
+    setBookmarkedSessions((prev) => {
+      const exists = prev.find((s) => s.id === itemId);
+      if (newStatus) {
+        return exists ? prev : [...prev, { ...exists, id: itemId, isBookmarked: true }];
+      } else {
+        return prev.filter((s) => s.id !== itemId);
+      }
     });
 
-    // Update local state so UI reflects immediately
-    session.isBookmarked = newStatus;
-    setSearchQuery(q => q); // quick re-render trigger
-  } catch (error) {
-    console.error("Failed to toggle bookmark:", error);
+    // 🔹 Update chatSessions so the Chat tab UI reflects it
+    const updated = chatSessions.map((s) =>
+      s.id === itemId ? { ...s, isBookmarked: newStatus } : s
+    );
+
+    // Because chatSessions comes from parent, call onBookmarkUpdate
+   if (onBookmarkUpdate) {
+  onBookmarkUpdate(itemId, newStatus, updated);  // 🔹 pass updated sessions
+}
+
+    setSearchQuery((q) => q); // force rerender
+  } catch (err) {
+    console.error("Failed to toggle bookmark:", err);
   }
 };
 
 
-  const handleMoreOptions = (itemId) => {
-    // This would typically show a dropdown menu
-    console.log('Show more options for item:', itemId);
+  // --- More Options: Rename + Delete ---
+  const handleRename = async (id) => {
+    try {
+      await axios.put(`${process.env.REACT_APP_API_URL}/chat/rename/${id}`, { title: renameValue });
+      setRenamingId(null);
+      setSearchQuery(q => q);
+    } catch (err) {
+      console.error("Rename failed:", err);
+    }
   };
 
-  const HistoryItem = ({ item, section, isHighlighted = false }) => {
-    const handleItemClick = () => {
-      if (onSelectSession) {
-        if (item.id.startsWith('sample')) {
-          // For sample data, create a mock chat history
-          const sampleHistory = [
-            { role: "user", text: "Tell me about " + item.title },
-            { role: "assistant", text: `Here's information about ${item.title}: This is a sample response showing how the chat history feature works. In a real scenario, this would load the actual conversation history stored in your browser's local storage.`, results: [] }
-          ];
-          // Call onSelectSession with the sample data
-          onSelectSession(item.id, sampleHistory);
-        } else {
-          onSelectSession(item.id);
-        }
-        onClose();
-      }
-    };
+  const handleDelete = async (id) => {
+    try {
+      await axios.delete(`${process.env.REACT_APP_API_URL}/chat/delete/${id}`);
+      setSearchQuery(q => q);
+    } catch (err) {
+      console.error("Delete failed:", err);
+    }
+  };
+
+  const HistoryItem = ({ item }) => {
+    const isRenaming = renamingId === item.id;
 
     return (
+      <div className={`history-item ${item.isHighlighted ? 'highlighted' : ''}`}>
       <div
-        className={`history-item ${isHighlighted ? 'highlighted' : ''}`}
-        onClick={handleItemClick}
-        style={{ cursor: onSelectSession ? 'pointer' : 'default' }}
-      >
-        <div className="history-item-content">
-          <span className="history-item-title">{item.title}</span>
+  className="history-item-content"
+  onClick={() => {
+  if (!onSelectSession || !item.id) return;
+  onSelectSession(item);   // pass the full session object
+  onClose();
+}}
+
+>
+
+          {isRenaming ? (
+            <input
+              className="rename-input"
+              value={renameValue}
+              onChange={(e) => setRenameValue(e.target.value)}
+              onBlur={() => handleRename(item.id)}
+              onKeyDown={(e) => e.key === 'Enter' && handleRename(item.id)}
+              autoFocus
+            />
+          ) : (
+            <span className="history-item-title">{item.title}</span>
+          )}
         </div>
         <div className="history-item-actions">
-          <button
-            className="action-btn bookmark-btn"
-            onClick={(e) => {
-              e.stopPropagation();
-              toggleBookmark(item.id, section);
-            }}
-            aria-label={item.isBookmarked ? 'Remove bookmark' : 'Add bookmark'}
-          >
-            <FiBookmark className={item.isBookmarked ? 'bookmarked' : ''} />
+          <button className="action-btn bookmark-btn"
+            onClick={(e) => { e.stopPropagation(); toggleBookmark(item.id); }}>
+            <FiBookmark className={item.isBookmarked ? 'bookmarked' : ''} style={{
+              color: item.isBookmarked ? '#F59E0B' : 'inherit',
+              fill: item.isBookmarked ? '#F59E0B' : 'transparent'
+            }} />
           </button>
-          <button
-            className="action-btn more-btn"
-            onClick={(e) => {
-              e.stopPropagation();
-              handleMoreOptions(item.id);
-            }}
-            aria-label="More options"
-          >
-            <FiMoreHorizontal />
-          </button>
+
+          <div className="dropdown-wrapper">
+            <button className="action-btn more-btn"
+              onClick={(e) => { e.stopPropagation(); setDropdownOpen(dropdownOpen === item.id ? null : item.id); }}>
+              <FiMoreHorizontal />
+            </button>
+            {dropdownOpen === item.id && (
+              <div className="dropdown-menu">
+                <button onClick={(e) => {
+                  e.stopPropagation();
+                  setRenamingId(item.id);
+                  setRenameValue(item.title);
+                  setDropdownOpen(null);
+                }}>
+                  <FiEdit2 /> Rename
+                </button>
+                <button onClick={(e) => {
+                  e.stopPropagation();
+                  handleDelete(item.id);
+                  setDropdownOpen(null);
+                }}>
+                  <FiTrash2 /> Delete
+                </button>
+              </div>
+            )}
+          </div>
         </div>
       </div>
     );
   };
 
-  const HistorySection = ({ title, items, sectionKey }) => (
+  const HistorySection = ({ title, items }) => (
     <div className="history-section">
-      <div className="section-header">
-        <h3 className="section-title">{title}</h3>
-      </div>
+      <h3 className="section-title">{title}</h3>
       <div className="section-items">
-        {items.map((item, index) => (
-          <HistoryItem
-            key={item.id}
-            item={item}
-            section={sectionKey}
-            isHighlighted={item.isHighlighted}
-          />
+        {items.map(item => (
+          <HistoryItem key={item.id} item={item} />
         ))}
       </div>
     </div>
   );
 
-  const handleOverlayClick = (e) => {
-    if (e.target === e.currentTarget) {
-      onClose();
-    }
-  };
-
   if (!isOpen) return null;
 
   return (
-    <div className="chat-history-overlay" onClick={handleOverlayClick}>
-      <div
-        className="chat-history-modal"
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="history-title"
-      >
+    <div className="chat-history-overlay" onClick={(e) => e.target === e.currentTarget && onClose()}>
+      <div className="chat-history-modal" role="dialog" aria-modal="true">
         <div className="history-header">
-          <button className="close-btn" onClick={onClose} aria-label="Close history">
-            <FiX />
-          </button>
-          <h1 id="history-title" className="history-title">History</h1>
+          <button className="close-btn" onClick={onClose}><FiX /></button>
+          <h1 className="history-title">History</h1>
         </div>
 
         <div className="history-tabs">
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
+          {tabs.map(tab => (
+            <button key={tab.id}
               className={`tab-btn ${activeTab === tab.id ? 'active' : ''}`}
-              onClick={() => handleTabClick(tab.id)}
-            >
+              onClick={() => setActiveTab(tab.id)}>
               {tab.label}
             </button>
           ))}
@@ -325,80 +291,31 @@ const toggleBookmark = async (itemId, section) => {
 
         <div className="history-content">
           <div className="search-section">
-            <div className="search-container">
-             
-              <input
-                type="text"
-                placeholder="Search Vala History"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="search-input"
-              />
-            </div>
+            <input
+              type="text"
+              placeholder="Search Vala History"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="search-input"
+            />
           </div>
 
           <div className="history-list">
             {activeTab === 'chat' && (
               <>
-                {filteredHistoryData.today.length > 0 && (
-                  <HistorySection
-                    title="Today"
-                    items={filteredHistoryData.today}
-                    sectionKey="today"
-                  />
-                )}
-                {filteredHistoryData.yesterday.length > 0 && (
-                  <HistorySection
-                    title="Yesterday"
-                    items={filteredHistoryData.yesterday}
-                    sectionKey="yesterday"
-                  />
-                )}
-                {Object.entries(filteredHistoryData.older || {}).map(([dateKey, items]) => (
-                  <HistorySection
-                    key={dateKey}
-                    title={dateKey}
-                    items={items}
-                    sectionKey={dateKey}
-                  />
-                ))}
-                {searchQuery.trim() &&
-                 filteredHistoryData.today.length === 0 &&
-                 filteredHistoryData.yesterday.length === 0 &&
-                 Object.keys(filteredHistoryData.older || {}).length === 0 && (
-                  <div className="empty-state">
-                    <p>No results found for "{searchQuery}"</p>
-                  </div>
-                )}
-                {!searchQuery.trim() &&
-                 historyData.today.length === 0 &&
-                 historyData.yesterday.length === 0 &&
-                 Object.keys(historyData.older || {}).length === 0 && (
-                  <div className="empty-state">
-                    <p>No chat history yet</p>
-                  </div>
+                {filteredHistoryData.today.length > 0 && <HistorySection title="Today" items={filteredHistoryData.today} />}
+                {filteredHistoryData.yesterday.length > 0 && <HistorySection title="Yesterday" items={filteredHistoryData.yesterday} />}
+                {Object.entries(filteredHistoryData.older || {}).map(([date, items]) =>
+                  <HistorySection key={date} title={date} items={items} />
                 )}
               </>
             )}
 
-         {activeTab === 'bookmarks' && (
-  <>
-    {bookmarkedSessions.length > 0 ? (
-      <HistorySection
-        title="Bookmarked Sessions"
-        items={bookmarkedSessions}
-        sectionKey="bookmarks"
-      />
-    ) : (
-      <div className="empty-state">
-        <p>No bookmarks yet</p>
-      </div>
-    )}
-  </>
-)}
-
-
-            
+            {activeTab === 'bookmarks' && (
+              bookmarkedSessions.length > 0 ?
+                <HistorySection title="Bookmarked Sessions" items={bookmarkedSessions} /> :
+                <div className="empty-state"><p>No bookmarks yet</p></div>
+            )}
           </div>
         </div>
       </div>

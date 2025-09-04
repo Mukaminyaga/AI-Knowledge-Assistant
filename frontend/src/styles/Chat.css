@@ -501,6 +501,25 @@
   padding: 2px;
   transition: color 0.2s ease, transform 0.2s ease, background-color 0.2s ease;
   border-radius: 4px;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
+/* Larger touch targets for mobile */
+@media (max-width: 768px) {
+  .message-action-btn {
+    width: 24px;
+    height: 24px;
+    padding: 4px;
+  }
+}
+
+@media (max-width: 480px) {
+  .message-action-btn {
+    width: 28px;
+    height: 28px;
+    padding: 6px;
+  }
 }
 
 .message-action-btn:hover {
@@ -539,6 +558,23 @@
 }
 
 /* User message actions (positioned outside message container) */
+.user-message-actions-outside {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 8px;
+  margin-left: 0;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  justify-content: flex-end;
+  padding-right: 0;
+}
+
+.message.user-msg:hover .user-message-actions-outside {
+  opacity: 1;
+}
+
+/* Legacy support for old user message actions */
 .user-message-actions {
   display: flex;
   gap: 8px;
@@ -567,6 +603,23 @@
   color: #6B7280;
   transition: all 0.2s ease;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
+/* Larger touch targets for mobile */
+@media (max-width: 768px) {
+  .user-action-btn {
+    width: 32px;
+    height: 32px;
+  }
+}
+
+@media (max-width: 480px) {
+  .user-action-btn {
+    width: 36px;
+    height: 36px;
+  }
 }
 
 .user-action-btn:hover {
@@ -580,6 +633,26 @@
 .user-action-btn svg {
   width: 14px;
   height: 14px;
+}
+
+/* Copy feedback */
+.copied-feedback {
+  font-size: 12px;
+  color: #10B981;
+  font-weight: 500;
+  margin-left: 4px;
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateX(-5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
 }
 
 /* Typing indicator */
@@ -935,4 +1008,32 @@
 
 .messages-area::-webkit-scrollbar-thumb:hover {
   background: #9CA3AF;
+}
+
+.selectable-text {
+  user-select: text; /* allow highlight + copy with mouse */
+}
+
+.copy-btn-outside {
+  margin-left: auto;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: #666;
+}
+
+.copy-btn-outside:hover {
+  color: #000;
+}
+
+.copied-label {
+  margin-left: 8px;
+  font-size: 0.8rem;
+  color: green;
+  animation: fadeOut 1.5s forwards;
+}
+
+@keyframes fadeOut {
+  0% { opacity: 1; }
+  100% { opacity: 0; }
 }

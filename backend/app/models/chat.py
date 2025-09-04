@@ -1,34 +1,26 @@
-import uuid
-from sqlalchemy import Column, Integer ,String, DateTime, Boolean, ForeignKey, Text, JSON
-from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy import Column, Integer, String, ForeignKey, DateTime, Text
 from sqlalchemy.orm import relationship
 from datetime import datetime
-from ..database import Base
+from app.database import Base
 
 class ChatSession(Base):
     __tablename__ = "chat_sessions"
 
-    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4, index=True)
-    user_id = Column(Integer, ForeignKey("users.id"))
-    tenant_id = Column(Integer)
-    title = Column(String)
-    created_at = Column(DateTime, default=datetime.utcnow)
-    bookmarked = Column(Boolean, default=False)
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id"), nullable=False)   
+    title = Column(String, default="New Chat")
+    timestamp = Column(DateTime, default=datetime.utcnow)
+    bookmarked = Column(Integer, default=0)
 
+    messages = relationship("Message", back_populates="session", cascade="all, delete")
     user = relationship("User", back_populates="chats")
-    messages = relationship("ChatMessage", back_populates="session", cascade="all, delete")
 
-class ChatMessage(Base):
-    __tablename__ = "chat_messages"
+class Message(Base):
+    __tablename__ = "messages"
 
-    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4, index=True)
-    session_id = Column(UUID(as_uuid=True), ForeignKey("chat_sessions.id"))
-    user_id = Column(Integer, ForeignKey("users.id"))
-    tenant_id = Column(Integer)
-    role = Column(String)
-    text = Column(Text)
-    response = Column(Text, nullable=True)
-    results = Column(JSON, nullable=True)
-    created_at = Column(DateTime, default=datetime.utcnow)
+    id = Column(Integer, primary_key=True, index=True)
+    session_id = Column(Integer, ForeignKey("chat_sessions.id"), nullable=False)
+    role = Column(String, nullable=False)  # "user" or "assistant"
+    text = Column(Text, nullable=False)
 
     session = relationship("ChatSession", back_populates="messages")
