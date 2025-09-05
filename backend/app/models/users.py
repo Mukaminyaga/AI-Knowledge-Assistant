@@ -3,6 +3,7 @@ from sqlalchemy import Column, Integer, String, Boolean, ForeignKey
 from sqlalchemy.orm import relationship
 from ..database import Base
 from app.models.chat import ChatSession
+from sqlalchemy import DateTime, func
 
 
 
@@ -18,6 +19,8 @@ class User(Base):
     is_approved = Column(Boolean, nullable=False, default=False)
     tenant_id = Column(Integer, ForeignKey("tenants.id"), nullable=False)
     status = Column(String, nullable=False, default="active")
+    last_active = Column(DateTime(timezone=True), nullable=True)
+
     tenant = relationship("Tenant", back_populates="users")
     chats = relationship("ChatSession", back_populates="user", cascade="all, delete-orphan")
 

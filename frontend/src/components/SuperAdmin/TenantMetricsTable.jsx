@@ -342,14 +342,23 @@ const TenantMetricsTable = ({
                       </div>
                     </td>
                     
-                    <td>
-                      <div className="activity-cell">
-                        <div className="activity-time">{formatDate(tenant.lastActive)}</div>
-                        <div className="activity-indicator">
-                          <div className={`activity-dot ${activityLevel.level}`}></div>
-                        </div>
-                      </div>
-                    </td>
+                     <td>
+            <div className="activity-cell">
+              <div className="activity-time">
+                {tenant.last_active_user
+                  ? formatDate(tenant.last_active_user.last_active)
+                  : "Never"}
+              </div>
+              <div className="activity-indicator">
+                <div className={`activity-dot ${activityLevel.level}`}></div>
+              </div>
+              {/* {tenant.last_active_user?.email && (
+                <div className="activity-user">
+                  {tenant.last_active_user.email}
+                </div>
+              )} */}
+            </div>
+          </td>
                     
                     <td>
                       <div className="users-cell">
@@ -395,18 +404,18 @@ const TenantMetricsTable = ({
                       </div>
                     </td>
                     
-                    <td>
-                      <div className="errors-cell">
-                        <span className={`error-count ${tenant.errorCount > 0 ? 'has-errors' : 'no-errors'}`}>
-                          {tenant.errorCount}
-                        </span>
-                        {tenant.errorCount > 0 && (
-                          <div className="error-details">
-                            <span className="error-type">Auth failures</span>
-                          </div>
-                        )}
-                      </div>
-                    </td>
+                     <td>
+            <div className="errors-cell">
+              <span className={`error-count ${tenant.login_failures_24h > 0 ? 'has-errors' : 'no-errors'}`}>
+                {tenant.login_failures_24h}
+              </span>
+              {tenant.login_failures_24h > 0 && (
+                <div className="error-details">
+                  <span className="error-type">Auth failures</span>
+                </div>
+              )}
+            </div>
+          </td>
                     
                     <td>
                       <div className="plan-revenue-cell">

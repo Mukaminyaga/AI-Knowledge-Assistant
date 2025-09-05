@@ -445,9 +445,9 @@ const handleBookmarkUpdate = (sessionId, isBookmarked, updatedSessions) => {
                           >
                             <FiEdit2 />
                           </button>
-                          {copiedMessageIndex === idx && (
+                          {/* {copiedMessageIndex === idx && (
                             <span className="copied-feedback">Copied!</span>
-                          )}
+                          )} */}
                         </div>
                       </>
                     ) : (

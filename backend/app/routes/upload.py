@@ -449,3 +449,20 @@ def get_user_activity_log(
         }
         for row in interactions
     ]
+
+@router.get("/metrics/storage")
+def get_total_storage_used(db: Session = Depends(get_db)):
+    total_size = db.query(func.sum(Document.size)).scalar() or 0
+    return {"total_storage_used": total_size}
+
+@router.get("/metrics/storage/by-tenant")
+def get_storage_used_by_tenant(db: Session = Depends(get_db)):
+    results = (
+        db.query(Document.tenant_id, func.sum(Document.size).label("total_size"))
+        .group_by(Document.tenant_id)
+        .all()
+    )
+    return [
+        {"tenant_id": tenant_id, "total_storage_used": total_size or 0}
+        for tenant_id, total_size in results
+    ]

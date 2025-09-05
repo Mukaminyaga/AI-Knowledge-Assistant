@@ -9,6 +9,9 @@ from datetime import datetime
 from app.utils.email import send_email
 from app.auth import get_current_user
 from app.models.users import User
+from app.models.login_attempt import LoginAttempt
+from datetime import datetime, timedelta
+from datetime import datetime, timezone
 
 router = APIRouter()
 
@@ -177,7 +180,19 @@ def login(user: schemas.UserLogin, db: Session = Depends(database.get_db)):
 
     # Check credentials
     if not db_user or not auth.verify_password(user.password, db_user.hashed_password):
+        attempt = LoginAttempt(email=user.email, user_id=db_user.id if db_user else None, success=False)
+        db.add(attempt)
+        db.commit()
         raise HTTPException(status_code=400, detail="Invalid credentials")
+
+    # Successful login attempt
+    attempt = LoginAttempt(email=db_user.email, user_id=db_user.id, success=True)
+    db.add(attempt)
+
+    db_user.last_active = datetime.now(timezone.utc)
+    db.add(db_user)  # make sure it's tracked
+    db.commit()
+    db.refresh(db_user)
 
     # Prevent login if inactive
     if db_user.status == "inactive":
@@ -208,6 +223,8 @@ def login(user: schemas.UserLogin, db: Session = Depends(database.get_db)):
             "tenant_id": db_user.tenant_id,
         },
     }
+
+
 
 @router.post("/change-password")
 def change_password(

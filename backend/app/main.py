@@ -11,6 +11,7 @@ from app.routes import contact
 from app.routes import user_profile
 from app.routes import payment 
 from app.routes import analytics
+from app.routes import metrics
 from app import database
 from app.models import users
 from dotenv import load_dotenv
@@ -100,6 +101,7 @@ app.include_router(payment.router)
 app.include_router(analytics.router)
 app.include_router(department.router)
 app.include_router(chat.router)
+app.include_router(metrics.router)
 # app.mount("/uploads", StaticFiles(directory=UPLOADS_PATH), name="uploads")
 app.include_router(tenant.router, prefix="/tenants", tags=["Tenants"])
 

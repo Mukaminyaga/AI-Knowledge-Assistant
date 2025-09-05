@@ -45,11 +45,14 @@ const Metrics = () => {
   const [tenantMetrics, setTenantMetrics] = useState([]);
   const [activityTrends, setActivityTrends] = useState([]);
   const [featureUsage, setFeatureUsage] = useState([]);
+  const [storage, setStorage] = useState(null);
   const [loginFailures, setLoginFailures] = useState(24);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedDateRange, setSelectedDateRange] = useState("7d");
   const [selectedStatus, setSelectedStatus] = useState("all");
   const [loading, setLoading] = useState(true);
+  const MAX_STORAGE = 3 * 1024 * 1024 * 1024 * 1024; // 3 TB in bytes
+
 
   const user = JSON.parse(localStorage.getItem("user"));
 
@@ -83,19 +86,25 @@ const Metrics = () => {
       const token = localStorage.getItem("token");
       const headers = { Authorization: `Bearer ${token}` };
 
-      const [overviewRes, documentsRes] = await Promise.all([
+      const [overviewRes, documentsRes , storageRes] = await Promise.all([
         axios.get(`${API_URL}/tenants/tenants/dashboard/overview/`, { headers }),
-        axios.get(`${API_URL}/documents/superadmin/stats/total-documents/`, { headers })
+        axios.get(`${API_URL}/documents/superadmin/stats/total-documents/`, { headers }),
+        axios.get(`${API_URL}/documents/metrics/storage`, { headers })
       ]);
+      
 
       const mergedData = {
         ...overviewRes.data,
         total_documents: documentsRes.data.total_documents
+        
       };
 
       setDashboardData(mergedData);
+      setStorage(storageRes.data.total_storage_used);
       setActivityTrends(sampleActivityTrends);
       setFeatureUsage(sampleFeatureUsage);
+      
+      
     } catch (err) {
       console.error("Failed to fetch dashboard data:", err);
     } finally {
@@ -103,29 +112,43 @@ const Metrics = () => {
     }
   };
 
-  const fetchTenantMetrics = async () => {
-    try {
-      const token = localStorage.getItem("token");
-      const headers = { Authorization: `Bearer ${token}` };
-      
-      // This would be a real API call to get detailed tenant metrics
-      const response = await axios.get(`${API_URL}/tenants/tenants/`, { headers });
-      
-      // Mock additional metrics for demo
-      const enrichedTenants = response.data.map(tenant => ({
-        ...tenant,
-        lastActive: new Date(Date.now() - Math.random() * 7 * 24 * 60 * 60 * 1000).toISOString(),
-        activeUsers7d: Math.floor(Math.random() * 25) + 1,
-        totalUploads: Math.floor(Math.random() * 150) + 20,
-        storageUsed: `${(Math.random() * 5 + 0.5).toFixed(1)} GB`,
-        errorCount: Math.floor(Math.random() * 3)
-      }));
-      
-      setTenantMetrics(enrichedTenants);
-    } catch (err) {
-      console.error("Failed to fetch tenant metrics:", err);
-    }
-  };
+const fetchTenantMetrics = async () => {
+  try {
+    const token = localStorage.getItem("token");
+    const headers = { Authorization: `Bearer ${token}` };
+
+    const response = await axios.get(`${API_URL}/metrics/tenants`, { headers });
+
+    const mappedData = response.data.map(t => ({
+      id: t.tenant_id,
+      company_name: t.tenant_name,
+      login_failures_24h: t.login_failures_24h,
+      last_active_user: t.last_active_user,
+      activeUsers7d: t.active_users_7d,
+      totalUploads: 0,   // Or fetch from backend if available
+      storageUsed: "0 B", // Or fetch from backend if available
+      status: "active",   // Default if backend doesn’t provide
+      created_at: new Date().toISOString(),
+      plan: "Basic",
+      monthly_fee: 0
+    }));
+
+    setTenantMetrics(mappedData);
+
+  } catch (err) {
+    console.error("Failed to fetch tenant metrics:", err);
+  }
+};
+
+
+  const formatSize = (bytes) => {
+  if (bytes === 0) return "0 B";
+  const sizes = ["B", "KB", "MB", "GB", "TB"];
+  const i = Math.floor(Math.log(bytes) / Math.log(1024));
+  return (bytes / Math.pow(1024, i)).toFixed(2) + " " + sizes[i];
+};
+
+  
 
   const filteredTenants = tenantMetrics.filter(tenant => {
     const matchesSearch = tenant.company_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -133,6 +156,8 @@ const Metrics = () => {
     const matchesStatus = selectedStatus === 'all' || tenant.status === selectedStatus;
     return matchesSearch && matchesStatus;
   });
+
+  
 
   return (
     <SuperAdminLayout activePage="metrics">
@@ -199,10 +224,12 @@ const Metrics = () => {
           </div>
 
           <div className="metric-card">
-            <div className="metric-icon"><FiDatabase /></div>
-            <div className="metric-content">
-              <div className="metric-value">2.1 TB</div>
-              <div className="metric-label">Total Storage Used</div>
+      <div className="metric-icon"><FiDatabase /></div>
+      <div className="metric-content">
+        <div className="metric-value">
+          {storage !== null ? formatSize(storage) : ""}
+        </div>
+        <div className="metric-label">Total Storage Used</div>
             </div>
           </div>
         </div>
@@ -344,9 +371,14 @@ const Metrics = () => {
                 <FiFileText />
               </div>
               <div className="health-content">
-                <div className="health-value">2.1 TB</div>
-                <div className="health-label">Total Storage</div>
-                <div className="health-status success">75% Used</div>
+                <div className="health-value">
+  {storage !== null ? formatSize(storage) : "Loading..."}
+</div>
+<div className="health-label">Total Storage</div>
+<div className="health-status success">
+  {storage !== null ? `${((storage / MAX_STORAGE) * 100).toFixed(1)}% Used` : "--"}
+</div>
+
               </div>
             </div>
           </div>
