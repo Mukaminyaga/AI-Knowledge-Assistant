@@ -38,7 +38,7 @@ const TenantTable = ({
     payment: null,
     tenant: null
   });
-  const itemsPerPage = 8;
+  const itemsPerPage = 7;
 
   const filteredTenants = tenants.filter((tenant) => {
     const companyName = tenant?.companyName || tenant?.company_name || "";
@@ -138,6 +138,14 @@ const TenantTable = ({
     if (currentPage < totalPages) {
       setCurrentPage(currentPage + 1);
     }
+  };
+
+  const handleFirstPage = () => {
+    setCurrentPage(1);
+  };
+
+  const handleLastPage = () => {
+    setCurrentPage(totalPages);
   };
 
   const handleSearchChange = (e) => {
@@ -581,56 +589,44 @@ const TenantTable = ({
 
       {/* Pagination Controls */}
       {!limit && totalPages > 1 && (
-        <div className="pagination-container">
-          <div className="pagination-info">
-            <span>
-              Showing {startIndex + 1}-{Math.min(endIndex, sortedTenants.length)} of {sortedTenants.length} tenants
-            </span>
-          </div>
-          <div className="pagination-controls">
+        <div className="activity-pagination-container">
+          <div className="activity-pagination-controls">
             <button
-              className="pagination-btn"
+              className="activity-pagination-btn"
+              onClick={handleFirstPage}
+              disabled={currentPage === 1}
+            >
+              First
+            </button>
+
+            <button
+              className="activity-pagination-btn"
               onClick={handlePreviousPage}
               disabled={currentPage === 1}
             >
-              <FiChevronLeft />
               Previous
             </button>
 
-            <div className="pagination-numbers">
-              {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => {
-                // Show first, last, current, and pages around current
-                if (
-                  page === 1 ||
-                  page === totalPages ||
-                  (page >= currentPage - 1 && page <= currentPage + 1)
-                ) {
-                  return (
-                    <button
-                      key={page}
-                      className={`pagination-number ${currentPage === page ? 'active' : ''}`}
-                      onClick={() => handlePageChange(page)}
-                    >
-                      {page}
-                    </button>
-                  );
-                } else if (
-                  page === currentPage - 2 ||
-                  page === currentPage + 2
-                ) {
-                  return <span key={page} className="pagination-ellipsis">...</span>;
-                }
-                return null;
-              })}
+            <div className="activity-pagination-info">
+              <span>
+                Showing {startIndex + 1} to {Math.min(endIndex, sortedTenants.length)} of {sortedTenants.length}
+              </span>
             </div>
 
             <button
-              className="pagination-btn"
+              className="activity-pagination-btn"
               onClick={handleNextPage}
               disabled={currentPage === totalPages}
             >
               Next
-              <FiChevronRight />
+            </button>
+
+            <button
+              className="activity-pagination-btn"
+              onClick={handleLastPage}
+              disabled={currentPage === totalPages}
+            >
+              Last
             </button>
           </div>
         </div>

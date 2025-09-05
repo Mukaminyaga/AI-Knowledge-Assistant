@@ -1,4 +1,8 @@
+from datetime import datetime
+from typing import Optional
 from pydantic import BaseModel, EmailStr
+from sqlalchemy import DateTime, func
+
 
 class UserCreate(BaseModel):
     first_name: str
@@ -21,6 +25,8 @@ class UserOut(BaseModel):
     is_approved: bool
     status: str
     tenant_id: int
+    last_active: Optional[datetime]
+
 
     class Config:
         from_attributes = True

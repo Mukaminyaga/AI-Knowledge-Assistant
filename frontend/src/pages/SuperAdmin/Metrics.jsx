@@ -46,7 +46,7 @@ const Metrics = () => {
   const [activityTrends, setActivityTrends] = useState([]);
   const [featureUsage, setFeatureUsage] = useState([]);
   const [storage, setStorage] = useState(null);
-  const [loginFailures, setLoginFailures] = useState(24);
+  const [loginFailures, setLoginFailures] = useState(0);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedDateRange, setSelectedDateRange] = useState("7d");
   const [selectedStatus, setSelectedStatus] = useState("all");
@@ -86,11 +86,14 @@ const Metrics = () => {
       const token = localStorage.getItem("token");
       const headers = { Authorization: `Bearer ${token}` };
 
-      const [overviewRes, documentsRes , storageRes] = await Promise.all([
-        axios.get(`${API_URL}/tenants/tenants/dashboard/overview/`, { headers }),
-        axios.get(`${API_URL}/documents/superadmin/stats/total-documents/`, { headers }),
-        axios.get(`${API_URL}/documents/metrics/storage`, { headers })
-      ]);
+      const [overviewRes, documentsRes , storageRes, metricsRes] = await Promise.all([
+  axios.get(`${API_URL}/tenants/tenants/dashboard/overview/`, { headers }),
+  axios.get(`${API_URL}/documents/superadmin/stats/total-documents/`, { headers }),
+  axios.get(`${API_URL}/documents/metrics/storage`, { headers }),
+  axios.get(`${API_URL}/metrics/tenants`, { headers }) // ✅ add this
+]);
+
+
       
 
       const mergedData = {
@@ -103,6 +106,7 @@ const Metrics = () => {
       setStorage(storageRes.data.total_storage_used);
       setActivityTrends(sampleActivityTrends);
       setFeatureUsage(sampleFeatureUsage);
+      setLoginFailures(metricsRes.data.summary.total_login_failures_24h);
       
       
     } catch (err) {
@@ -118,22 +122,26 @@ const fetchTenantMetrics = async () => {
     const headers = { Authorization: `Bearer ${token}` };
 
     const response = await axios.get(`${API_URL}/metrics/tenants`, { headers });
+    const tenants = response.data.tenants || [];
 
-    const mappedData = response.data.map(t => ({
-      id: t.tenant_id,
-      company_name: t.tenant_name,
-      login_failures_24h: t.login_failures_24h,
-      last_active_user: t.last_active_user,
-      activeUsers7d: t.active_users_7d,
-      totalUploads: 0,   // Or fetch from backend if available
-      storageUsed: "0 B", // Or fetch from backend if available
-      status: "active",   // Default if backend doesn’t provide
-      created_at: new Date().toISOString(),
-      plan: "Basic",
-      monthly_fee: 0
-    }));
+    const mappedData = tenants.map(t => ({
+  id: t.tenant_id,
+  company_name: t.tenant_name,
+  login_failures_24h: t.login_failures_24h,
+  lastActive: t.last_active_user?.last_active || null,  // ✅ flatten
+  lastActiveEmail: t.last_active_user?.email || null,   // optional
+  activeUsers7d: t.active_users_7d,
+  totalUploads: t.uploads_7d || 0,
+  storageUsed: "0 B",
+  status: "active",
+  created_at: new Date().toISOString(),
+  plan: "Basic",
+  monthly_fee: 0
+}));
 
-    setTenantMetrics(mappedData);
+setTenantMetrics(mappedData);
+
+    
 
   } catch (err) {
     console.error("Failed to fetch tenant metrics:", err);
@@ -148,7 +156,7 @@ const fetchTenantMetrics = async () => {
   return (bytes / Math.pow(1024, i)).toFixed(2) + " " + sizes[i];
 };
 
-  
+
 
   const filteredTenants = tenantMetrics.filter(tenant => {
     const matchesSearch = tenant.company_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -372,7 +380,7 @@ const fetchTenantMetrics = async () => {
               </div>
               <div className="health-content">
                 <div className="health-value">
-  {storage !== null ? formatSize(storage) : "Loading..."}
+  {storage !== null ? formatSize(storage) : " "}
 </div>
 <div className="health-label">Total Storage</div>
 <div className="health-status success">

@@ -37,45 +37,53 @@ const TenantMetricsTable = ({
     }
   };
 
-  const sortedTenants = [...tenants].sort((a, b) => {
-    let aVal = a[sortField];
-    let bVal = b[sortField];
 
-    // Handle different data types
-    if (sortField === "lastActive") {
-      aVal = new Date(aVal);
-      bVal = new Date(bVal);
-    } else if (sortField === "monthly_fee" || sortField === "activeUsers7d" || sortField === "totalUploads") {
-      aVal = parseFloat(aVal) || 0;
-      bVal = parseFloat(bVal) || 0;
-    } else if (typeof aVal === 'string') {
-      aVal = aVal.toLowerCase();
-      bVal = bVal.toLowerCase();
-    }
 
-    if (sortDirection === "asc") {
-      return aVal > bVal ? 1 : -1;
-    } else {
-      return aVal < bVal ? 1 : -1;
-    }
+const sortedTenants = [...tenants].sort((a, b) => {
+  let aVal, bVal;
+
+  if (sortField === "lastActive") {
+    aVal = a.last_active_user?.last_active
+      ? new Date(a.last_active_user.last_active)
+      : null;
+    bVal = b.last_active_user?.last_active
+      ? new Date(b.last_active_user.last_active)
+      : null;
+
+    if (!aVal && !bVal) return 0;
+    if (!aVal) return 1; // nulls go last
+    if (!bVal) return -1;
+    return bVal - aVal; // newest first
+  } else {
+    aVal = a[sortField];
+    bVal = b[sortField];
+    if (typeof aVal === "string") return aVal.localeCompare(bVal);
+    return (bVal || 0) - (aVal || 0);
+  }
+});
+
+
+ const formatDate = (dateString) => {
+  if (!dateString) return "Never";
+  const date = new Date(dateString); // safe now
+  if (isNaN(date)) return "Invalid date";
+
+  const now = new Date();
+  const diffInHours = Math.floor((now - date) / (1000 * 60 * 60));
+
+  if (diffInHours < 1) return "Just now";
+  if (diffInHours < 24) return `${diffInHours}h ago`;
+  if (diffInHours < 48) return "Yesterday";
+
+  return date.toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+    hour: "2-digit",
+    minute: "2-digit"
   });
+};
 
-  const formatDate = (dateString) => {
-    const date = new Date(dateString);
-    const now = new Date();
-    const diffInHours = Math.floor((now - date) / (1000 * 60 * 60));
-    
-    if (diffInHours < 1) return "Just now";
-    if (diffInHours < 24) return `${diffInHours}h ago`;
-    if (diffInHours < 48) return "Yesterday";
-    
-    return date.toLocaleDateString("en-US", {
-      month: "short",
-      day: "numeric",
-      hour: "2-digit",
-      minute: "2-digit"
-    });
-  };
+  
 
   const getStatusBadge = (status) => {
     const statusConfig = {
@@ -342,23 +350,20 @@ const TenantMetricsTable = ({
                       </div>
                     </td>
                     
-                     <td>
-            <div className="activity-cell">
-              <div className="activity-time">
-                {tenant.last_active_user
-                  ? formatDate(tenant.last_active_user.last_active)
-                  : "Never"}
-              </div>
-              <div className="activity-indicator">
-                <div className={`activity-dot ${activityLevel.level}`}></div>
-              </div>
-              {/* {tenant.last_active_user?.email && (
-                <div className="activity-user">
-                  {tenant.last_active_user.email}
-                </div>
-              )} */}
-            </div>
-          </td>
+                    <td>
+  <div className="activity-cell">
+    <div className="activity-time">
+      {tenant.lastActive ? formatDate(tenant.lastActive) : "Never"}
+    </div>
+    <div className="activity-indicator">
+      <div className={`activity-dot ${activityLevel.level}`}></div>
+    </div>
+    {/* {tenant.lastActiveEmail && (
+      <div className="activity-user">{tenant.lastActiveEmail}</div>
+    )} */}
+  </div>
+</td>
+
                     
                     <td>
                       <div className="users-cell">
@@ -494,7 +499,7 @@ const TenantMetricsTable = ({
             </div>
           </div>
         </div>
-      )}
+    )}
     </div>
   );
 };

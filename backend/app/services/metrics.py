@@ -3,6 +3,7 @@ from sqlalchemy.orm import Session
 from app.models.users import User
 from app.models.tenant import Tenant
 from app.models.login_attempt import LoginAttempt
+from datetime import timezone
 
 
 # def get_login_failures(db: Session, hours: int = 24):
@@ -40,12 +41,21 @@ from app.models.login_attempt import LoginAttempt
 #     ).count()
 
 
+def _iso_ms_z(dt):
+    if not dt:
+        return None
+    dt_utc = dt.astimezone(timezone.utc)
+    return dt_utc.strftime("%Y-%m-%dT%H:%M:%S.%f")[:-3] + "Z"
+
 def get_tenant_metrics(db, days=7, hours=24):
     tenants = db.query(Tenant).all()
     since_days = datetime.utcnow() - timedelta(days=days)
     since_hours = datetime.utcnow() - timedelta(hours=hours)
 
     results = []
+    total_failures = 0
+    total_active_users = 0
+
     for tenant in tenants:
         # Login failures per tenant (last X hours)
         login_failures = (
@@ -58,11 +68,12 @@ def get_tenant_metrics(db, days=7, hours=24):
             )
             .count()
         )
+        total_failures += login_failures
 
         # Last active user in tenant
         last_active_user = (
             db.query(User)
-            .filter(User.tenant_id == tenant.id)
+            .filter(User.tenant_id == tenant.id, User.last_active.isnot(None))
             .order_by(User.last_active.desc())
             .first()
         )
@@ -73,19 +84,25 @@ def get_tenant_metrics(db, days=7, hours=24):
             .filter(User.tenant_id == tenant.id, User.last_active >= since_days)
             .count()
         )
+        total_active_users += active_users
 
         results.append({
             "tenant_id": tenant.id,
             "tenant_name": tenant.company_name,
             "login_failures_24h": login_failures,
             "last_active_user": {
-                "id": last_active_user.id,
+                 "id": last_active_user.id,
                 "email": last_active_user.email,
-                "last_active": last_active_user.last_active.isoformat() 
-                               if last_active_user.last_active else None
-        } if last_active_user else None,
-    "active_users_7d": active_users
-   })
+                "last_active": _iso_ms_z(last_active_user.last_active)
+            } if last_active_user else None,
 
+            "active_users_7d": active_users
+        })
 
-    return results
+    return {
+        "summary": {
+            "total_login_failures_24h": total_failures,
+            "total_active_users_7d": total_active_users,
+        },
+        "tenants": results
+    }

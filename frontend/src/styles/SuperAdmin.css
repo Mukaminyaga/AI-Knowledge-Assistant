@@ -3734,3 +3734,104 @@
     gap: 12px;
   }
 }
+
+/* Activity-style Pagination - matching the design */
+.activity-pagination-container {
+  width: 100%;
+  height: 40px;
+  margin-top: 32px;
+  position: relative;
+}
+
+.activity-pagination-controls {
+  width: 100%;
+  height: 40px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.activity-pagination-btn {
+  width: 150px;
+  height: 40px;
+  border-radius: 5px;
+  border: 1px solid #252525;
+  background: transparent;
+  color: #ACAAAA;
+  text-align: center;
+  font-family: Poppins, -apple-system, Roboto, Helvetica, sans-serif;
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: normal;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.activity-pagination-btn:hover:not(:disabled) {
+  border-color: #ACAAAA;
+  background: rgba(172, 170, 170, 0.1);
+}
+
+.activity-pagination-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.activity-pagination-btn:not(:disabled) {
+  color: #FCFCFC;
+}
+
+.activity-pagination-info {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.activity-pagination-info span {
+  color: #ACAAAA;
+  text-align: center;
+  font-family: Poppins, -apple-system, Roboto, Helvetica, sans-serif;
+  font-size: 18px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: normal;
+}
+
+/* Responsive adjustments for activity pagination */
+@media (max-width: 768px) {
+  .activity-pagination-controls {
+    flex-direction: column;
+    gap: 16px;
+    height: auto;
+  }
+
+  .activity-pagination-info {
+    position: static;
+    transform: none;
+    order: 2;
+  }
+
+  .activity-pagination-btn {
+    width: 120px;
+  }
+}
+
+@media (max-width: 480px) {
+  .activity-pagination-btn {
+    width: 100px;
+    font-size: 14px;
+  }
+
+  .activity-pagination-info span {
+    font-size: 16px;
+  }
+}
