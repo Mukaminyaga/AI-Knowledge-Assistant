@@ -42,3 +42,6 @@ class TenantUpdate(BaseModel):
 
     class Config:
         orm_mode = True
+
+class TenantEmailRequest(BaseModel):
+    contact_email: EmailStr

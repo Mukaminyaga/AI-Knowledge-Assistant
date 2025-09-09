@@ -5,7 +5,7 @@ from app.database import get_db
 from app.models.tenant import Tenant
 from app.models.users import User
 from app.models.payment import Payment
-from app.schemas.tenant import TenantCreate, TenantUpdate, TenantOut
+from app.schemas.tenant import TenantCreate, TenantUpdate, TenantOut, TenantEmailRequest
 from app.schemas.users import UserOut
 from app.schemas.payment import PaymentOut
 from datetime import datetime
@@ -104,6 +104,59 @@ def create_tenant(tenant: TenantCreate, db: Session = Depends(get_db)):
     )
 
     return db_tenant
+
+@router.post("/send-welcome-email")
+def send_welcome_email(request: TenantEmailRequest, db: Session = Depends(get_db)):
+    # Check if tenant exists by email
+    db_tenant = db.query(Tenant).filter(Tenant.contact_email == request.contact_email).first()
+    if not db_tenant:
+        raise HTTPException(status_code=404, detail="Tenant not found with this email.")
+
+    signup_link = "https://vala.ke/signup"
+
+    send_email(
+        to_email=db_tenant.contact_email,
+        subject="Welcome to Vala AI – Tenant Setup Successful",
+        html_content=f"""
+            <p>Dear {db_tenant.company_name},</p>
+
+            <p>Welcome to <strong>Vala AI</strong>! Your tenant account has been successfully created.</p>
+            <p>As the administrator of your organization, you now have the keys to your workspace. 
+               Here’s what you can do to make the most of your account:</p>
+
+            <ul>
+                <li><strong>Approve new users</strong> so your team can join the platform.</li>
+                <li><strong>Upload documents</strong> to your Knowledge Base to power your AI assistant with relevant information.</li>
+                <li><strong>Create Departments</strong> to organize your knowledge base.</li>
+                <li><strong>Edit user roles</strong> to assign permissions to your team.</li>
+                <li><strong>View activity logs</strong> to track platform usage.</li>
+            </ul>
+
+            <p>To get started, please sign up using the following credentials:</p>
+            <ul>
+                <li><strong>Signup Link:</strong> <a href="{signup_link}">{signup_link}</a></li>
+                <li><strong>Email:</strong> {db_tenant.contact_email}</li>
+                <li><strong>Serial Code:</strong> {db_tenant.serial_code}</li>
+            </ul>
+
+            <p>Please share the <strong>serial code</strong> with your team members so they can join your organization on the platform.</p>
+
+            <p>We're excited to have you on board. If you have any questions, feel free to reach out.</p>
+            <p>Warm regards,<br>
+            Vala.ai Support<br>
+            <a href="mailto:vala.ai@goodpartnerske.org">vala.ai@goodpartnerske.org</a></p>
+
+            <hr>
+            <p style="font-size: 12px; color: #888;">
+                Sent from Vala.ai | {datetime.now().strftime('%b %d, %Y - %I:%M %p')}
+                <br>
+                Need help? Contact us at: <a href="mailto:vala.ai@goodpartnerske.org">vala.ai@goodpartnerske.org</a><br>
+                This is an automated message. Do not reply directly to this email.
+            </p>
+        """
+    )
+
+    return {"message": f"Welcome email sent successfully to {db_tenant.contact_email}"}
 
 
 # Get all tenants

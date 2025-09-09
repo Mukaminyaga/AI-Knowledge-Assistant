@@ -4,6 +4,14 @@
   width: 100%;
 }
 
+/* Page Header Actions */
+.page-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-right: 24px;
+}
+
 /* Navigation */
 .page-navigation {
   margin-bottom: 16px;

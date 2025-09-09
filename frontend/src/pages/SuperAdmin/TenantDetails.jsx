@@ -17,6 +17,7 @@ import {
   FiClock,
   FiCalendar,
   FiDownload,
+  FiSend,
 } from "react-icons/fi";
 import "../../styles/SuperAdmin.css";
 import "../../styles/TenantDetails.css";
@@ -35,6 +36,7 @@ const TenantDetails = () => {
   const [payments, setPayments] = useState([]);
   const [showPaymentModal, setShowPaymentModal] = useState(false);
   const [loadingPayments, setLoadingPayments] = useState(false);
+  const [sendingEmail, setSendingEmail] = useState(false);
 
 
   useEffect(() => {
@@ -123,6 +125,27 @@ const TenantDetails = () => {
       refunded: "info",
     };
     return statusClasses[status] || "default";
+  };
+
+  const sendWelcomeEmail = async () => {
+    try {
+      setSendingEmail(true);
+
+      const tenantEmail = tenant.contactEmail || tenant.contact_email;
+     
+
+      // Make API call to send welcome email
+      await axios.post(`${API_URL}/tenants/tenants/send-welcome-email`, {
+        contact_email: tenantEmail
+      });
+
+      alert(`Welcome email sent successfully to ${tenantEmail}`);
+    } catch (err) {
+      console.error("Error sending welcome email:", err);
+      alert("Failed to send welcome email. Please try again.");
+    } finally {
+      setSendingEmail(false);
+    }
   };
 
   const handleExportPayments = (format) => {
@@ -219,7 +242,17 @@ const TenantDetails = () => {
             <h1 className="page-title">{tenant.companyName || tenant.company_name}</h1>
             {/* <p className="page-subtitle">Manage users and documents for this tenant</p> */}
           </div>
-          <div className="page-header-actions">{getStatusBadge(tenant.status)}</div>
+          <div className="page-header-actions">
+            <button
+              className="btn btn-primary"
+              onClick={sendWelcomeEmail}
+              disabled={sendingEmail}
+            >
+              <FiSend className="btn-icon" />
+              {sendingEmail ? "Sending..." : "Send Welcome Email"}
+            </button>
+            {getStatusBadge(tenant.status)}
+          </div>
         </div>
 
         {/* Info Cards */}
