@@ -14,12 +14,9 @@ class QueryRequest(BaseModel):
     query: str
     top_k: int = 10
     summarize: bool = True
-    # optional chat history for follow-ups (most-recent last)
     history: list[str] = []
 
-# --- RunPod settings ---
-POD_INTERNAL_PORT = int(os.environ.get("POD_INTERNAL_PORT", 8888))
-POD_SHARED_SECRET = os.environ.get("POD_SHARED_SECRET")
+POD_SHARED_SECRET = os.environ.get("POD_SHARED_SECRET", "")
 RUNPOD_WORKER_URL = os.environ.get("RUNPOD_WORKER_URL")
 
 def clean_text(text: str) -> str:
@@ -32,13 +29,16 @@ def search_docs(
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
-    worker_url = f"{RUNPOD_WORKER_URL}/search"
+    if not RUNPOD_WORKER_URL:
+        raise HTTPException(status_code=500, detail="RUNPOD_WORKER_URL not configured")
+
+    worker_url = f"{RUNPOD_WORKER_URL.rstrip('/')}/search"
     payload = {
         "query": request.query,
         "top_k": request.top_k,
         "summarize": request.summarize,
-        "tenant_id": current_user.tenant_id,
-        "history": request.history,  # pass along for follow-ups
+        "tenant_id": int(current_user.tenant_id),
+        "history": request.history,
     }
     headers = {}
     if POD_SHARED_SECRET:
@@ -57,7 +57,7 @@ def search_docs(
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed to parse worker response: {e}")
 
-    # Safety: enforce tenant_id
+    # enforce tenant_id
     results = [
         r for r in result.get("results", [])
         if str(r.get("tenant_id")) == str(current_user.tenant_id)
@@ -66,13 +66,13 @@ def search_docs(
     if not results and not result.get("summary"):
         raise HTTPException(status_code=404, detail="No matching documents found for your tenant.")
 
-    # The worker now returns a single winning source_file and answer from that source only
     final_answer = result.get("summary") or ""
-    source_file = result.get("source_file") or (results[0].get("filename") if results else "unknown")
+    # collect unique source files from hits
+    source_files = list({r.get("filename") for r in results}) if results else []
 
     return {
-        "query": request.query,
-        "answer": clean_text(final_answer),
-        "raw_results": results,            # chunks, but ONLY from the chosen source file
-        "source_files": [source_file],     # single file only
-    }
+    "query": request.query,
+    "answer": final_answer,  # don’t clean/flatten here
+    "raw_results": results,
+    "source_files": source_files,
+}

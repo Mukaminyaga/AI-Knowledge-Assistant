@@ -1,32 +1,36 @@
 import React, { useState, useEffect } from "react";
-import { 
-  FiUsers, 
-  FiActivity, 
-  FiAlertTriangle, 
+import {
+  FiUsers,
+  FiActivity,
+  FiAlertTriangle,
   FiTrendingUp,
   FiHardDrive,
   FiClock,
   FiSearch,
   FiFilter,
   FiDownload,
-  FiEye
+  FiEye,
+  FiChevronLeft,
+  FiChevronRight
 } from "react-icons/fi";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import "../../styles/SuperAdmin.css";
 
-const TenantMetricsTable = ({ 
-  tenants = [], 
-  searchTerm = "", 
+const TenantMetricsTable = ({
+  tenants = [],
+  searchTerm = "",
   onSearchChange,
   selectedStatus = "all",
   onStatusChange,
   selectedDateRange = "7d",
-  onDateRangeChange 
+  onDateRangeChange
 }) => {
   const [sortField, setSortField] = useState("lastActive");
   const [sortDirection, setSortDirection] = useState("desc");
   const [loading, setLoading] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 8;
 
   const handleSort = (field) => {
     if (sortField === field) {
@@ -35,11 +39,48 @@ const TenantMetricsTable = ({
       setSortField(field);
       setSortDirection("desc");
     }
+    setCurrentPage(1); // Reset to first page when sorting
   };
 
 
 
-const sortedTenants = [...tenants].sort((a, b) => {
+// Filter tenants based on search and status
+const filteredTenants = tenants.filter((tenant) => {
+  // Search filter
+  const companyName = tenant?.company_name || "";
+  const contactEmail = tenant?.contact_email || "";
+  const searchMatch = companyName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                     contactEmail.toLowerCase().includes(searchTerm.toLowerCase());
+
+  // Status filter
+  const statusMatch = selectedStatus === "all" || tenant.status === selectedStatus;
+
+  return searchMatch && statusMatch;
+});
+
+const sortedTenants = [...filteredTenants].sort((a, b) => {
+  // Custom primary sorting: Active first, then by most active users, then by uploads
+  if (sortField === "priority") {
+    // 1. Active status first
+    if (a.status === "active" && b.status !== "active") return -1;
+    if (b.status === "active" && a.status !== "active") return 1;
+
+    // 2. If both have same status, sort by active users (descending)
+    if (a.status === b.status) {
+      const aUsers = a.activeUsers7d || 0;
+      const bUsers = b.activeUsers7d || 0;
+      if (aUsers !== bUsers) return bUsers - aUsers;
+
+      // 3. If active users are same, sort by uploads (descending)
+      const aUploads = a.totalUploads || 0;
+      const bUploads = b.totalUploads || 0;
+      return bUploads - aUploads;
+    }
+
+    return 0;
+  }
+
+  // Regular field sorting
   let aVal, bVal;
 
   if (sortField === "lastActive") {
@@ -58,10 +99,61 @@ const sortedTenants = [...tenants].sort((a, b) => {
     aVal = a[sortField];
     bVal = b[sortField];
     if (typeof aVal === "string") return aVal.localeCompare(bVal);
-    return (bVal || 0) - (aVal || 0);
+    return sortDirection === "asc" ? (aVal || 0) - (bVal || 0) : (bVal || 0) - (aVal || 0);
   }
 });
 
+// Apply default custom sorting if no specific sort field is selected
+if (sortField === "lastActive" && sortDirection === "desc") {
+  // Apply the priority sorting as default
+  sortedTenants.sort((a, b) => {
+    // 1. Active status first
+    if (a.status === "active" && b.status !== "active") return -1;
+    if (b.status === "active" && a.status !== "active") return 1;
+
+    // 2. If both have same status, sort by active users (descending)
+    if (a.status === b.status) {
+      const aUsers = a.activeUsers7d || 0;
+      const bUsers = b.activeUsers7d || 0;
+      if (aUsers !== bUsers) return bUsers - aUsers;
+
+      // 3. If active users are same, sort by uploads (descending)
+      const aUploads = a.totalUploads || 0;
+      const bUploads = b.totalUploads || 0;
+      return bUploads - aUploads;
+    }
+
+    return 0;
+  });
+}
+
+// Pagination logic
+const totalPages = Math.ceil(sortedTenants.length / itemsPerPage);
+const startIndex = (currentPage - 1) * itemsPerPage;
+const endIndex = startIndex + itemsPerPage;
+const displayTenants = sortedTenants.slice(startIndex, endIndex);
+
+// Pagination handlers
+const handlePageChange = (page) => {
+  setCurrentPage(page);
+};
+
+const handlePreviousPage = () => {
+  if (currentPage > 1) {
+    setCurrentPage(currentPage - 1);
+  }
+};
+
+const handleNextPage = () => {
+  if (currentPage < totalPages) {
+    setCurrentPage(currentPage + 1);
+  }
+};
+
+const handleSearchChange = (value) => {
+  onSearchChange(value);
+  setCurrentPage(1); // Reset to first page when searching
+};
 
  const formatDate = (dateString) => {
   if (!dateString) return "Never";
@@ -156,6 +248,14 @@ const sortedTenants = [...tenants].sort((a, b) => {
     window.URL.revokeObjectURL(url);
   };
 
+  const formatSize = (bytes) => {
+  if (!bytes) return "0 B";
+  const sizes = ["B", "KB", "MB", "GB", "TB"];
+  const i = Math.floor(Math.log(bytes) / Math.log(1024));
+  return `${(bytes / Math.pow(1024, i)).toFixed(2)} ${sizes[i]}`;
+};
+
+
   return (
     <div className="tenant-metrics-section">
       {/* Table Controls */}
@@ -169,12 +269,12 @@ const sortedTenants = [...tenants].sort((a, b) => {
         
         <div className="table-filters">
           <div className="search-box">
-            <FiSearch className="search-icon" />
+           
             <input
               type="text"
               placeholder="Search tenants..."
               value={searchTerm}
-              onChange={(e) => onSearchChange(e.target.value)}
+              onChange={(e) => handleSearchChange(e.target.value)}
               className="search-input"
             />
           </div>
@@ -315,14 +415,14 @@ const sortedTenants = [...tenants].sort((a, b) => {
                   Loading tenant metrics...
                 </td>
               </tr>
-            ) : sortedTenants.length === 0 ? (
+            ) : displayTenants.length === 0 ? (
               <tr>
                 <td colSpan={9} className="no-data">
                   {searchTerm ? "No tenants found matching your search." : "No tenant data available."}
                 </td>
               </tr>
             ) : (
-              sortedTenants.map((tenant) => {
+              displayTenants.map((tenant) => {
                 const activityLevel = getActivityLevel(tenant.activeUsers7d);
                 const storagePercentage = getStorageUsagePercentage(tenant.storageUsed);
                 
@@ -344,9 +444,9 @@ const sortedTenants = [...tenants].sort((a, b) => {
                     <td>
                       <div className="status-cell">
                         {getStatusBadge(tenant.status)}
-                        <div className="status-since">
+                        {/* <div className="status-since">
                           Since {new Date(tenant.created_at).toLocaleDateString()}
-                        </div>
+                        </div> */}
                       </div>
                     </td>
                     
@@ -385,29 +485,48 @@ const sortedTenants = [...tenants].sort((a, b) => {
                       </div>
                     </td>
                     
-                    <td>
-                      <div className="uploads-cell">
-                        <span className="metric-highlight uploads-count">
-                          {tenant.totalUploads}
-                        </span>
-                        <div className="uploads-change">
-                          +{Math.floor(Math.random() * 10 + 1)} this week
-                        </div>
-                      </div>
-                    </td>
-                    
-                    <td>
-                      <div className="storage-cell">
-                        <div className="storage-amount">{tenant.storageUsed}</div>
-                        <div className="storage-bar">
-                          <div 
-                            className="storage-fill" 
-                            style={{ width: `${storagePercentage}%` }}
-                          ></div>
-                        </div>
-                        <div className="storage-percentage">{storagePercentage.toFixed(0)}% used</div>
-                      </div>
-                    </td>
+                  <td>
+  <div className="uploads-cell">
+    <span className="metric-highlight uploads-count">
+      {tenant.totalUploads}
+    </span>
+    <div className="uploads-change">
+      +{tenant.uploadsThisWeek} this week
+    </div>
+  </div>
+</td>
+
+<td>
+  <div className="storage-cell">
+    {/* Formatted storage amount */}
+    <div className="storage-amount">
+      {tenant.storageUsed ? formatSize(tenant.storageUsed) : "0 B"}
+    </div>
+
+    {/* Storage bar */}
+    <div className="storage-bar">
+      <div className="plan-limit">
+  Limit: {formatSize(tenant.planLimit)}
+</div>
+
+      <div
+        className="storage-fill"
+        style={{
+          width: `${Math.min((tenant.storageUsed / tenant.planLimit) * 100, 100)}%`
+        }}
+      ></div>
+    </div>
+
+    {/* Percentage */}
+    <div className="storage-percentage">
+      {tenant.planLimit
+        ? `${((tenant.storageUsed / tenant.planLimit) * 100).toFixed(0)}% used`
+        : "N/A"}
+    </div>
+  </div>
+</td>
+
+
                     
                      <td>
             <div className="errors-cell">
@@ -425,11 +544,11 @@ const sortedTenants = [...tenants].sort((a, b) => {
                     <td>
                       <div className="plan-revenue-cell">
                         <div className="plan-info">
-                          <span className="plan-badge">{tenant.plan || 'Basic'}</span>
+                          <span className="plan-badge">{tenant.plan}</span>
                         </div>
                         <div className="revenue-info">
                           <span className="revenue-amount">
-                            KES {(tenant.monthly_fee || 0).toLocaleString()}
+                            KES {tenant.monthly_fee.toLocaleString()}
                           </span>
                           <span className="revenue-period">/month</span>
                         </div>
@@ -470,6 +589,66 @@ const sortedTenants = [...tenants].sort((a, b) => {
           </tbody>
         </table>
       </div>
+
+      {/* Pagination Controls */}
+      {totalPages > 1 && (
+        <div className="pagination-container">
+          <div className="pagination-info">
+            <span>
+              Showing {startIndex + 1}-
+              {Math.min(endIndex, sortedTenants.length)} of {sortedTenants.length} tenants
+            </span>
+          </div>
+
+          <div className="pagination-controls">
+            <button
+              className="pagination-btn"
+              onClick={handlePreviousPage}
+              disabled={currentPage === 1}
+            >
+              <FiChevronLeft />
+              Previous
+            </button>
+
+            <div className="pagination-numbers">
+              {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => {
+                // Show first, last, current, and pages around current
+                if (
+                  page === 1 ||
+                  page === totalPages ||
+                  (page >= currentPage - 1 && page <= currentPage + 1)
+                ) {
+                  return (
+                    <button
+                      key={page}
+                      className={`pagination-number ${currentPage === page ? "active" : ""}`}
+                      onClick={() => handlePageChange(page)}
+                    >
+                      {page}
+                    </button>
+                  );
+                } else if (page === currentPage - 2 || page === currentPage + 2) {
+                  return (
+                    <span key={page} className="pagination-ellipsis">
+                      ...
+                    </span>
+                  );
+                }
+                return null;
+              })}
+            </div>
+
+            <button
+              className="pagination-btn"
+              onClick={handleNextPage}
+              disabled={currentPage === totalPages}
+            >
+              Next
+              <FiChevronRight />
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Table Footer */}
       {sortedTenants.length > 0 && (

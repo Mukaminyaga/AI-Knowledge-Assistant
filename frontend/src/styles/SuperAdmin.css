@@ -886,6 +886,7 @@
   position: relative;
   flex: 1;
   max-width: 400px;
+  height: 35px;
 }
 
 .search-icon {
@@ -899,9 +900,9 @@
 
 .search-input {
   width: 100%;
-  padding: 12px 12px 12px 40px;
+  padding: 12px 12px 12px 40px ;
   border: 1px solid rgb(229, 231, 235); /* gray-100 */
-  border-radius: 8px;
+  border-radius: 7px !important;
   font-size: 14px;
   background: rgb(255, 255, 255);
   transition: border-color 0.2s ease;
@@ -909,7 +910,7 @@
 
 .search-input:focus {
   outline: none;
-  border-color: rgb(32, 148, 243); /* primary-blue */
+  /* border-color: rgb(32, 148, 243); */
   box-shadow: 0 0 0 3px rgba(32, 148, 243, 0.1);
 }
 

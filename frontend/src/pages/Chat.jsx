@@ -23,6 +23,7 @@ import ChatHistory from "../components/ChatHistory";
 import ThemeToggle from "../components/ThemeToggle";
 import "../styles/Chat.css";
 import { Link } from "react-router-dom";
+import ReactMarkdown from "react-markdown";
 
 function Chat() {
   const user = JSON.parse(localStorage.getItem("user"));
@@ -452,7 +453,10 @@ const handleBookmarkUpdate = (sessionId, isBookmarked, updatedSessions) => {
                       </>
                     ) : (
                       <div className="assistant-message-content">
-                        <div className="formatted-message-text">{msg.text}</div>
+                        <div className="formatted-message-text">
+  <ReactMarkdown>{msg.text}</ReactMarkdown>
+</div>
+
                         {msg.results?.length > 0 && (
                           <div className="message-sources">
                             <ul>

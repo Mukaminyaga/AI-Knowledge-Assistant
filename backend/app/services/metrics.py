@@ -4,7 +4,10 @@ from app.models.users import User
 from app.models.tenant import Tenant
 from app.models.login_attempt import LoginAttempt
 from datetime import timezone
-
+from app.models.document_interaction import DocumentInteraction
+from app.models.document import Document
+from sqlalchemy import func
+from app.utils.plan_limits import PLAN_LIMITS
 
 # def get_login_failures(db: Session, hours: int = 24):
 #     since = datetime.utcnow() - timedelta(hours=hours)
@@ -55,9 +58,11 @@ def get_tenant_metrics(db, days=7, hours=24):
     results = []
     total_failures = 0
     total_active_users = 0
+    total_uploads_all = 0
+    total_uploads_week = 0
 
     for tenant in tenants:
-        # Login failures per tenant (last X hours)
+        # Login failures
         login_failures = (
             db.query(LoginAttempt)
             .join(User, User.id == LoginAttempt.user_id)
@@ -70,7 +75,7 @@ def get_tenant_metrics(db, days=7, hours=24):
         )
         total_failures += login_failures
 
-        # Last active user in tenant
+        # Last active user
         last_active_user = (
             db.query(User)
             .filter(User.tenant_id == tenant.id, User.last_active.isnot(None))
@@ -78,7 +83,7 @@ def get_tenant_metrics(db, days=7, hours=24):
             .first()
         )
 
-        # Active users (last X days)
+        # Active users
         active_users = (
             db.query(User)
             .filter(User.tenant_id == tenant.id, User.last_active >= since_days)
@@ -86,23 +91,61 @@ def get_tenant_metrics(db, days=7, hours=24):
         )
         total_active_users += active_users
 
+        # Total docs
+        total_documents = (
+            db.query(Document)
+            .filter(Document.tenant_id == tenant.id)
+            .count()
+        )
+        total_uploads_all += total_documents
+
+        # Recent uploads
+        recent_uploads = (
+            db.query(DocumentInteraction)
+            .filter(
+                DocumentInteraction.tenant_id == tenant.id,
+                DocumentInteraction.action == "upload",
+                DocumentInteraction.timestamp >= since_days
+            )
+            .count()
+        )
+        total_uploads_week += recent_uploads
+
+        # Storage used
+        storage_used = (
+            db.query(func.coalesce(func.sum(Document.size), 0))
+            .filter(Document.tenant_id == tenant.id)
+            .scalar()
+        )
+
+        # ✅ Get plan limit (default 5GB if not found)
+        plan_limit = PLAN_LIMITS.get(tenant.plan.lower(), 5 * 1024 * 1024 * 1024)
+
         results.append({
             "tenant_id": tenant.id,
             "tenant_name": tenant.company_name,
+            "status": tenant.status,
+            "plan": tenant.plan,
+            "monthly_fee": tenant.monthly_fee,
             "login_failures_24h": login_failures,
             "last_active_user": {
-                 "id": last_active_user.id,
+                "id": last_active_user.id,
                 "email": last_active_user.email,
                 "last_active": _iso_ms_z(last_active_user.last_active)
             } if last_active_user else None,
-
-            "active_users_7d": active_users
+            "active_users_7d": active_users,
+            "total_uploads": total_documents,
+            "uploads_7d": recent_uploads,
+            "storage_used": storage_used,
+            "plan_limit": plan_limit   # <-- NEW
         })
 
     return {
         "summary": {
             "total_login_failures_24h": total_failures,
             "total_active_users_7d": total_active_users,
+            "total_uploads": total_uploads_all,
+            "total_uploads_7d": total_uploads_week
         },
         "tenants": results
     }

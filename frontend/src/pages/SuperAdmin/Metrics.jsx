@@ -9,7 +9,8 @@ import {
   FiTrendingUp, 
   FiFileText,
   FiActivity,
-  FiDatabase
+  FiDatabase,
+  FiUpload
 } from "react-icons/fi";
 import { 
   LineChart, 
@@ -124,20 +125,25 @@ const fetchTenantMetrics = async () => {
     const response = await axios.get(`${API_URL}/metrics/tenants`, { headers });
     const tenants = response.data.tenants || [];
 
-    const mappedData = tenants.map(t => ({
+  const mappedData = tenants.map(t => ({
   id: t.tenant_id,
   company_name: t.tenant_name,
   login_failures_24h: t.login_failures_24h,
-  lastActive: t.last_active_user?.last_active || null,  // ✅ flatten
-  lastActiveEmail: t.last_active_user?.email || null,   // optional
+  lastActive: t.last_active_user?.last_active || null,
+  lastActiveEmail: t.last_active_user?.email || null,
   activeUsers7d: t.active_users_7d,
-  totalUploads: t.uploads_7d || 0,
-  storageUsed: "0 B",
-  status: "active",
-  created_at: new Date().toISOString(),
-  plan: "Basic",
-  monthly_fee: 0
+
+  //  use both total_uploads and uploads_7d from backend
+  totalUploads: t.total_uploads || 0,
+  uploadsThisWeek: t.uploads_7d || 0,
+
+  storageUsed: t.storage_used || 0, 
+  status: t.status || "active",          //  from backend
+  plan: t.plan || "Basic",              // from backend
+  monthly_fee: t.monthly_fee || 0,  
+  planLimit: t.plan_limit || (5 * 1024 * 1024 * 1024) 
 }));
+
 
 setTenantMetrics(mappedData);
 
@@ -202,6 +208,17 @@ setTenantMetrics(mappedData);
               <div className="metric-label">Total Documents</div>
             </div>
           </div>
+    
+
+
+  {/*  NEW: Uploads This Week */}
+  <div className="metric-card">
+    <div className="metric-icon"><FiTrendingUp /></div>
+    <div className="metric-content">
+      <div className="metric-value">+{dashboardData.total_uploads_7d || 0}</div>
+      <div className="metric-label">Uploads This Week</div>
+    </div>
+  </div>
 
           <div className="metric-card">
             <div className="metric-icon"><FiDollarSign /></div>

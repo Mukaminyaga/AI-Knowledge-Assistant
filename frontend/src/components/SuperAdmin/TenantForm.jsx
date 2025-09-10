@@ -354,10 +354,10 @@ const TenantForm = ({ isOpen, onClose, onSubmit, initialData = null }) => {
               >
                 <option value="">Select Plan</option>
                 <option value="Basic">Basic Plan</option>
-                <option value="Standard">Standard Plan</option>
+                {/* <option value="Standard">Standard Plan</option> */}
                 <option value="Premium">Premium Plan</option>
                 <option value="Enterprise">Enterprise Plan</option>
-                <option value="Custom">Custom Plan</option>
+                {/* <option value="Custom">Custom Plan</option> */}
               </select>
               {errors.plan && <span className="error-text">{errors.plan}</span>}
             </div>
