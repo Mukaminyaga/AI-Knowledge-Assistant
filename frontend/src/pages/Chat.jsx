@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import {
   FiPlus,
-  FiTrash2,
   FiChevronDown,
   FiChevronUp,
   FiSearch,
@@ -24,10 +23,11 @@ import ThemeToggle from "../components/ThemeToggle";
 import "../styles/Chat.css";
 import { Link } from "react-router-dom";
 import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm"; // enable tables, task lists, strikethrough, etc.
 
 function Chat() {
   const user = JSON.parse(localStorage.getItem("user"));
-  const userId = user?.id || 0; // default to 0 or handle guest properly
+  const userId = user?.id || 0;
 
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
@@ -38,27 +38,20 @@ function Chat() {
   const [currentSessionId, setCurrentSessionId] = useState(null);
   const [isHistoryOpen, setIsHistoryOpen] = useState(false);
   const [messageActions, setMessageActions] = useState({});
-  const [inputPosition, setInputPosition] = useState("center"); // 'center' or 'bottom'
+  const [inputPosition, setInputPosition] = useState("center");
   const [copiedMessageIndex, setCopiedMessageIndex] = useState(null);
   const [editingMessageIndex, setEditingMessageIndex] = useState(null);
-  
 
-  // Update input position based on chat history
   useEffect(() => {
-    if (chatHistory.length > 0) {
-      setInputPosition("bottom");
-    } else {
-      setInputPosition("center");
-    }
+    setInputPosition(chatHistory.length > 0 ? "bottom" : "center");
   }, [chatHistory]);
 
-  // Load user chat sessions from backend
   useEffect(() => {
     const fetchSessions = async () => {
       try {
         const res = await axios.get(
-  `${process.env.REACT_APP_API_URL}/chat/history/${userId}`
-);
+          `${process.env.REACT_APP_API_URL}/chat/history/${userId}`
+        );
         setChatSessions(res.data || []);
       } catch (err) {
         console.error("Failed to load sessions:", err);
@@ -80,119 +73,109 @@ function Chat() {
       );
       setChatHistory([]);
       setCurrentSessionId(res.data.id);
-      
       setInputValue("");
       setChatSessions((prev) => [res.data, ...prev]);
     } catch (err) {
       console.error("Failed to create new chat:", err);
     }
   };
-const handleSend = async (userQuery) => {
-  if (!userQuery.trim()) return;
 
-  // Always update chat history locally first
-  const newChat = [...chatHistory, { role: "user", text: userQuery }];
-  setChatHistory(newChat);
-  setInputValue("");
+  const handleSend = async (userQuery) => {
+    if (!userQuery.trim()) return;
 
-  try {
-    setLoading(true);
+    const newChat = [...chatHistory, { role: "user", text: userQuery }];
+    setChatHistory(newChat);
+    setInputValue("");
 
-    let sessionId = currentSessionId;
+    try {
+      setLoading(true);
 
-    // 🔹 If no session exists, create one before sending the first message
-    if (!sessionId) {
-      const startRes = await axios.post(
-        `${process.env.REACT_APP_API_URL}/chat/start`,
-        { user_id: userId, title: summarizeTitle(userQuery) }
+      let sessionId = currentSessionId;
+      if (!sessionId) {
+        const startRes = await axios.post(
+          `${process.env.REACT_APP_API_URL}/chat/start`,
+          { user_id: userId, title: summarizeTitle(userQuery) }
+        );
+        sessionId = startRes.data.id;
+        setCurrentSessionId(sessionId);
+        setChatSessions((prev) => [startRes.data, ...prev]);
+      }
+
+      // store user message
+      await axios.post(`${process.env.REACT_APP_API_URL}/chat/message`, {
+        session_id: Number(sessionId),
+        role: "user",
+        text: userQuery,
+      });
+
+      // 🔹 Call RAG search endpoint (now returns Markdown in `answer`)
+      const response = await axios.post(
+        `${process.env.REACT_APP_API_URL}/search/search`,
+        { query: userQuery, top_k: 15, summarize: true },
+        { headers: { Authorization: `Bearer ${localStorage.getItem("token")}` } }
       );
-      sessionId = startRes.data.id;
-      setCurrentSessionId(sessionId);
-      setChatSessions((prev) => [startRes.data, ...prev]);
-    }
 
-    // 🔹 Store user message in backend
-    await axios.post(`${process.env.REACT_APP_API_URL}/chat/message`, {
-      session_id: Number(sessionId),
-      role: "user",
-      text: userQuery,
-    });
-
-    // 🔹 Call AI search endpoint
-    const response = await axios.post(
-      `${process.env.REACT_APP_API_URL}/search/search`,
-      { query: userQuery, top_k: 15, summarize: true },
-      { headers: { Authorization: `Bearer ${localStorage.getItem("token")}` } }
-    );
-
-    const assistantMessage = {
-      role: "assistant",
-      text: response.data.answer,
-      results:
-        response.data.source_files?.map((src) => ({ chunk_text: src })) || [],
-    };
-
-    setChatHistory((prev) => [...prev, assistantMessage]);
-
-    // 🔹 Store assistant message in backend
-    await axios.post(`${process.env.REACT_APP_API_URL}/chat/message`, {
-      session_id: Number(sessionId),
-      role: "assistant",
-      text: response.data.answer,
-    });
-  } catch (error) {
-    console.error("Error:", error);
-    setChatHistory((prev) => [
-      ...prev,
-      {
+      const assistantMessage = {
         role: "assistant",
-        text: "Sorry, I encountered an error while processing your request.",
-        results: [],
-      },
-    ]);
-  } finally {
-    setLoading(false);
-  }
-};
+        text: response.data.answer || "",
+        // keep a simple string list and show beneath as bullets
+        results:
+          (response.data.source_files || []).map((src) => ({ chunk_text: src })) || [],
+      };
 
+      setChatHistory((prev) => [...prev, assistantMessage]);
+
+      // store assistant message
+      await axios.post(`${process.env.REACT_APP_API_URL}/chat/message`, {
+        session_id: Number(sessionId),
+        role: "assistant",
+        text: response.data.answer || "",
+      });
+    } catch (error) {
+      console.error("Error:", error);
+      setChatHistory((prev) => [
+        ...prev,
+        {
+          role: "assistant",
+          text: "Sorry, I encountered an error while processing your request.",
+          results: [],
+        },
+      ]);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    handleSubmitEdit(e);
+    if (inputValue.trim()) {
+      handleSend(inputValue);
+    }
   };
 
-const handleSelectChat = async (session) => {
-  if (session.messages) {
-    // Sample/demo messages
-    setChatHistory(session.messages);
-    setCurrentSessionId(null); // no real session
-  } else {
-    // Fetch messages from backend for real session
-    try {
-      const res = await axios.get(
-        `${process.env.REACT_APP_API_URL}/chat/messages/${session.id}`
-      );
-
-      
-    const normalized = (res.data || []).map(m => ({
-    role: m.role,
-    text: m.text || m.message || "",
-    results: m.results || []
-  }));
-
-
-      setChatHistory(normalized);
-      setCurrentSessionId(session.id);
-    } catch (err) {
-      console.error("Failed to load chat history:", err);
-      setChatHistory([]);
+  const handleSelectChat = async (session) => {
+    if (session.messages) {
+      setChatHistory(session.messages);
+      setCurrentSessionId(null);
+    } else {
+      try {
+        const res = await axios.get(
+          `${process.env.REACT_APP_API_URL}/chat/messages/${session.id}`
+        );
+        const normalized = (res.data || []).map((m) => ({
+          role: m.role,
+          text: m.text || m.message || "",
+          results: m.results || [],
+        }));
+        setChatHistory(normalized);
+        setCurrentSessionId(session.id);
+      } catch (err) {
+        console.error("Failed to load chat history:", err);
+        setChatHistory([]);
+      }
     }
-  }
-  setInputValue("");
-};
-
-
-
+    setInputValue("");
+  };
 
   const handleDeleteChat = async (sessionId) => {
     try {
@@ -208,21 +191,17 @@ const handleSelectChat = async (session) => {
     }
   };
 
- // 🔹 Accept optional updatedSessions array from ChatHistory
-const handleBookmarkUpdate = (sessionId, isBookmarked, updatedSessions) => {
-  if (updatedSessions) {
-    setChatSessions(updatedSessions);
-  } else {
-    setChatSessions((prev) =>
-      prev.map((session) =>
-        session.id === sessionId
-          ? { ...session, isBookmarked }
-          : session
-      )
-    );
-  }
-};
-
+  const handleBookmarkUpdate = (sessionId, isBookmarked, updatedSessions) => {
+    if (updatedSessions) {
+      setChatSessions(updatedSessions);
+    } else {
+      setChatSessions((prev) =>
+        prev.map((session) =>
+          session.id === sessionId ? { ...session, isBookmarked } : session
+        )
+      );
+    }
+  };
 
   const toggleProfileDropdown = () => {
     setProfileDropdownOpen(!profileDropdownOpen);
@@ -246,23 +225,21 @@ const handleBookmarkUpdate = (sessionId, isBookmarked, updatedSessions) => {
       if (navigator.clipboard && navigator.clipboard.writeText) {
         await navigator.clipboard.writeText(text);
       } else {
-        // Fallback for older browsers
-        const textArea = document.createElement('textarea');
+        const textArea = document.createElement("textarea");
         textArea.value = text;
-        textArea.style.position = 'fixed';
-        textArea.style.left = '-999999px';
-        textArea.style.top = '-999999px';
+        textArea.style.position = "fixed";
+        textArea.style.left = "-999999px";
+        textArea.style.top = "-999999px";
         document.body.appendChild(textArea);
         textArea.focus();
         textArea.select();
-        document.execCommand('copy');
+        document.execCommand("copy");
         document.body.removeChild(textArea);
       }
       setCopiedMessageIndex(messageIndex);
       setTimeout(() => setCopiedMessageIndex(null), 2000);
     } catch (err) {
       console.error("Failed to copy text: ", err);
-      // Still show copied feedback even if there was an error
       setCopiedMessageIndex(messageIndex);
       setTimeout(() => setCopiedMessageIndex(null), 2000);
     }
@@ -271,9 +248,8 @@ const handleBookmarkUpdate = (sessionId, isBookmarked, updatedSessions) => {
   const handleEditMessage = (messageText, messageIndex) => {
     setInputValue(messageText);
     setEditingMessageIndex(messageIndex);
-    // Focus on input field
     setTimeout(() => {
-      const inputElement = document.querySelector('.chat-input');
+      const inputElement = document.querySelector(".chat-input");
       if (inputElement) {
         inputElement.focus();
       }
@@ -284,11 +260,10 @@ const handleBookmarkUpdate = (sessionId, isBookmarked, updatedSessions) => {
     e.preventDefault();
     if (inputValue.trim()) {
       if (editingMessageIndex !== null) {
-        // Update the message in chat history
         const updatedHistory = [...chatHistory];
         updatedHistory[editingMessageIndex] = {
           ...updatedHistory[editingMessageIndex],
-          text: inputValue
+          text: inputValue,
         };
         setChatHistory(updatedHistory);
         setEditingMessageIndex(null);
@@ -304,11 +279,7 @@ const handleBookmarkUpdate = (sessionId, isBookmarked, updatedSessions) => {
         {/* Header */}
         <div className="chat-compact-header">
           <div className="search-wrapper">
-            <input
-              type="text"
-              placeholder="Search..."
-              className="compact-search-input"
-            />
+            <input type="text" placeholder="Search..." className="compact-search-input" />
           </div>
           <div className="header-controls">
             <button className="control-btn new-chat-btn" onClick={startNewChat}>
@@ -322,9 +293,7 @@ const handleBookmarkUpdate = (sessionId, isBookmarked, updatedSessions) => {
             <ThemeToggle className="control-btn" />
             <div className="sidebar-top-profile">
               <div
-                className={`profile-dropdown-trigger ${
-                  profileDropdownOpen ? "active" : ""
-                }`}
+                className={`profile-dropdown-trigger ${profileDropdownOpen ? "active" : ""}`}
                 onClick={toggleProfileDropdown}
               >
                 <div className="profile-avatar-sidebar">
@@ -340,11 +309,7 @@ const handleBookmarkUpdate = (sessionId, isBookmarked, updatedSessions) => {
                       </span>
                     </div>
                     <div className="dropdown-arrow">
-                      {profileDropdownOpen ? (
-                        <FiChevronUp size={16} />
-                      ) : (
-                        <FiChevronDown size={16} />
-                      )}
+                      {profileDropdownOpen ? <FiChevronUp size={16} /> : <FiChevronDown size={16} />}
                     </div>
                   </>
                 )}
@@ -426,6 +391,7 @@ const handleBookmarkUpdate = (sessionId, isBookmarked, updatedSessions) => {
                     <div className="message-header">
                       {msg.role === "user" ? "YOU" : "AI ASSISTANT"}
                     </div>
+
                     {msg.role === "user" ? (
                       <>
                         <div className="message-body">
@@ -446,16 +412,17 @@ const handleBookmarkUpdate = (sessionId, isBookmarked, updatedSessions) => {
                           >
                             <FiEdit2 />
                           </button>
-                          {/* {copiedMessageIndex === idx && (
-                            <span className="copied-feedback">Copied!</span>
-                          )} */}
                         </div>
                       </>
                     ) : (
                       <div className="assistant-message-content">
                         <div className="formatted-message-text">
-  <ReactMarkdown>{msg.text}</ReactMarkdown>
-</div>
+                          {/*  Render Markdown with GFM to preserve lists, tables, etc. */}
+                         <ReactMarkdown remarkPlugins={[remarkGfm]}>
+  {msg.text}
+</ReactMarkdown>
+
+                        </div>
 
                         {msg.results?.length > 0 && (
                           <div className="message-sources">
@@ -477,9 +444,6 @@ const handleBookmarkUpdate = (sessionId, isBookmarked, updatedSessions) => {
                           >
                             {copiedMessageIndex === idx ? <FiCheck /> : <FiCopy />}
                           </button>
-                          {/* {copiedMessageIndex === idx && (
-                            <span className="copied-feedback">Copied!</span>
-                          )} */}
                           <button
                             className={`message-action-btn ${
                               messageActions[idx]?.liked ? "liked" : ""
@@ -503,6 +467,7 @@ const handleBookmarkUpdate = (sessionId, isBookmarked, updatedSessions) => {
                     )}
                   </div>
                 ))}
+
                 {loading && (
                   <div className="message assistant-msg">
                     <div className="message-header">AI ASSISTANT</div>

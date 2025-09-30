@@ -32,7 +32,7 @@ def search_docs(
     if not RUNPOD_WORKER_URL:
         raise HTTPException(status_code=500, detail="RUNPOD_WORKER_URL not configured")
 
-    worker_url = f"{RUNPOD_WORKER_URL.rstrip('/')}/search"
+    worker_url = f"{RUNPOD_WORKER_URL.rstrip('/')}/search/search"
     payload = {
         "query": request.query,
         "top_k": request.top_k,
@@ -66,7 +66,8 @@ def search_docs(
     if not results and not result.get("summary"):
         raise HTTPException(status_code=404, detail="No matching documents found for your tenant.")
 
-    final_answer = result.get("summary") or ""
+    final_answer = result.get("answer") or result.get("summary") or ""
+
     # collect unique source files from hits
     source_files = list({r.get("filename") for r in results}) if results else []
 
